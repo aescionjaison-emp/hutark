@@ -1,0 +1,57 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model ContactEnquiry {
+  id              String   @id @default(uuid())
+  name            String
+  email           String
+  phone           String?
+  company         String
+  productInterest String?
+  industry        String?
+  message         String
+  createdAt       DateTime @default(now())
+}
+
+model EventRegistration {
+  id          String   @id @default(uuid())
+  eventSlug   String
+  name        String
+  email       String
+  company     String
+  title       String
+  attendMode  String
+  createdAt   DateTime @default(now())
+}
+
+model Product {
+  id           String   @id
+  slug         String   @unique
+  name         String
+  series       String
+  tagline      String
+  heroSubtitle String
+  heroImg      String
+  overview     String
+  specs        String   // JSON string of specs array
+  features     String   // JSON string of features array
+  createdAt    DateTime @default(now())
+}
+
+model NewsArticle {
+  id        String   @id
+  title     String
+  date      String
+  category  String
+  summary   String
+  img       String
+  content   String   // JSON string of sections
+  createdAt DateTime @default(now())
+}
+

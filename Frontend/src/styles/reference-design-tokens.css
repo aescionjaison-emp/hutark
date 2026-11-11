@@ -1,0 +1,89 @@
+/* ==========================================================================
+   HUTARK REFERENCE DESIGN TOKENS
+   Strict Reverse-Engineering of https://www.agibot.com/
+   ========================================================================== */
+
+@font-face {
+  font-family: 'MiSans';
+  src: url('/fonts/MiSans-ExtraLight-200.woff') format('woff');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'MiSans';
+  src: url('/fonts/MiSans-Light-300.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'MiSans';
+  src: url('/fonts/MiSans-Regular-400.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'MiSans';
+  src: url('/fonts/MiSans-Medium-500.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'MiSans';
+  src: url('/fonts/MiSans-Bold-700.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* GLOBAL FONTS */
+  --font-primary: 'MiSans', "PingFang SC", "Microsoft YaHei", Arial, Helvetica, sans-serif;
+
+  /* GLOBAL BACKGROUNDS - PREDOMINANTLY WHITE & LIGHT */
+  --bg-body: #ffffff;
+  --bg-section-white: #ffffff;
+  --bg-section-light: #f8f8f8;
+  --bg-section-tint: #f6f6f6;
+  --bg-card: #ffffff;
+  --bg-card-alt: #f8f8f8;
+  --bg-footer: #1e2021;
+
+  /* TEXT COLORS */
+  --text-heading: #111111;
+  --text-body: #333333;
+  --text-muted: #666666;
+  --text-caption: #999999;
+  --text-inverse: #ffffff;
+
+  /* BRAND ACCENTS */
+  --color-primary: #0062c5;
+  --color-cyan: #37a5d0;
+  --color-purple: #6b5ba0;
+  --gradient-brand: linear-gradient(105deg, #37a5d0 0%, #6b5ba0 100%);
+  --gradient-accent: linear-gradient(105deg, #6b5ba0 0%, #37a5d0 100%);
+
+  /* HEADER & NAVIGATION */
+  --header-height: 80px;
+  --header-bg-top: rgba(138, 151, 161, 0.36);
+  --header-bg-scrolled: rgba(255, 255, 255, 1);
+  --header-border-scrolled: #dddddd;
+  --dropdown-bg: #ffffff;
+
+  /* CONTAINERS & SPACING */
+  --container-max-width: 1720px;
+  --container-width-pct: 92%;
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 16px;
+  --border-radius-xl: 24px;
+  --border-radius-pill: 9999px;
+}
+

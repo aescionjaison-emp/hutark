@@ -1,0 +1,16 @@
+{
+  "name": "hutark",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev:frontend": "cd Frontend && npm run dev",
+    "dev:backend": "cd Backend && npm run dev",
+    "build:frontend": "cd Frontend && npm run build",
+    "build:backend": "cd Backend && npm run build",
+    "build": "npm run build:backend && npm run build:frontend",
+    "start:frontend": "cd Frontend && npm run start",
+    "start:backend": "cd Backend && npm run start",
+    "verify": "node verify_system.js"
+  }
+}
+
