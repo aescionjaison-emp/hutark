@@ -33,3 +33,4 @@ jobs:
       - name: Deploy to Firebase Hosting
         run: |
           npx firebase-tools deploy --only hosting --token "${{ secrets.FIREBASE_TOKEN }}" --project hutark-1f8a5
+

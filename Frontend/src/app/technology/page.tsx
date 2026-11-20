@@ -41,10 +41,10 @@ export default function TechnologyPage() {
       <section className="py-24 bg-gradient-to-b from-gray-50 via-white to-white border-b border-gray-100">
         <div className="site-container max-w-4xl text-center space-y-5">
           <span className="inline-block px-3.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-blue-50 text-brand-blue border border-blue-100">
-            Core Technology & OS
+            R & D & Innovation
           </span>
           <h1 className="text-4xl sm:text-6xl font-extrabold text-gray-900 tracking-tight leading-tight">
-            The Physical AI Architecture
+            R & D: The Physical AI Architecture
           </h1>
           <p className="text-base sm:text-lg text-gray-600 font-light max-w-2xl mx-auto leading-relaxed">
             HUTARK bridges hardware engineering and artificial intelligence through Link-U OS, modular compliance actuators, and foundation physical neural models.
@@ -53,7 +53,7 @@ export default function TechnologyPage() {
       </section>
 
       {/* =========================================================================
-          FOUR PILLARS OF TECHNOLOGY
+          FOUR PILLARS OF R & D
           ========================================================================= */}
       <section className="py-24 bg-white border-b border-gray-100">
         <div className="site-container">

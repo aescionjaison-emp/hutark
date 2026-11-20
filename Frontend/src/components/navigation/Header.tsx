@@ -85,7 +85,7 @@ export default function Header() {
             </span>
           </div>
 
-          {/* Technology Link */}
+          {/* R & D Link */}
           <Link
             href="/technology"
             className={`transition-colors ${
@@ -93,7 +93,7 @@ export default function Header() {
             }`}
             onMouseEnter={() => setActiveMenu(null)}
           >
-            Technology & OS
+            R & D
           </Link>
 
           {/* About Dropdown Trigger */}
@@ -336,7 +336,7 @@ export default function Header() {
               href="/technology"
               className="block py-3 text-base font-bold border-b border-gray-100"
             >
-              Technology & OS
+              R & D
             </Link>
 
             <div>
