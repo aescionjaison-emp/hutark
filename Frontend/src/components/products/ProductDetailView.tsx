@@ -60,8 +60,44 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
     }
   };
 
-  // Hardware cards matching the screenshot
-  const hardwareModules = [
+  // Dynamic Image Paths & Sections with High-Fidelity Defaults
+  const heroBannerBg = product.heroBannerBg || "/uploads/images/20261103/015bf1f9da95cc783f5e1e7363b3882c.png";
+  const cinematicImg = product.cinematicImg || "/uploads/images/20261029/492548ce8722aa332e87aa47ce1019e5.png";
+  const manipulationImg = product.manipulationImg || "/uploads/images/20261029/33d570751012965d2455b2f1c9a6d43d.jpg";
+  const interactionImg = product.interactionImg || "/uploads/images/20261030/3b46c5afb682b2c6798d153344ad4cc3.jpg";
+  const matchingDiagramImg = product.matchingListImg || "/uploads/images/20261029/62974a39fa9e903d8e47b2cd2befc16e.png";
+
+  // Dynamic Cinematic Content
+  const cinematicHeading = product.cinematicHeading || "Full Scenario Embodied Intelligence";
+  const cinematicSubheading = product.cinematicSubheading || "PHYSICAL AI BREAKTHROUGH";
+  const cinematicDesc = product.cinematicDesc || "Equipped with end-to-end foundation physical AI policy networks, navigating dynamic industrial shop floors, unmapped warehouses, and human co-working spaces with continuous multi-sensor real-time coordination.";
+  const cinematicMetrics = product.cinematicMetrics || [
+    { value: "1000 Hz", label: "Bus Sync Rate" },
+    { value: "380 N·m", label: "Peak Joint Torque" },
+    { value: "< 1 ms", label: "Control Latency" }
+  ];
+
+  // Dynamic Manipulation Content
+  const manipulationHeading = product.manipulationHeading || "High Precision Dexterous Manipulation";
+  const manipulationSubtitle = product.manipulationSubtitle || "SUB-MILLIMETER DEXTERITY";
+  const manipulationDesc = product.manipulationDesc || "High-density optical-tactile fingertip sensors deliver dynamic micro-force feedback down to 0.01 N. Capable of handling delicate smartphone display glass, flexible cable harness insertion, and precision electronics fastener assembly.";
+  const manipulationFeatures = product.manipulationFeatures || [
+    "Multi-axis dynamic optical-tactile feedback array",
+    "Sub-millimeter position & force impedance hybrid control",
+    "Zero-damage handling of fragile glassware and electronic components"
+  ];
+
+  // Dynamic Interaction Content
+  const interactionHeading = product.interactionHeading || "Natural Multimodal Cognitive Dialogue";
+  const interactionSubtitle = product.interactionSubtitle || "HUMAN-ROBOT COLLABORATION";
+  const interactionDesc = product.interactionDesc || "Powered by the GO-3 physical foundation model, interpreting natural language spoken tasks, spatial pointing gestures, and visual environmental state changes zero-shot.";
+  const interactionBubbles = product.interactionBubbles || [
+    { title: "Spatial Perception Intent:", text: "Workstation target acquired: Calibrating end-effector pose..." },
+    { title: "Collaborative Feedback:", text: "Assembly verified: Tolerances strictly within ±0.03 mm." }
+  ];
+
+  // Dynamic Hardware Modules
+  const hardwareModules = product.hardwareModules || [
     {
       title: "Dual-Arm High-Payload Coordination",
       subtitle: "7-DoF Active Degrees of Freedom Per Arm",
@@ -100,8 +136,8 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
     }
   ];
 
-  // Application Scenarios matching the screenshot
-  const applicationScenarios = [
+  // Dynamic Application Scenarios
+  const applicationScenarios = product.applicationScenarios || [
     {
       title: "Automotive & Electronics Assembly",
       subtitle: "High-Throughput Workstations",
@@ -128,8 +164,18 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
     }
   ];
 
-  // Comprehensive Specification Rows matching the screenshot table
-  const specRows = [
+  // Dynamic Matching List Chips
+  const matchingListChips = product.matchingListChips || [
+    { label: "Head Vision", value: "RGB-D + LiDAR" },
+    { label: "Dual Arms", value: "7-DoF Active" },
+    { label: "Hands", value: "Tactile Fingertips" },
+    { label: "Torso Control", value: "Dual Thor 2000T" },
+    { label: "Base Mobility", value: "Omnidirectional" },
+    { label: "Power Bay", value: "Hot-Swappable 48V" }
+  ];
+
+  // Dynamic Specification Rows
+  const specRows = product.specRows || [
     { category: "Basic Parameters", item: "Total Height", value: "165 – 172 cm (Configurable)" },
     { category: "Basic Parameters", item: "Total System Weight", value: "58 – 65 kg (Including Battery)" },
     { category: "Basic Parameters", item: "Active Degrees of Freedom (DoF)", value: "38 – 44 Active DoF" },
@@ -168,7 +214,7 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
         {/* Sky / Landscape Banner Background */}
         <div className="absolute inset-0 z-0">
           <Image
-            src="/uploads/images/20261103/015bf1f9da95cc783f5e1e7363b3882c.png"
+            src={heroBannerBg}
             alt={product.name}
             fill
             priority
@@ -181,9 +227,8 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
         {/* Content Container */}
         <div className="site-container relative z-10 w-full py-16">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            {/* Left Spacer for the waving robot graphic present in background */}
+            {/* Left Robot Showcase */}
             <div className="hidden lg:block lg:col-span-6 min-h-[400px]">
-              {/* Optional dynamic robot cutout overlay if different from default background */}
               {product.heroImg && (
                 <div className="relative w-full h-[520px] transition-transform duration-700 hover:scale-[1.02]">
                   <Image
@@ -245,8 +290,8 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
         {/* Full-width atmospheric background */}
         <div className="absolute inset-0 z-0">
           <Image
-            src="/uploads/images/20261029/492548ce8722aa332e87aa47ce1019e5.png"
-            alt="Full Scenario Embodied Intelligence"
+            src={cinematicImg}
+            alt={cinematicHeading}
             fill
             className="object-cover object-center opacity-85"
           />
@@ -257,31 +302,25 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
         <div className="site-container relative z-10 w-full py-20">
           <div className="max-w-2xl space-y-6">
             <span className="inline-block text-xs font-bold uppercase tracking-[0.25em] text-cyan-400">
-              PHYSICAL AI BREAKTHROUGH
+              {cinematicSubheading}
             </span>
 
             <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-tight">
-              Full Scenario Embodied Intelligence
+              {cinematicHeading}
             </h2>
 
             <p className="text-base sm:text-lg text-gray-300 font-light leading-relaxed">
-              Equipped with end-to-end foundation physical AI policy networks, navigating dynamic industrial shop floors, unmapped warehouses, and human co-working spaces with continuous multi-sensor real-time coordination.
+              {cinematicDesc}
             </p>
 
             {/* Metrics Chips */}
             <div className="pt-4 grid grid-cols-3 gap-4">
-              <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/10">
-                <div className="text-2xl font-black text-cyan-300">1000 Hz</div>
-                <div className="text-xs text-gray-400 mt-1">Bus Sync Rate</div>
-              </div>
-              <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/10">
-                <div className="text-2xl font-black text-cyan-300">380 N·m</div>
-                <div className="text-xs text-gray-400 mt-1">Peak Joint Torque</div>
-              </div>
-              <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/10">
-                <div className="text-2xl font-black text-cyan-300">&lt; 1 ms</div>
-                <div className="text-xs text-gray-400 mt-1">Control Latency</div>
-              </div>
+              {cinematicMetrics.map((met, idx) => (
+                <div key={idx} className="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/10">
+                  <div className="text-2xl font-black text-cyan-300">{met.value}</div>
+                  <div className="text-xs text-gray-400 mt-1">{met.label}</div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -294,8 +333,8 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
         {/* High-res Macro Hand on Phone Glass */}
         <div className="absolute inset-0 z-0">
           <Image
-            src="/uploads/images/20261029/33d570751012965d2455b2f1c9a6d43d.jpg"
-            alt="Sub-Millimeter Tactile Precision"
+            src={manipulationImg}
+            alt={manipulationHeading}
             fill
             className="object-cover object-center opacity-90"
           />
@@ -305,30 +344,24 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
         <div className="site-container relative z-10 w-full py-20">
           <div className="max-w-xl space-y-6">
             <span className="inline-block text-xs font-bold uppercase tracking-[0.2em] text-cyan-400">
-              SUB-MILLIMETER DEXTERITY
+              {manipulationSubtitle}
             </span>
 
             <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight">
-              High Precision Dexterous Manipulation
+              {manipulationHeading}
             </h2>
 
             <p className="text-base text-gray-300 font-light leading-relaxed">
-              High-density optical-tactile fingertip sensors deliver dynamic micro-force feedback down to 0.01 N. Capable of handling delicate smartphone display glass, flexible cable harness insertion, and precision electronics fastener assembly.
+              {manipulationDesc}
             </p>
 
             <ul className="space-y-3 pt-2 text-sm text-gray-200">
-              <li className="flex items-center space-x-3">
-                <CheckCircle2 className="w-5 h-5 text-cyan-400 flex-shrink-0" />
-                <span>Multi-axis dynamic optical-tactile feedback array</span>
-              </li>
-              <li className="flex items-center space-x-3">
-                <CheckCircle2 className="w-5 h-5 text-cyan-400 flex-shrink-0" />
-                <span>Sub-millimeter position & force impedance hybrid control</span>
-              </li>
-              <li className="flex items-center space-x-3">
-                <CheckCircle2 className="w-5 h-5 text-cyan-400 flex-shrink-0" />
-                <span>Zero-damage handling of fragile glassware and electronic components</span>
-              </li>
+              {manipulationFeatures.map((feat, idx) => (
+                <li key={idx} className="flex items-center space-x-3">
+                  <CheckCircle2 className="w-5 h-5 text-cyan-400 flex-shrink-0" />
+                  <span>{feat}</span>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
@@ -340,8 +373,8 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
       <section className="relative w-full min-h-[650px] lg:min-h-[750px] bg-[#0c0f16] text-white flex items-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <Image
-            src="/uploads/images/20261030/3b46c5afb682b2c6798d153344ad4cc3.jpg"
-            alt="Cognitive Multimodal Interaction"
+            src={interactionImg}
+            alt={interactionHeading}
             fill
             className="object-cover object-center opacity-85"
           />
@@ -350,29 +383,34 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
 
         {/* Floating Holographic Dialogue Bubbles (Left Side) */}
         <div className="hidden lg:block absolute left-16 top-1/3 z-20 space-y-4 max-w-xs">
-          <div className="bg-cyan-950/70 border border-cyan-400/40 p-4 rounded-2xl backdrop-blur-md shadow-2xl text-xs text-cyan-200 animate-pulse">
-            <span className="font-bold text-cyan-300 block mb-1">Spatial Perception Intent:</span>
-            &quot;Workstation target acquired: Calibrating end-effector pose...&quot;
-          </div>
-          <div className="bg-blue-950/70 border border-blue-400/40 p-4 rounded-2xl backdrop-blur-md shadow-2xl text-xs text-blue-200">
-            <span className="font-bold text-blue-300 block mb-1">Collaborative Feedback:</span>
-            &quot;Assembly verified: Tolerances strictly within ±0.03 mm.&quot;
-          </div>
+          {interactionBubbles.map((bub, idx) => (
+            <div 
+              key={idx} 
+              className={`p-4 rounded-2xl backdrop-blur-md shadow-2xl text-xs border ${
+                idx === 0 
+                  ? 'bg-cyan-950/70 border-cyan-400/40 text-cyan-200 animate-pulse' 
+                  : 'bg-blue-950/70 border-blue-400/40 text-blue-200'
+              }`}
+            >
+              <span className="font-bold text-cyan-300 block mb-1">{bub.title}</span>
+              &quot;{bub.text}&quot;
+            </div>
+          ))}
         </div>
 
         {/* Right Side Text Content */}
         <div className="site-container relative z-10 w-full py-20 flex justify-end">
           <div className="max-w-xl space-y-6 text-left">
             <span className="inline-block text-xs font-bold uppercase tracking-[0.2em] text-cyan-400">
-              HUMAN-ROBOT COLLABORATION
+              {interactionSubtitle}
             </span>
 
             <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight">
-              Natural Multimodal Cognitive Dialogue
+              {interactionHeading}
             </h2>
 
             <p className="text-base text-gray-300 font-light leading-relaxed">
-              Powered by the GO-3 physical foundation model, interpreting natural language spoken tasks, spatial pointing gestures, and visual environmental state changes zero-shot.
+              {interactionDesc}
             </p>
 
             <div className="pt-2 grid grid-cols-2 gap-4">
@@ -500,7 +538,7 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
               Matching List
             </h2>
             <p className="text-sm sm:text-base text-gray-600 font-light max-w-2xl mx-auto">
-              Inspect the comprehensive physical architecture, sub-assemblies, and sensor integration callouts.
+              Inspect the comprehensive physical architecture, sub-assemblies, and sensor integration callouts for {product.name}.
             </p>
 
             {/* Interactive Component Category Pills */}
@@ -531,7 +569,7 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
           {/* High-Resolution Anatomy Diagram Image from Reference */}
           <div className="relative w-full min-h-[500px] sm:min-h-[700px] lg:min-h-[850px] bg-[#fafafa] rounded-3xl border border-gray-200 p-6 flex items-center justify-center overflow-hidden shadow-sm">
             <Image
-              src="/uploads/images/20261029/62974a39fa9e903d8e47b2cd2befc16e.png"
+              src={matchingDiagramImg}
               alt="Matching List Diagram"
               fill
               className="object-contain p-6"
@@ -540,30 +578,12 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
 
           {/* Component Quick Specs Badges */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mt-8">
-            <div className="bg-[#f9f9fb] p-4 rounded-2xl border border-gray-200 text-center">
-              <span className="text-xs text-gray-500 font-semibold uppercase">Head Vision</span>
-              <p className="text-sm font-bold text-gray-900 mt-1">RGB-D + LiDAR</p>
-            </div>
-            <div className="bg-[#f9f9fb] p-4 rounded-2xl border border-gray-200 text-center">
-              <span className="text-xs text-gray-500 font-semibold uppercase">Dual Arms</span>
-              <p className="text-sm font-bold text-gray-900 mt-1">7-DoF Active</p>
-            </div>
-            <div className="bg-[#f9f9fb] p-4 rounded-2xl border border-gray-200 text-center">
-              <span className="text-xs text-gray-500 font-semibold uppercase">Hands</span>
-              <p className="text-sm font-bold text-gray-900 mt-1">Tactile Fingertips</p>
-            </div>
-            <div className="bg-[#f9f9fb] p-4 rounded-2xl border border-gray-200 text-center">
-              <span className="text-xs text-gray-500 font-semibold uppercase">Torso Control</span>
-              <p className="text-sm font-bold text-gray-900 mt-1">Dual Thor 2000T</p>
-            </div>
-            <div className="bg-[#f9f9fb] p-4 rounded-2xl border border-gray-200 text-center">
-              <span className="text-xs text-gray-500 font-semibold uppercase">Base Mobility</span>
-              <p className="text-sm font-bold text-gray-900 mt-1">Omnidirectional</p>
-            </div>
-            <div className="bg-[#f9f9fb] p-4 rounded-2xl border border-gray-200 text-center">
-              <span className="text-xs text-gray-500 font-semibold uppercase">Power Bay</span>
-              <p className="text-sm font-bold text-gray-900 mt-1">Hot-Swappable 48V</p>
-            </div>
+            {matchingListChips.map((chip, idx) => (
+              <div key={idx} className="bg-[#f9f9fb] p-4 rounded-2xl border border-gray-200 text-center">
+                <span className="text-xs text-gray-500 font-semibold uppercase">{chip.label}</span>
+                <p className="text-sm font-bold text-gray-900 mt-1">{chip.value}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>

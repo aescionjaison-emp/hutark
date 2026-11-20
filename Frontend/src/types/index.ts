@@ -9,6 +9,31 @@ export interface ProductFeature {
   img?: string;
 }
 
+export interface HardwareModule {
+  title: string;
+  subtitle: string;
+  desc: string;
+  img: string;
+}
+
+export interface ApplicationScenario {
+  title: string;
+  subtitle: string;
+  desc: string;
+  img: string;
+}
+
+export interface SpecRowItem {
+  category: string;
+  item: string;
+  value: string;
+}
+
+export interface MatchingComponentItem {
+  label: string;
+  value: string;
+}
+
 export interface ProductData {
   id: string;
   slug?: string;
@@ -17,6 +42,29 @@ export interface ProductData {
   tagline: string;
   heroSubtitle: string;
   heroImg: string;
+  heroBannerBg?: string;
+  cinematicHeading?: string;
+  cinematicSubheading?: string;
+  cinematicDesc?: string;
+  cinematicImg?: string;
+  cinematicMetrics?: { value: string; label: string }[];
+  manipulationHeading?: string;
+  manipulationSubtitle?: string;
+  manipulationDesc?: string;
+  manipulationImg?: string;
+  manipulationFeatures?: string[];
+  interactionHeading?: string;
+  interactionSubtitle?: string;
+  interactionDesc?: string;
+  interactionImg?: string;
+  interactionBubbles?: { title: string; text: string }[];
+  matchingListTitle?: string;
+  matchingListDesc?: string;
+  matchingListImg?: string;
+  matchingListChips?: MatchingComponentItem[];
+  hardwareModules?: HardwareModule[];
+  applicationScenarios?: ApplicationScenario[];
+  specRows?: SpecRowItem[];
   overview: string;
   specs: ProductSpec[];
   features: ProductFeature[];
@@ -67,4 +115,3 @@ export interface NavColumn {
   heading: string;
   items: NavProductItem[];
 }
-
