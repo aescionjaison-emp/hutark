@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { siteContentStore } from '../services/siteContentStore';
 
 const HERO_SLIDES = [
   {
@@ -118,14 +119,28 @@ const NEWS_LIST = [
 
 export default function HomePage() {
   const [activeSlide, setActiveSlide] = useState(0);
+  const [homeContent, setHomeContent] = useState(() => siteContentStore.getSiteContent().home);
+
+  useEffect(() => {
+    const unsub = siteContentStore.subscribe((content) => {
+      setHomeContent(content.home);
+    });
+    return () => unsub();
+  }, []);
+
+  const heroSlides = homeContent?.heroSlides && homeContent.heroSlides.length > 0 ? homeContent.heroSlides : HERO_SLIDES;
+  const intelligences = homeContent?.intelligences && homeContent.intelligences.length > 0 ? homeContent.intelligences : INTELLIGENCES;
+  const productsGrid = homeContent?.productsGrid && homeContent.productsGrid.length > 0 ? homeContent.productsGrid : PRODUCTS_GRID;
+  const newsFeatured = homeContent?.featuredNews || NEWS_FEATURED;
+  const newsList = homeContent?.newsList && homeContent.newsList.length > 0 ? homeContent.newsList : NEWS_LIST;
 
   // Auto slide interval
   useEffect(() => {
     const timer = setInterval(() => {
-      setActiveSlide((prev) => (prev + 1) % HERO_SLIDES.length);
+      setActiveSlide((prev) => (prev + 1) % heroSlides.length);
     }, 6000);
     return () => clearInterval(timer);
-  }, []);
+  }, [heroSlides.length]);
 
   return (
     <div className="w-full bg-white text-[#333333] overflow-x-hidden">
@@ -134,7 +149,7 @@ export default function HomePage() {
           ========================================================================= */}
       <section className="relative w-full h-screen min-h-[640px] max-h-[1080px] bg-black">
         {/* Main Fullscreen Images */}
-        {HERO_SLIDES.map((slide, idx) => (
+        {heroSlides.map((slide, idx) => (
           <div
             key={idx}
             className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
@@ -142,13 +157,25 @@ export default function HomePage() {
             }`}
           >
             <Link href={slide.link} className="block w-full h-full relative group">
-              <Image
-                src={slide.img}
-                alt={slide.title}
-                fill
-                priority={idx === 0}
-                className="object-cover object-center"
-              />
+              {slide.img?.includes('.mp4') || slide.img?.includes('.webm') || slide.img?.startsWith('data:video') ? (
+                <video
+                  src={slide.img}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <Image
+                  src={slide.img}
+                  alt={slide.title}
+                  fill
+                  priority={idx === 0}
+                  className="object-cover object-center"
+                  unoptimized={slide.img?.startsWith('data:')}
+                />
+              )}
               {/* Reference subtle gradient overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20" />
             </Link>
@@ -159,7 +186,7 @@ export default function HomePage() {
         <div className="absolute bottom-0 left-0 right-0 z-20 bg-[#f6f6f6] border-t border-gray-200">
           <div className="site-container">
             <div className="grid grid-cols-2 md:grid-cols-4">
-              {HERO_SLIDES.map((slide, idx) => (
+              {heroSlides.map((slide, idx) => (
                 <button
                   key={idx}
                   onClick={() => setActiveSlide(idx)}
@@ -199,7 +226,7 @@ export default function HomePage() {
 
           {/* 3 Immersive Video / Animation Cards (.box .sec_item) */}
           <div className="space-y-12">
-            {INTELLIGENCES.map((item, idx) => (
+            {intelligences.map((item, idx) => (
               <div
                 key={idx}
                 className="relative w-full h-[70vh] min-h-[500px] max-h-[820px] rounded-3xl overflow-hidden shadow-2xl group border border-gray-100"
@@ -254,7 +281,7 @@ export default function HomePage() {
 
           {/* Exact 2-Column Product Grid Matching Reference (.list ul) */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
-            {PRODUCTS_GRID.map((prod, idx) => (
+            {productsGrid.map((prod, idx) => (
               <Link
                 key={idx}
                 href={prod.link}
@@ -312,21 +339,21 @@ export default function HomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
             {/* Left Featured Big Card (.le) */}
             <div className="lg:col-span-5 bg-[#f8f8f8] rounded-2xl overflow-hidden border border-gray-200/80 group flex flex-col justify-between hover:shadow-xl transition-all">
-              <Link href={NEWS_FEATURED.link} className="block flex-1 flex flex-col justify-between">
+              <Link href={newsFeatured.link} className="block flex-1 flex flex-col justify-between">
                 <div className="relative w-full h-72 sm:h-96 overflow-hidden">
                   <Image
-                    src={NEWS_FEATURED.img}
-                    alt={NEWS_FEATURED.title}
+                    src={newsFeatured.img}
+                    alt={newsFeatured.title}
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                   />
                 </div>
                 <div className="p-8 sm:p-10 space-y-3">
                   <h6 className="text-xl sm:text-2xl font-bold text-[#111111] leading-snug group-hover:text-[#0062c5] transition-colors">
-                    {NEWS_FEATURED.title}
+                    {newsFeatured.title}
                   </h6>
                   <div className="text-sm text-[#adadad] font-medium pt-2">
-                    {NEWS_FEATURED.date}
+                    {newsFeatured.date}
                   </div>
                 </div>
               </Link>
@@ -334,7 +361,7 @@ export default function HomePage() {
 
             {/* Right List of 3 Stories (.re) */}
             <div className="lg:col-span-7 flex flex-col justify-between gap-5">
-              {NEWS_LIST.map((item, idx) => (
+              {newsList.map((item, idx) => (
                 <Link
                   key={idx}
                   href={item.link}

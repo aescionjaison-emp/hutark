@@ -29,6 +29,7 @@ import { ProductData } from '../../types';
 import YouTubeVideoSlider from './YouTubeVideoSlider';
 import AdminProductEditorDrawer from './AdminProductEditorDrawer';
 import { getProductData } from '../../services/productStore';
+import { adminAuth } from '../../services/adminAuth';
 
 interface ProductDetailViewProps {
   product: ProductData;
@@ -39,15 +40,20 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
   const searchParams = useSearchParams();
   const [currentProduct, setCurrentProduct] = useState<ProductData>(product);
   const [isAdminDrawerOpen, setIsAdminDrawerOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
-  // Sync state with productStore to load any admin modifications
+  // Sync state with productStore and adminAuth
   useEffect(() => {
     const loaded = getProductData(product.id);
     setCurrentProduct(loaded);
 
-    if (searchParams.get('admin') === 'true') {
-      setIsAdminDrawerOpen(true);
-    }
+    // Subscribe to auth state
+    const unsubAuth = adminAuth.subscribe((auth) => {
+      setIsAdmin(auth);
+      if (auth && searchParams.get('admin') === 'true') {
+        setIsAdminDrawerOpen(true);
+      }
+    });
 
     const handleUpdate = (e: any) => {
       if (e.detail?.id === product.id || e.detail?.all) {
@@ -55,7 +61,10 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
       }
     };
     window.addEventListener('hutark_product_updated', handleUpdate);
-    return () => window.removeEventListener('hutark_product_updated', handleUpdate);
+    return () => {
+      unsubAuth();
+      window.removeEventListener('hutark_product_updated', handleUpdate);
+    };
   }, [product.id, searchParams]);
 
   // Matching List Active Tab
@@ -912,28 +921,32 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
       </section>
 
       {/* =========================================================================
-          FLOATING ADMIN LIVE CUSTOMIZER TRIGGER
+          FLOATING ADMIN LIVE CUSTOMIZER TRIGGER (ONLY VISIBLE WHEN LOGGED IN AS ADMIN)
           ========================================================================= */}
-      <div className="fixed bottom-6 right-6 z-40">
-        <button
-          onClick={() => setIsAdminDrawerOpen(true)}
-          className="flex items-center space-x-2.5 bg-[#0f121a] hover:bg-[#161c28] text-white px-5 py-3 rounded-full border border-cyan-500/50 shadow-2xl transition-all hover:scale-105 active:scale-95 group cursor-pointer"
-        >
-          <div className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse" />
-          <Edit3 className="w-4 h-4 text-cyan-400 group-hover:rotate-12 transition-transform" />
-          <span className="text-xs font-bold tracking-wide">Edit Page (Admin)</span>
-        </button>
-      </div>
+      {isAdmin && (
+        <>
+          <div className="fixed bottom-6 right-6 z-40">
+            <button
+              onClick={() => setIsAdminDrawerOpen(true)}
+              className="flex items-center space-x-2.5 bg-[#0f121a] hover:bg-[#161c28] text-white px-5 py-3 rounded-full border border-cyan-500/50 shadow-2xl transition-all hover:scale-105 active:scale-95 group cursor-pointer"
+            >
+              <div className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse" />
+              <Edit3 className="w-4 h-4 text-cyan-400 group-hover:rotate-12 transition-transform" />
+              <span className="text-xs font-bold tracking-wide">Edit Page (Admin)</span>
+            </button>
+          </div>
 
-      {/* =========================================================================
-          ADMIN PRODUCT EDITOR DRAWER
-          ========================================================================= */}
-      <AdminProductEditorDrawer
-        product={currentProduct}
-        isOpen={isAdminDrawerOpen}
-        onClose={() => setIsAdminDrawerOpen(false)}
-        onProductUpdated={(updated) => setCurrentProduct(updated)}
-      />
+          {/* =========================================================================
+              ADMIN PRODUCT EDITOR DRAWER
+              ========================================================================= */}
+          <AdminProductEditorDrawer
+            product={currentProduct}
+            isOpen={isAdminDrawerOpen}
+            onClose={() => setIsAdminDrawerOpen(false)}
+            onProductUpdated={(updated) => setCurrentProduct(updated)}
+          />
+        </>
+      )}
     </div>
   );
 }

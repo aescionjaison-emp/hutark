@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { ProductData, YouTubeVideoSlide, SpecRowItem, HardwareModule, ApplicationScenario } from '../../types';
 import { saveProductData, resetProductData } from '../../services/productStore';
+import MediaUploadZone from '../admin/MediaUploadZone';
 
 interface AdminProductEditorDrawerProps {
   product: ProductData;
@@ -393,88 +394,58 @@ export default function AdminProductEditorDrawer({
                 </p>
 
                 {/* Hero Banner Background */}
-                <div className="space-y-2">
-                  <label className="block text-xs font-semibold text-gray-300">
-                    1. Hero Section Panoramic Background (`heroBannerBg`)
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.heroBannerBg || ''}
-                    onChange={(e) => setFormData({ ...formData, heroBannerBg: e.target.value })}
-                    placeholder="/uploads/images/products/a3_hero_banner.jpg"
-                    className="w-full bg-[#1b202c] border border-white/15 rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-cyan-400 font-mono"
-                  />
-                </div>
+                <MediaUploadZone
+                  label="1. Hero Section Panoramic Background (heroBannerBg)"
+                  description="Drag & drop high-res banner or browse from local file manager"
+                  value={formData.heroBannerBg || ''}
+                  onChange={(url) => setFormData({ ...formData, heroBannerBg: url })}
+                  mediaType="image"
+                />
 
                 {/* Hero Robot Render */}
-                <div className="space-y-2">
-                  <label className="block text-xs font-semibold text-gray-300">
-                    2. Hero Robot Showcase PNG (`heroImg`)
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.heroImg || ''}
-                    onChange={(e) => setFormData({ ...formData, heroImg: e.target.value })}
-                    placeholder="/uploads/images/20261019/d000d7c155d324f34dde6ae2d90e04b8.png"
-                    className="w-full bg-[#1b202c] border border-white/15 rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-cyan-400 font-mono"
-                  />
-                </div>
+                <MediaUploadZone
+                  label="2. Hero Robot Showcase PNG (heroImg)"
+                  description="Cutout transparent PNG of robot standing pose"
+                  value={formData.heroImg || ''}
+                  onChange={(url) => setFormData({ ...formData, heroImg: url })}
+                  mediaType="image"
+                />
 
                 {/* Cinematic Chamber Image */}
-                <div className="space-y-2">
-                  <label className="block text-xs font-semibold text-gray-300">
-                    3. Cinematic Dark Chamber Image (`cinematicImg`)
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.cinematicImg || ''}
-                    onChange={(e) => setFormData({ ...formData, cinematicImg: e.target.value })}
-                    placeholder="/uploads/images/products/a3_cinematic_dark.jpg"
-                    className="w-full bg-[#1b202c] border border-white/15 rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-cyan-400 font-mono"
-                  />
-                </div>
+                <MediaUploadZone
+                  label="3. Cinematic Dark Chamber Image (cinematicImg)"
+                  description="Embodied intelligence dark chamber rendering"
+                  value={formData.cinematicImg || ''}
+                  onChange={(url) => setFormData({ ...formData, cinematicImg: url })}
+                  mediaType="image"
+                />
 
                 {/* Macro Manipulation Image */}
-                <div className="space-y-2">
-                  <label className="block text-xs font-semibold text-gray-300">
-                    4. Macro Dexterous Manipulation Image (`manipulationImg`)
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.manipulationImg || ''}
-                    onChange={(e) => setFormData({ ...formData, manipulationImg: e.target.value })}
-                    placeholder="/uploads/images/20261029/33d570751012965d2455b2f1c9a6d43d.jpg"
-                    className="w-full bg-[#1b202c] border border-white/15 rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-cyan-400 font-mono"
-                  />
-                </div>
+                <MediaUploadZone
+                  label="4. Macro Dexterous Manipulation Image (manipulationImg)"
+                  description="Close-up dual-arm manipulation illustration"
+                  value={formData.manipulationImg || ''}
+                  onChange={(url) => setFormData({ ...formData, manipulationImg: url })}
+                  mediaType="image"
+                />
 
                 {/* Cognitive Interaction Image */}
-                <div className="space-y-2">
-                  <label className="block text-xs font-semibold text-gray-300">
-                    5. Cognitive Dialogue Head Image (`interactionImg`)
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.interactionImg || ''}
-                    onChange={(e) => setFormData({ ...formData, interactionImg: e.target.value })}
-                    placeholder="/uploads/images/20261030/3b46c5afb682b2c6798d153344ad4cc3.jpg"
-                    className="w-full bg-[#1b202c] border border-white/15 rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-cyan-400 font-mono"
-                  />
-                </div>
+                <MediaUploadZone
+                  label="5. Cognitive Dialogue Head Image (interactionImg)"
+                  description="AI face / head interaction portrait"
+                  value={formData.interactionImg || ''}
+                  onChange={(url) => setFormData({ ...formData, interactionImg: url })}
+                  mediaType="image"
+                />
 
                 {/* Matching List Blueprint Image */}
-                <div className="space-y-2">
-                  <label className="block text-xs font-semibold text-gray-300">
-                    6. Matching List CAD Blueprint Diagram (`matchingListImg`)
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.matchingListImg || ''}
-                    onChange={(e) => setFormData({ ...formData, matchingListImg: e.target.value })}
-                    placeholder="/uploads/images/products/a3_anatomy_diagram.jpg"
-                    className="w-full bg-[#1b202c] border border-white/15 rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-cyan-400 font-mono"
-                  />
-                </div>
+                <MediaUploadZone
+                  label="6. Matching List CAD Blueprint Diagram (matchingListImg)"
+                  description="Technical blueprint or callout diagram"
+                  value={formData.matchingListImg || ''}
+                  onChange={(url) => setFormData({ ...formData, matchingListImg: url })}
+                  mediaType="image"
+                />
               </div>
 
               {/* QUICK PRESET SELECTOR CAROUSEL */}
@@ -677,16 +648,16 @@ export default function AdminProductEditorDrawer({
                         placeholder="Description"
                         className="w-full bg-[#1b202c] border border-white/10 rounded-lg px-3 py-1.5 text-xs text-gray-300"
                       />
-                      <input
-                        type="text"
+                      <MediaUploadZone
+                        label="Module Graphic"
+                        description="Drag & drop module render from file manager"
                         value={mod.img}
-                        onChange={(e) => {
+                        onChange={(url) => {
                           const mods = [...(formData.hardwareModules || [])];
-                          mods[i] = { ...mods[i], img: e.target.value };
+                          mods[i] = { ...mods[i], img: url };
                           setFormData({ ...formData, hardwareModules: mods });
                         }}
-                        placeholder="Image URL"
-                        className="w-full bg-[#1b202c] border border-white/10 rounded-lg px-3 py-1 text-[11px] text-gray-400 font-mono"
+                        mediaType="image"
                       />
                     </div>
                   ))}
@@ -825,19 +796,15 @@ export default function AdminProductEditorDrawer({
                       </button>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div>
-                        <label className="block text-[11px] font-semibold text-gray-400 mb-1">
-                          YouTube Video ID or Full URL *
-                        </label>
-                        <input
-                          type="text"
-                          value={vid.id}
-                          onChange={(e) => handleUpdateVideo(idx, 'id', e.target.value)}
-                          placeholder="e.g. 7zI3u19q_e0 or https://youtube.com/watch?v=..."
-                          className="w-full bg-[#1b202c] border border-white/10 rounded-lg px-3 py-1.5 text-xs text-cyan-300 font-mono"
-                        />
-                      </div>
+                    <div className="space-y-3">
+                      <MediaUploadZone
+                        label="Video File / YouTube Link *"
+                        description="Drop MP4 video file from File Manager or enter a YouTube URL"
+                        value={vid.id}
+                        onChange={(val) => handleUpdateVideo(idx, 'id', val)}
+                        mediaType="video"
+                      />
+
                       <div>
                         <label className="block text-[11px] font-semibold text-gray-400 mb-1">
                           Category / Tag

@@ -1,9 +1,10 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, Award, Compass, Eye, ShieldCheck, Users, Milestone, ChevronRight } from 'lucide-react';
+import { siteContentStore } from '../../services/siteContentStore';
 
 const CORE_VALUES = [
   {
@@ -66,6 +67,19 @@ const LEADERSHIP = [
 ];
 
 export default function AboutPage() {
+  const [aboutContent, setAboutContent] = useState(() => siteContentStore.getSiteContent().about);
+
+  useEffect(() => {
+    const unsub = siteContentStore.subscribe((content) => {
+      setAboutContent(content.about);
+    });
+    return () => unsub();
+  }, []);
+
+  const coreValues = aboutContent?.coreValues && aboutContent.coreValues.length > 0 ? aboutContent.coreValues : CORE_VALUES;
+  const milestones = aboutContent?.milestones && aboutContent.milestones.length > 0 ? aboutContent.milestones : MILESTONES;
+  const leadership = aboutContent?.leadership && aboutContent.leadership.length > 0 ? aboutContent.leadership : LEADERSHIP;
+
   return (
     <div className="bg-white text-[#333333] pt-20 min-h-screen">
       {/* =========================================================================
@@ -74,13 +88,13 @@ export default function AboutPage() {
       <section className="py-24 bg-gradient-to-b from-gray-50 to-white border-b border-gray-100">
         <div className="site-container max-w-4xl text-center space-y-5">
           <span className="inline-block px-3.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-blue-50 text-brand-blue border border-blue-100">
-            About HUTARK
+            {aboutContent?.badge || 'About HUTARK'}
           </span>
           <h1 className="text-4xl sm:text-6xl font-extrabold text-gray-900 tracking-tight leading-tight">
-            Empowering the World with Embodied Intelligence
+            {aboutContent?.heroTitle || 'Empowering the World with Embodied Intelligence'}
           </h1>
           <p className="text-base sm:text-lg text-gray-600 font-light max-w-2xl mx-auto leading-relaxed">
-            HUTARK is a global pioneer dedicated to researching, manufacturing, and deploying general-purpose humanoid robots and embodied foundation models.
+            {aboutContent?.heroDesc || 'HUTARK is a global pioneer dedicated to researching, manufacturing, and deploying general-purpose humanoid robots and embodied foundation models.'}
           </p>
         </div>
       </section>
@@ -173,7 +187,7 @@ export default function AboutPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {CORE_VALUES.map((val, idx) => (
+            {coreValues.map((val, idx) => (
               <div
                 key={idx}
                 className="bg-[#f8f8f8] p-8 rounded-2xl border border-gray-200/80 space-y-3"
@@ -202,7 +216,7 @@ export default function AboutPage() {
           </div>
 
           <div className="max-w-4xl mx-auto space-y-8">
-            {MILESTONES.map((m, idx) => (
+            {milestones.map((m, idx) => (
               <div
                 key={idx}
                 className="bg-white p-8 rounded-2xl border border-gray-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6"
@@ -235,7 +249,7 @@ export default function AboutPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {LEADERSHIP.map((lead, idx) => (
+            {leadership.map((lead, idx) => (
               <div
                 key={idx}
                 className="bg-[#f8f8f8] p-8 rounded-3xl border border-gray-200 space-y-3"

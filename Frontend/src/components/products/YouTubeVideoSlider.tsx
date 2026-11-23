@@ -88,16 +88,25 @@ export default function YouTubeVideoSlider({
         {/* Video Slider Showcase Container */}
         <div className="max-w-6xl mx-auto bg-[#12151e]/90 rounded-3xl border border-white/10 shadow-2xl overflow-hidden backdrop-blur-xl">
           <div className="grid grid-cols-1 lg:grid-cols-12 items-stretch">
-            {/* Left 8 Cols: Video Embed Area */}
+            {/* Left 8 Cols: Video Embed / Player Area */}
             <div className="lg:col-span-8 bg-black relative flex items-center justify-center min-h-[320px] sm:min-h-[440px] lg:min-h-[500px]">
-              <iframe
-                key={videoId}
-                src={`https://www.youtube-nocookie.com/embed/${videoId}?autoplay=0&rel=0&modestbranding=1&controls=1`}
-                title={currentVideo.title}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="w-full h-full min-h-[320px] sm:min-h-[440px] lg:min-h-[500px] border-0"
-              />
+              {currentVideo.id?.endsWith('.mp4') || currentVideo.id?.endsWith('.webm') || currentVideo.id?.startsWith('data:video') || currentVideo.id?.includes('/uploads/') ? (
+                <video
+                  key={currentVideo.id}
+                  src={currentVideo.id}
+                  controls
+                  className="w-full h-full min-h-[320px] sm:min-h-[440px] lg:min-h-[500px] object-contain bg-black"
+                />
+              ) : (
+                <iframe
+                  key={videoId}
+                  src={`https://www.youtube-nocookie.com/embed/${videoId}?autoplay=0&rel=0&modestbranding=1&controls=1`}
+                  title={currentVideo.title}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="w-full h-full min-h-[320px] sm:min-h-[440px] lg:min-h-[500px] border-0"
+                />
+              )}
             </div>
 
             {/* Right 4 Cols: Video Information & Slide Navigation */}

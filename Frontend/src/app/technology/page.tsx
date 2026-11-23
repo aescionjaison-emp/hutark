@@ -1,9 +1,10 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Cpu, Layers, GitBranch, Terminal, Shield, Zap, ArrowRight, Download } from 'lucide-react';
+import { siteContentStore } from '../../services/siteContentStore';
 
 const TECH_PILLARS = [
   {
@@ -33,6 +34,18 @@ const TECH_PILLARS = [
 ];
 
 export default function TechnologyPage() {
+  const [rdContent, setRdContent] = useState(() => siteContentStore.getSiteContent().rd);
+
+  useEffect(() => {
+    const unsub = siteContentStore.subscribe((content) => {
+      setRdContent(content.rd);
+    });
+    return () => unsub();
+  }, []);
+
+  const pillars = rdContent?.pillars && rdContent.pillars.length > 0 ? rdContent.pillars : TECH_PILLARS;
+  const pillarIcons = [Cpu, Zap, Layers, GitBranch];
+
   return (
     <div className="bg-white text-[#333333] pt-20 min-h-screen">
       {/* =========================================================================
@@ -41,13 +54,13 @@ export default function TechnologyPage() {
       <section className="py-24 bg-gradient-to-b from-gray-50 via-white to-white border-b border-gray-100">
         <div className="site-container max-w-4xl text-center space-y-5">
           <span className="inline-block px-3.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-blue-50 text-brand-blue border border-blue-100">
-            R & D & Innovation
+            {rdContent?.badge || 'R & D & Innovation'}
           </span>
           <h1 className="text-4xl sm:text-6xl font-extrabold text-gray-900 tracking-tight leading-tight">
-            R & D: The Physical AI Architecture
+            {rdContent?.heroTitle || 'R & D: The Physical AI Architecture'}
           </h1>
           <p className="text-base sm:text-lg text-gray-600 font-light max-w-2xl mx-auto leading-relaxed">
-            HUTARK bridges hardware engineering and artificial intelligence through Link-U OS, modular compliance actuators, and foundation physical neural models.
+            {rdContent?.heroDesc || 'HUTARK bridges hardware engineering and artificial intelligence through Link-U OS, modular compliance actuators, and foundation physical neural models.'}
           </p>
         </div>
       </section>
@@ -58,8 +71,8 @@ export default function TechnologyPage() {
       <section className="py-24 bg-white border-b border-gray-100">
         <div className="site-container">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-            {TECH_PILLARS.map((pillar, idx) => {
-              const Icon = pillar.icon;
+            {pillars.map((pillar, idx) => {
+              const Icon = pillarIcons[idx % pillarIcons.length] || Cpu;
               return (
                 <div
                   key={idx}
