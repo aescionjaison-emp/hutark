@@ -388,13 +388,26 @@ export default function AdminDashboardPage() {
 
         <div className="relative z-10 max-w-md w-full bg-white border border-gray-200/90 rounded-3xl p-8 sm:p-10 shadow-xl space-y-6">
           <div className="text-center space-y-3">
-            <div className="w-16 h-16 rounded-2xl bg-blue-50 border border-blue-200 text-brand-blue flex items-center justify-center mx-auto shadow-sm">
-              <Lock className="w-8 h-8" />
+            <Link href="/" className="inline-flex items-center gap-2.5 mx-auto group" title="Return to Website Homepage">
+              <div className="relative h-11 w-9 flex-shrink-0">
+                <Image
+                  src="/images/hutark-mark.png"
+                  alt="HUTARK"
+                  fill
+                  className="object-contain"
+                  priority
+                />
+              </div>
+              <span className="font-black text-3xl tracking-[0.18em] text-gray-900 group-hover:text-brand-blue transition-colors">
+                HUTARK
+              </span>
+            </Link>
+            <div className="pt-1">
+              <h2 className="text-lg font-bold tracking-tight text-gray-900">Admin Portal</h2>
+              <p className="text-xs text-gray-500 font-light mt-0.5">
+                Restricted Access. Please authenticate with Admin ID &amp; Password.
+              </p>
             </div>
-            <h2 className="text-2xl font-extrabold tracking-tight text-gray-900">HUTARK Master CMS</h2>
-            <p className="text-xs text-gray-500 font-light">
-              Restricted Access. Please authenticate with Admin ID &amp; Password.
-            </p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-4">
@@ -485,18 +498,23 @@ export default function AdminDashboardPage() {
       <header className="border-b border-gray-200 bg-white/95 backdrop-blur-md sticky top-0 z-40 shadow-sm">
         <div className="site-container py-3.5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 rounded-xl bg-brand-blue flex items-center justify-center text-white shadow-sm">
-              <Shield className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="flex items-center space-x-2">
-                <h1 className="text-lg font-bold text-gray-900 tracking-tight">HUTARK Master CMS Studio</h1>
-                <span className="text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 font-mono px-2 py-0.5 rounded-full uppercase font-bold">
-                  Authenticated
-                </span>
+            <Link href="/" className="flex items-center gap-2.5 group" title="Return to Website Homepage">
+              <div className="relative h-9 w-7 flex-shrink-0">
+                <Image
+                  src="/images/hutark-mark.png"
+                  alt="HUTARK"
+                  fill
+                  className="object-contain"
+                  priority
+                />
               </div>
-              <p className="text-[11px] text-gray-500">Complete Website Content, Media &amp; Fleet Management</p>
-            </div>
+              <span className="font-black text-2xl tracking-[0.18em] text-gray-900 group-hover:text-brand-blue transition-colors">
+                HUTARK
+              </span>
+            </Link>
+            <span className="text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 font-mono px-2 py-0.5 rounded-full uppercase font-bold">
+              Authenticated
+            </span>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
