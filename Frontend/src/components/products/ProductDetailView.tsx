@@ -21,7 +21,6 @@ import {
   Sliders, 
   Activity,
   Send,
-  Sparkles,
   Edit3,
   Video
 } from 'lucide-react';
@@ -249,42 +248,6 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
   return (
     <div className="bg-white text-[#333333] pt-20 min-h-screen" style={{ fontFamily: customFont }}>
       {/* =========================================================================
-          SECONDARY PRODUCT SUB-NAVIGATION & BREADCRUMBS
-          ========================================================================= */}
-      <div className="sticky top-20 z-40 bg-white/95 backdrop-blur-md border-b border-gray-200/80 shadow-xs">
-        <div className="site-container flex items-center justify-between py-3">
-          <div className="flex items-center space-x-2 text-xs">
-            <Link href="/" className="text-gray-500 hover:text-brand-blue transition-colors">Home</Link>
-            <span className="text-gray-300">/</span>
-            <Link href="/products" className="text-gray-500 hover:text-brand-blue transition-colors">Products</Link>
-            <span className="text-gray-300">/</span>
-            <span className="font-bold text-gray-900">{currentProduct.name}</span>
-          </div>
-
-          <div className="hidden md:flex items-center space-x-5 text-xs font-semibold text-gray-600">
-            <button onClick={() => scrollToSection('hero-section')} className="hover:text-[#0062c5] transition-colors cursor-pointer">Overview</button>
-            <button onClick={() => scrollToSection('intelligence-section')} className="hover:text-[#0062c5] transition-colors cursor-pointer">Embodied AI</button>
-            <button onClick={() => scrollToSection('dexterity-section')} className="hover:text-[#0062c5] transition-colors cursor-pointer">Dexterity</button>
-            <button onClick={() => scrollToSection('hardware-section')} className="hover:text-[#0062c5] transition-colors cursor-pointer">Hardware</button>
-            <button onClick={() => scrollToSection('scenarios-section')} className="hover:text-[#0062c5] transition-colors cursor-pointer">Scenarios</button>
-            <button onClick={() => scrollToSection('matching-section')} className="hover:text-[#0062c5] transition-colors cursor-pointer">Matching List</button>
-            <button onClick={() => scrollToSection('specifications-section')} className="hover:text-[#0062c5] transition-colors cursor-pointer">Specifications</button>
-            <button onClick={() => scrollToSection('videos-section')} className="hover:text-[#0062c5] transition-colors cursor-pointer flex items-center space-x-1">
-              <Video className="w-3.5 h-3.5 text-cyan-600" />
-              <span>Video Slides</span>
-            </button>
-            <button 
-              onClick={() => scrollToSection('contact-section')} 
-              style={{ backgroundColor: primaryColor }}
-              className="hover:opacity-90 text-white px-4 py-1.5 rounded-full transition-all text-xs font-bold shadow-sm cursor-pointer"
-            >
-              Inquire Now
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* =========================================================================
           1. HERO BANNER (MATCHING SCREENSHOT TOP: SKY, BLUE HILLS & ROBOT)
           ========================================================================= */}
       <section id="hero-section" className="relative w-full min-h-[85vh] lg:min-h-[92vh] flex items-center overflow-hidden bg-[#eef3f7] border-b border-gray-200">
@@ -320,12 +283,8 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
 
             {/* Right Hero Typography */}
             <div className="lg:col-span-6 space-y-6 text-left">
-              <div 
-                style={{ borderColor: primaryColor, color: primaryColor }}
-                className="inline-flex items-center space-x-2 text-xs font-bold uppercase tracking-wider bg-blue-50/90 px-3.5 py-1.5 rounded-full border shadow-sm backdrop-blur-sm"
-              >
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>{currentProduct.series}</span>
+              <div className="text-xs font-bold uppercase tracking-widest text-gray-500">
+                {currentProduct.series}
               </div>
 
               <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-gray-950 tracking-tight leading-none uppercase">

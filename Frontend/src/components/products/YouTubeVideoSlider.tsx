@@ -73,8 +73,8 @@ export default function YouTubeVideoSlider({
       <div className="site-container relative z-10">
         {/* Section Header matching AGIBOT design tone */}
         <div className="text-center space-y-4 mb-14">
-          <div className="inline-flex items-center space-x-2 text-xs font-bold uppercase tracking-[0.25em] text-cyan-400 bg-cyan-950/60 px-4 py-1.5 rounded-full border border-cyan-800/50 backdrop-blur-md">
-            <Video className="w-3.5 h-3.5" />
+          <div className="text-xs font-bold uppercase tracking-[0.25em] text-gray-400 flex items-center justify-center space-x-2">
+            <Video className="w-3.5 h-3.5 text-cyan-400" />
             <span>FIELD DEMONSTRATIONS & VIDEO SLIDES</span>
           </div>
           <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight">

@@ -69,7 +69,7 @@ export default function ContactPage() {
           ========================================================================= */}
       <section className="py-20 bg-gradient-to-b from-gray-50 via-white to-white border-b border-gray-100">
         <div className="site-container max-w-4xl text-center space-y-4">
-          <span className="inline-block px-3.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-blue-50 text-brand-blue border border-blue-100">
+          <span className="block text-xs font-bold uppercase tracking-widest text-gray-500">
             Partner With Us
           </span>
           <h1 className="text-4xl sm:text-6xl font-extrabold text-gray-900 tracking-tight">
@@ -252,7 +252,7 @@ export default function ContactPage() {
                 </h4>
 
                 <div className="flex items-start space-x-4">
-                  <div className="w-10 h-10 rounded-full bg-blue-50 text-brand-blue flex items-center justify-center flex-shrink-0">
+                  <div className="w-10 h-10 rounded-full bg-gray-100 text-gray-800 flex items-center justify-center flex-shrink-0">
                     <Mail className="w-5 h-5" />
                   </div>
                   <div>

@@ -45,7 +45,7 @@ export default function NewsDetailPage({ params }: { params: { id: string } }) {
           </Link>
 
           <div className="flex items-center space-x-3 text-xs text-gray-500 pt-2">
-            <span className="font-bold uppercase tracking-wider text-brand-blue bg-blue-50 px-2.5 py-1 rounded-full border border-blue-100">
+            <span className="text-xs font-bold uppercase tracking-widest text-gray-500">
               {article.category}
             </span>
             <span>•</span>

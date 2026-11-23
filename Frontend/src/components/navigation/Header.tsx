@@ -165,7 +165,7 @@ export default function Header() {
             {langMenuOpen && (
               <div className="absolute right-0 mt-2 w-32 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50 text-xs font-medium text-gray-700">
                 <button
-                  className="w-full text-left px-4 py-2 bg-blue-50 text-brand-blue font-bold flex items-center justify-between"
+                  className="w-full text-left px-4 py-2 bg-gray-50 text-gray-900 font-bold flex items-center justify-between"
                   onClick={() => setLangMenuOpen(false)}
                 >
                   <span>English</span>
@@ -247,7 +247,7 @@ export default function Header() {
                               {item.title}
                             </span>
                             {item.tag && (
-                              <span className="text-[10px] bg-blue-50 text-brand-blue px-1.5 py-0.5 rounded font-bold">
+                              <span className="text-[10px] bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded font-medium">
                                 {item.tag}
                               </span>
                             )}

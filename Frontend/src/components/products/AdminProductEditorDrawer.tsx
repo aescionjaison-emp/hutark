@@ -5,7 +5,6 @@ import {
   X, 
   Save, 
   RotateCcw, 
-  Sparkles, 
   Type, 
   Image as ImageIcon, 
   FileText, 
@@ -30,6 +29,7 @@ interface AdminProductEditorDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   onProductUpdated: (updated: ProductData) => void;
+  initialTab?: TabKey;
 }
 
 type TabKey = 'styles' | 'images' | 'content' | 'hardware' | 'specs' | 'videos';
@@ -39,15 +39,20 @@ export default function AdminProductEditorDrawer({
   isOpen,
   onClose,
   onProductUpdated,
+  initialTab = 'styles',
 }: AdminProductEditorDrawerProps) {
-  const [activeTab, setActiveTab] = useState<TabKey>('styles');
+  const [activeTab, setActiveTab] = useState<TabKey>(initialTab);
   const [formData, setFormData] = useState<ProductData>(product);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [newVideoUrl, setNewVideoUrl] = useState('');
 
-  // Sync state whenever product prop updates
+  // Sync state whenever product or initialTab prop updates
   useEffect(() => {
     setFormData(product);
-  }, [product]);
+    if (initialTab) {
+      setActiveTab(initialTab);
+    }
+  }, [product, initialTab]);
 
   if (!isOpen) return null;
 
@@ -125,6 +130,32 @@ export default function AdminProductEditorDrawer({
   };
 
   // Video slide handlers
+  const extractYouTubeId = (urlOrId: string): string => {
+    if (!urlOrId) return '';
+    const trimmed = urlOrId.trim();
+    if (trimmed.length === 11 && !trimmed.includes('/') && !trimmed.includes('?') && !trimmed.includes('=')) {
+      return trimmed;
+    }
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = trimmed.match(regExp);
+    return match && match[2].length === 11 ? match[2] : trimmed;
+  };
+
+  const handlePasteAndAddVideo = () => {
+    if (!newVideoUrl.trim()) return;
+    const parsedId = extractYouTubeId(newVideoUrl.trim());
+    const currentVideos = [...(formData.youtubeVideos || [])];
+    currentVideos.unshift({
+      id: parsedId || newVideoUrl.trim(),
+      title: `${formData.name} Video Demonstration`,
+      subtitle: 'FIELD PERFORMANCE TRIAL',
+      description: 'Autonomous demonstration of dynamic stability, obstacle negotiation, and precision manipulation capabilities.',
+      categoryTag: 'Demonstration',
+    });
+    setFormData({ ...formData, youtubeVideos: currentVideos });
+    setNewVideoUrl('');
+  };
+
   const handleAddVideo = () => {
     const currentVideos = [...(formData.youtubeVideos || [])];
     currentVideos.push({
@@ -161,7 +192,7 @@ export default function AdminProductEditorDrawer({
             <div>
               <div className="flex items-center space-x-2">
                 <h3 className="font-extrabold text-base text-white">Product Admin Studio</h3>
-                <span className="text-[10px] font-bold uppercase tracking-wider bg-cyan-900/60 text-cyan-300 px-2 py-0.5 rounded-full border border-cyan-700/50">
+                <span className="text-[11px] font-mono uppercase tracking-widest text-gray-400">
                   Live Customizer
                 </span>
               </div>
@@ -203,14 +234,14 @@ export default function AdminProductEditorDrawer({
         </div>
 
         {/* NAVIGATION TABS */}
-        <div className="flex items-center space-x-1 px-6 py-2.5 bg-[#12151e] border-b border-white/10 overflow-x-auto no-scrollbar text-xs font-semibold">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-1.5 px-6 py-3 bg-[#12151e] border-b border-white/10 text-xs font-semibold">
           {[
             { id: 'styles', label: 'Font & Theme', icon: Palette },
-            { id: 'images', label: 'Images & Backgrounds', icon: ImageIcon },
-            { id: 'content', label: 'Core Content', icon: FileText },
-            { id: 'hardware', label: 'Hardware & Scenarios', icon: Cpu },
+            { id: 'images', label: 'Backgrounds', icon: ImageIcon },
+            { id: 'content', label: 'Core Copy', icon: FileText },
+            { id: 'hardware', label: 'Hardware', icon: Cpu },
             { id: 'specs', label: 'Specs Table', icon: Table },
-            { id: 'videos', label: 'YouTube Video Slides', icon: Video },
+            { id: 'videos', label: 'YouTube Videos', icon: Video, isSpecial: true },
           ].map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -218,14 +249,16 @@ export default function AdminProductEditorDrawer({
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as TabKey)}
-                className={`flex items-center space-x-1.5 px-3 py-2 rounded-lg transition-all whitespace-nowrap cursor-pointer ${
+                className={`flex items-center justify-center space-x-1.5 px-3 py-2 rounded-xl transition-all cursor-pointer text-center ${
                   isActive
-                    ? 'bg-cyan-950/80 text-cyan-300 border border-cyan-500/40 shadow-sm'
-                    : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
+                    ? 'bg-red-950/80 text-red-300 border border-red-500/50 shadow-md font-bold'
+                    : tab.isSpecial
+                    ? 'bg-red-900/30 text-red-400 hover:bg-red-900/50 border border-red-500/30'
+                    : 'text-gray-300 hover:text-white bg-white/5 hover:bg-white/10'
                 }`}
               >
-                <Icon className="w-3.5 h-3.5" />
-                <span>{tab.label}</span>
+                <Icon className={`w-3.5 h-3.5 ${tab.isSpecial ? 'text-red-400' : 'text-gray-400'}`} />
+                <span className="truncate">{tab.label}</span>
               </button>
             );
           })}
@@ -739,109 +772,168 @@ export default function AdminProductEditorDrawer({
           )}
 
           {/* =========================================================================
-              TAB 6: YOUTUBE VIDEO SLIDES
+              TAB 6: YOUTUBE VIDEO SLIDES (COPY & PASTE METHOD)
               ========================================================================= */}
           {activeTab === 'videos' && (
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h4 className="text-sm font-bold text-white flex items-center space-x-2">
-                    <Video className="w-4 h-4 text-cyan-400" />
-                    <span>YouTube Video Slide Deck</span>
-                  </h4>
-                  <p className="text-xs text-gray-400 mt-0.5">
-                    Embed YouTube videos that render as slide carousels directly below the specifications section.
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={handleAddVideo}
-                  className="px-3 py-1.5 bg-blue-600/30 hover:bg-blue-600/50 text-cyan-300 border border-blue-500/40 rounded-xl text-xs font-bold flex items-center space-x-1.5 cursor-pointer"
-                >
-                  <Plus className="w-3.5 h-3.5" />
-                  <span>Add Video Slide</span>
-                </button>
-              </div>
-
-              <div className="space-y-4 max-h-[500px] overflow-y-auto no-scrollbar">
-                {(formData.youtubeVideos && formData.youtubeVideos.length > 0
-                  ? formData.youtubeVideos
-                  : [
-                      {
-                        id: '7zI3u19q_e0',
-                        title: `${formData.name} Dynamic Locomotion & Balance`,
-                        subtitle: 'AUTONOMOUS NAVIGATION',
-                        description: 'Field testing bipedal/wheeled stability over slopes and steps.',
-                        categoryTag: 'Locomotion',
-                      },
-                      {
-                        id: 'M3_Jb_5zT9I',
-                        title: 'Sub-Millimeter Fastener Assembly',
-                        subtitle: 'DUAL-ARM MANIPULATION',
-                        description: 'Precision wiring and electronic component insertion.',
-                        categoryTag: 'Manipulation',
-                      },
-                    ]
-                ).map((vid, idx) => (
-                  <div key={idx} className="bg-[#151922] p-4 rounded-2xl border border-white/10 space-y-3">
-                    <div className="flex items-center justify-between text-xs text-cyan-400 font-bold">
-                      <span>Video Slide #{idx + 1}</span>
-                      <button
-                        type="button"
-                        onClick={() => handleDeleteVideo(idx)}
-                        className="text-gray-500 hover:text-red-400 cursor-pointer flex items-center space-x-1"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                        <span>Delete</span>
-                      </button>
+            <div className="space-y-6">
+              {/* PRIMARY PROMINENT URL COPY-PASTE METHOD BOX */}
+              <div className="bg-gradient-to-br from-red-950/50 via-[#181a24] to-[#12151e] border-2 border-red-500/50 p-6 rounded-2xl space-y-4 shadow-xl">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2.5 text-white font-bold text-sm">
+                    <div className="w-8 h-8 rounded-xl bg-red-600 flex items-center justify-center text-white shadow-md">
+                      <Video className="w-4 h-4" />
                     </div>
-
-                    <div className="space-y-3">
-                      <MediaUploadZone
-                        label="Video File / YouTube Link *"
-                        description="Drop MP4 video file from File Manager or enter a YouTube URL"
-                        value={vid.id}
-                        onChange={(val) => handleUpdateVideo(idx, 'id', val)}
-                        mediaType="video"
-                      />
-
-                      <div>
-                        <label className="block text-[11px] font-semibold text-gray-400 mb-1">
-                          Category / Tag
-                        </label>
-                        <input
-                          type="text"
-                          value={vid.categoryTag || ''}
-                          onChange={(e) => handleUpdateVideo(idx, 'categoryTag', e.target.value)}
-                          placeholder="e.g. Field Trial, Locomotion"
-                          className="w-full bg-[#1b202c] border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white"
-                        />
-                      </div>
-                    </div>
-
                     <div>
-                      <label className="block text-[11px] font-semibold text-gray-400 mb-1">Slide Title</label>
-                      <input
-                        type="text"
-                        value={vid.title}
-                        onChange={(e) => handleUpdateVideo(idx, 'title', e.target.value)}
-                        placeholder="Video Title"
-                        className="w-full bg-[#1b202c] border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white font-bold"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-[11px] font-semibold text-gray-400 mb-1">Detailed Description</label>
-                      <textarea
-                        rows={2}
-                        value={vid.description}
-                        onChange={(e) => handleUpdateVideo(idx, 'description', e.target.value)}
-                        placeholder="Description of the test or feature shown in this video..."
-                        className="w-full bg-[#1b202c] border border-white/10 rounded-lg px-3 py-1.5 text-xs text-gray-300"
-                      />
+                      <h4 className="text-sm font-bold text-white tracking-tight">YouTube Video URL (Copy & Paste Method)</h4>
+                      <p className="text-[11px] text-gray-400 font-light">Paste any YouTube video link to add it immediately as a video slide</p>
                     </div>
                   </div>
-                ))}
+                  <span className="text-[10px] font-mono font-bold bg-red-950 text-red-400 border border-red-500/30 px-2.5 py-1 rounded-full uppercase">
+                    Auto-Embed
+                  </span>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-2.5 pt-1">
+                  <div className="relative flex-1">
+                    <input
+                      type="text"
+                      value={newVideoUrl}
+                      onChange={(e) => setNewVideoUrl(e.target.value)}
+                      placeholder="Paste YouTube video link (e.g. https://www.youtube.com/watch?v=7zI3u19q_e0 or youtu.be)..."
+                      className="w-full bg-black/70 border border-white/20 rounded-xl px-4 py-3 text-xs text-cyan-300 placeholder-gray-500 focus:outline-none focus:border-red-500 font-mono"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handlePasteAndAddVideo}
+                    className="bg-red-600 hover:bg-red-500 text-white font-bold px-6 py-3 rounded-xl text-xs flex items-center justify-center space-x-2 transition-all shadow-lg hover:shadow-red-500/25 active:scale-95 cursor-pointer whitespace-nowrap"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Add Video Slide</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* LIST OF VIDEO SLIDES */}
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold uppercase tracking-wider text-gray-400">
+                    Active Video Slides ({formData.youtubeVideos?.length || 0})
+                  </span>
+                  <button
+                    type="button"
+                    onClick={handleAddVideo}
+                    className="text-xs text-cyan-400 hover:text-cyan-300 flex items-center space-x-1"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>Add Blank Slide</span>
+                  </button>
+                </div>
+
+                <div className="space-y-6 max-h-[600px] overflow-y-auto no-scrollbar">
+                  {(formData.youtubeVideos && formData.youtubeVideos.length > 0
+                    ? formData.youtubeVideos
+                    : []
+                  ).map((vid, idx) => {
+                    const videoId = extractYouTubeId(vid.id);
+                    const isDirectVideo = vid.id?.endsWith('.mp4') || vid.id?.endsWith('.webm') || vid.id?.includes('/uploads/');
+
+                    return (
+                      <div key={idx} className="bg-[#151922] p-5 rounded-2xl border border-white/10 space-y-4 shadow-md">
+                        <div className="flex items-center justify-between text-xs font-bold border-b border-white/10 pb-3">
+                          <span className="text-cyan-400 flex items-center space-x-2">
+                            <Video className="w-4 h-4 text-red-500" />
+                            <span>SLIDE {String(idx + 1).padStart(2, '0')}</span>
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteVideo(idx)}
+                            className="text-gray-400 hover:text-red-400 cursor-pointer flex items-center space-x-1 transition-colors"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            <span>Delete Slide</span>
+                          </button>
+                        </div>
+
+                        {/* YouTube URL Copy-Paste Input Field */}
+                        <div className="space-y-1.5">
+                          <label className="block text-xs font-semibold text-gray-300">
+                            YouTube Video URL or Video File Path (Copy & Paste)
+                          </label>
+                          <div className="flex items-center space-x-2">
+                            <input
+                              type="text"
+                              value={vid.id.startsWith('http') || vid.id.startsWith('/') ? vid.id : `https://www.youtube.com/watch?v=${vid.id}`}
+                              onChange={(e) => handleUpdateVideo(idx, 'id', extractYouTubeId(e.target.value) || e.target.value)}
+                              placeholder="Paste YouTube link: https://www.youtube.com/watch?v=..."
+                              className="flex-1 bg-black/60 border border-white/15 rounded-xl px-4 py-2.5 text-xs text-cyan-300 font-mono focus:border-red-500 focus:outline-none"
+                            />
+                            {!isDirectVideo && (
+                              <a
+                                href={vid.id.startsWith('http') ? vid.id : `https://www.youtube.com/watch?v=${videoId}`}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="p-2.5 bg-white/5 hover:bg-white/15 rounded-xl text-gray-300 hover:text-white transition-colors"
+                                title="Open on YouTube"
+                              >
+                                <ExternalLink className="w-4 h-4" />
+                              </a>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Live YouTube Embed Preview */}
+                        <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-black border border-white/10">
+                          {isDirectVideo ? (
+                            <video src={vid.id} controls className="w-full h-full object-contain" />
+                          ) : (
+                            <iframe
+                              src={`https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1`}
+                              title={vid.title}
+                              className="w-full h-full border-0"
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                              allowFullScreen
+                            />
+                          )}
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-xs font-semibold text-gray-300 mb-1">Slide Title</label>
+                            <input
+                              type="text"
+                              value={vid.title}
+                              onChange={(e) => handleUpdateVideo(idx, 'title', e.target.value)}
+                              placeholder="Slide Title"
+                              className="w-full bg-[#1b202c] border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-bold"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-semibold text-gray-300 mb-1">Category / Tag</label>
+                            <input
+                              type="text"
+                              value={vid.categoryTag || ''}
+                              onChange={(e) => handleUpdateVideo(idx, 'categoryTag', e.target.value)}
+                              placeholder="e.g. Demonstration, Locomotion, Assembly"
+                              className="w-full bg-[#1b202c] border border-white/10 rounded-xl px-3 py-2 text-xs text-white"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-gray-300 mb-1">Detailed Description</label>
+                          <textarea
+                            rows={2}
+                            value={vid.description}
+                            onChange={(e) => handleUpdateVideo(idx, 'description', e.target.value)}
+                            placeholder="Description of the test or capability shown..."
+                            className="w-full bg-[#1b202c] border border-white/10 rounded-xl px-3 py-2 text-xs text-gray-300"
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           )}

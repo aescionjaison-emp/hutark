@@ -32,11 +32,12 @@ import {
   AlertCircle,
   Copy,
   Layers,
-  Sparkles,
-  ArrowRight
+  ArrowRight,
+  Sliders,
+  Play
 } from 'lucide-react';
 import { PRODUCTS } from '../../data/products';
-import { ProductData } from '../../types';
+import { ProductData, YouTubeVideoSlide } from '../../types';
 import { adminAuth } from '../../services/adminAuth';
 import { 
   siteContentStore, 
@@ -52,6 +53,7 @@ import {
 } from '../../services/siteContentStore';
 import { 
   getProductData, 
+  saveProductData,
   isProductCustomized, 
   resetProductData, 
   exportAllCustomizations, 
@@ -60,7 +62,7 @@ import {
 import MediaUploadZone from '../../components/admin/MediaUploadZone';
 import AdminProductEditorDrawer from '../../components/products/AdminProductEditorDrawer';
 
-type AdminTab = 'products' | 'home' | 'rd' | 'about' | 'global' | 'media' | 'security';
+type AdminTab = 'products' | 'youtube' | 'home' | 'rd' | 'about' | 'global' | 'media' | 'security';
 
 export default function AdminDashboardPage() {
   // Auth state
@@ -82,6 +84,19 @@ export default function AdminDashboardPage() {
   const [selectedSeries, setSelectedSeries] = useState<string>('all');
   const [customizedList, setCustomizedList] = useState<Record<string, boolean>>({});
   const [editingProduct, setEditingProduct] = useState<ProductData | null>(null);
+  const [drawerInitialTab, setDrawerInitialTab] = useState<'styles' | 'images' | 'content' | 'hardware' | 'specs' | 'videos'>('styles');
+
+  // YouTube Video Slides Manager State
+  const [selectedVideoRobotId, setSelectedVideoRobotId] = useState<string>('G2');
+  const [adminVideoUrlInput, setAdminVideoUrlInput] = useState<string>('');
+  const [activeVideoSlides, setActiveVideoSlides] = useState<YouTubeVideoSlide[]>([]);
+
+  const extractYouTubeId = (url: string): string => {
+    if (!url) return '';
+    const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+    if (match && match[1]) return match[1];
+    return url.trim();
+  };
 
   // Central Media Manager State
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
@@ -112,6 +127,73 @@ export default function AdminDashboardPage() {
 
     return () => unsub();
   }, []);
+
+  // Sync active video slides whenever selected robot changes
+  useEffect(() => {
+    const prod = getProductData(selectedVideoRobotId);
+    setActiveVideoSlides(prod.youtubeVideos || []);
+  }, [selectedVideoRobotId]);
+
+  // YouTube Video Slides Handlers
+  const handleAddVideoUrl = () => {
+    const raw = adminVideoUrlInput.trim();
+    if (!raw) return;
+    const newId = extractYouTubeId(raw);
+    const prod = getProductData(selectedVideoRobotId);
+    const newSlide: YouTubeVideoSlide = {
+      id: newId,
+      title: `${prod.name} Field Operational Demonstration`,
+      category: 'Live Robot Demonstration',
+      description: 'Recorded real-world operational testing of dexterity and autonomous intelligence.'
+    };
+    const updated = [...activeVideoSlides, newSlide];
+    setActiveVideoSlides(updated);
+    setAdminVideoUrlInput('');
+    saveProductData({ ...prod, youtubeVideos: updated });
+    setCustomizedList((prev) => ({ ...prev, [selectedVideoRobotId]: true }));
+    setSaveNotice(`Added video slide to ${prod.name}!`);
+    setTimeout(() => setSaveNotice(null), 3000);
+  };
+
+  const handleSaveAllVideoSlides = () => {
+    const prod = getProductData(selectedVideoRobotId);
+    saveProductData({ ...prod, youtubeVideos: activeVideoSlides });
+    setCustomizedList((prev) => ({ ...prev, [selectedVideoRobotId]: true }));
+    setSaveNotice(`Saved video slides for ${prod.name}!`);
+    setTimeout(() => setSaveNotice(null), 3000);
+  };
+
+  const handleDeleteVideoSlide = (idx: number) => {
+    const updated = activeVideoSlides.filter((_, i) => i !== idx);
+    setActiveVideoSlides(updated);
+    const prod = getProductData(selectedVideoRobotId);
+    saveProductData({ ...prod, youtubeVideos: updated });
+    setCustomizedList((prev) => ({ ...prev, [selectedVideoRobotId]: true }));
+    setSaveNotice(`Removed video slide from ${prod.name}`);
+    setTimeout(() => setSaveNotice(null), 3000);
+  };
+
+  const handleUpdateSlideField = (idx: number, field: keyof YouTubeVideoSlide, val: string) => {
+    const updated = [...activeVideoSlides];
+    updated[idx] = { ...updated[idx], [field]: val };
+    setActiveVideoSlides(updated);
+  };
+
+  const handleAddBlankSlide = () => {
+    const prod = getProductData(selectedVideoRobotId);
+    const newSlide: YouTubeVideoSlide = {
+      id: '7zI3u19q_e0',
+      title: `${prod.name} High Performance Demonstration`,
+      category: 'Field Testing',
+      description: 'Autonomous demonstration testing agility and dexterity.'
+    };
+    const updated = [...activeVideoSlides, newSlide];
+    setActiveVideoSlides(updated);
+    saveProductData({ ...prod, youtubeVideos: updated });
+    setCustomizedList((prev) => ({ ...prev, [selectedVideoRobotId]: true }));
+    setSaveNotice(`Added new video slide to ${prod.name}`);
+    setTimeout(() => setSaveNotice(null), 3000);
+  };
 
   // Login handler
   const handleLogin = (e: React.FormEvent) => {
@@ -380,6 +462,7 @@ export default function AdminDashboardPage() {
           <nav className="flex space-x-1 py-1 border-t border-white/5 text-xs font-semibold">
             {[
               { id: 'products', label: 'Robot Matrix (14 Models)', icon: Cpu },
+              { id: 'youtube', label: '📹 YouTube Video Slides', icon: Video },
               { id: 'home', label: 'Home Page Editor', icon: Home },
               { id: 'rd', label: 'R & D / Tech Editor', icon: FlaskConical },
               { id: 'about', label: 'About Page Editor', icon: Building2 },
@@ -466,7 +549,7 @@ export default function AdminDashboardPage() {
                   >
                     <div>
                       <div className="flex items-center justify-between mb-3">
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-cyan-400 bg-cyan-950/80 px-2.5 py-0.5 rounded-full border border-cyan-800/40">
+                        <span className="text-xs font-bold uppercase tracking-widest text-gray-400">
                           {prod.series}
                         </span>
                         {isCustomized ? (
@@ -496,11 +579,26 @@ export default function AdminDashboardPage() {
 
                     <div className="pt-4 border-t border-white/5 mt-4 flex items-center space-x-2">
                       <button
-                        onClick={() => setEditingProduct(currentData)}
-                        className="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center space-x-1.5 transition-all shadow-md"
+                        onClick={() => {
+                          setDrawerInitialTab('styles');
+                          setEditingProduct(currentData);
+                        }}
+                        className="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center space-x-1.5 transition-all shadow-md cursor-pointer"
                       >
-                        <Sparkles className="w-3.5 h-3.5" />
+                        <Sliders className="w-3.5 h-3.5" />
                         <span>Edit Page</span>
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          setSelectedVideoRobotId(prod.id);
+                          setActiveTab('youtube');
+                        }}
+                        className="bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 px-3 py-2 rounded-xl text-xs font-bold flex items-center space-x-1 transition-colors cursor-pointer"
+                        title="Edit YouTube Video Slides"
+                      >
+                        <Video className="w-3.5 h-3.5" />
+                        <span>Videos</span>
                       </button>
 
                       <Link
@@ -515,6 +613,309 @@ export default function AdminDashboardPage() {
                   </div>
                 );
               })}
+            </div>
+          </div>
+        )}
+
+        {/* =========================================================================
+            TAB: YOUTUBE VIDEO SLIDES (URL COPY & PASTE METHOD)
+            ========================================================================= */}
+        {activeTab === 'youtube' && (
+          <div className="space-y-8 max-w-6xl">
+            {/* Header & Subtitle */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div>
+                <h2 className="text-xl font-bold text-white flex items-center space-x-2.5">
+                  <span className="p-2 bg-red-600/20 text-red-500 rounded-xl border border-red-500/30">
+                    <Video className="w-5 h-5" />
+                  </span>
+                  <span>YouTube Video Slides Manager (URL Copy-Paste Method)</span>
+                </h2>
+                <p className="text-xs text-gray-400 mt-1">
+                  Manage high-definition YouTube video slide carousels across all 14 robot product pages. Paste any YouTube URL for instant auto-embed, live player preview, and slide customization.
+                </p>
+              </div>
+
+              <button
+                onClick={() => {
+                  const currentData = getProductData(selectedVideoRobotId);
+                  setDrawerInitialTab('videos');
+                  setEditingProduct(currentData);
+                }}
+                className="bg-white/10 hover:bg-white/20 text-white font-bold px-4 py-2 rounded-xl text-xs flex items-center space-x-2 transition-all cursor-pointer whitespace-nowrap"
+              >
+                <Sliders className="w-3.5 h-3.5 text-cyan-400" />
+                <span>Open in Full Robot Customizer</span>
+              </button>
+            </div>
+
+            {/* ROBOT SELECTOR CHIPS */}
+            <div className="bg-[#12151f] border border-white/10 rounded-2xl p-5 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold uppercase tracking-widest text-gray-400">
+                  Select Robot to Edit Video Slides:
+                </span>
+                <span className="text-xs text-cyan-400 font-mono">
+                  Currently Editing: <strong className="text-white">{getProductData(selectedVideoRobotId).name}</strong> ({selectedVideoRobotId})
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2">
+                {productList.map((prod) => {
+                  const isSelected = prod.id === selectedVideoRobotId;
+                  const count = (getProductData(prod.id).youtubeVideos || []).length;
+                  return (
+                    <button
+                      key={prod.id}
+                      onClick={() => setSelectedVideoRobotId(prod.id)}
+                      className={`p-2.5 rounded-xl text-left border transition-all cursor-pointer ${
+                        isSelected
+                          ? 'bg-red-600/20 border-red-500 text-white shadow-lg shadow-red-500/10'
+                          : 'bg-[#181c28] border-white/5 text-gray-400 hover:text-white hover:border-white/20'
+                      }`}
+                    >
+                      <div className="text-[10px] font-mono text-gray-400 uppercase tracking-wider">{prod.id}</div>
+                      <div className="text-xs font-bold truncate text-white">{prod.name.replace('HUTARK ', '')}</div>
+                      <div className="text-[10px] text-gray-400 mt-1 flex items-center space-x-1">
+                        <Video className="w-3 h-3 text-red-400" />
+                        <span>{count} slide{count === 1 ? '' : 's'}</span>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* PRIMARY URL COPY-PASTE METHOD SECTION */}
+            <div className="bg-gradient-to-br from-red-950/60 via-[#181a24] to-[#12151e] border-2 border-red-500/50 p-6 rounded-2xl space-y-4 shadow-xl">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3 text-white font-bold text-sm">
+                  <div className="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center text-white shadow-lg shadow-red-600/30">
+                    <Video className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold text-white tracking-tight">
+                      Paste YouTube Video Link for {getProductData(selectedVideoRobotId).name}
+                    </h3>
+                    <p className="text-xs text-gray-400 font-light">
+                      Supports direct YouTube URLs (e.g. https://www.youtube.com/watch?v=... or https://youtu.be/...)
+                    </p>
+                  </div>
+                </div>
+                <span className="text-[10px] font-mono font-bold bg-red-950 text-red-400 border border-red-500/30 px-3 py-1 rounded-full uppercase tracking-wider">
+                  Instant Auto-Embed
+                </span>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-2.5 pt-1">
+                <div className="relative flex-1">
+                  <input
+                    type="text"
+                    value={adminVideoUrlInput}
+                    onChange={(e) => setAdminVideoUrlInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleAddVideoUrl();
+                      }
+                    }}
+                    placeholder="Paste YouTube video link here: https://www.youtube.com/watch?v=..."
+                    className="w-full bg-black/80 border border-white/20 rounded-xl px-4 py-3 text-xs text-cyan-300 placeholder-gray-500 focus:outline-none focus:border-red-500 font-mono shadow-inner"
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={handleAddVideoUrl}
+                  className="bg-red-600 hover:bg-red-500 text-white font-bold px-6 py-3 rounded-xl text-xs flex items-center justify-center space-x-2 transition-all shadow-lg hover:shadow-red-500/25 active:scale-95 cursor-pointer whitespace-nowrap"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add Video Slide</span>
+                </button>
+              </div>
+            </div>
+
+            {/* ACTIVE VIDEO SLIDES LIST */}
+            <div className="space-y-6">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-white/10 pb-4">
+                <div>
+                  <h3 className="text-base font-bold text-white flex items-center space-x-2">
+                    <span>Active Video Slides for {getProductData(selectedVideoRobotId).name}</span>
+                    <span className="text-xs font-mono bg-white/10 px-2 py-0.5 rounded text-cyan-300">
+                      {activeVideoSlides.length}
+                    </span>
+                  </h3>
+                  <p className="text-xs text-gray-400 mt-0.5">
+                    These slides appear automatically under the product specifications on the live product page.
+                  </p>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <button
+                    type="button"
+                    onClick={handleAddBlankSlide}
+                    className="bg-white/5 hover:bg-white/10 text-gray-300 px-3 py-2 rounded-xl text-xs font-semibold flex items-center space-x-1.5 border border-white/10 transition-colors cursor-pointer"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>Add Blank Slide</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleSaveAllVideoSlides}
+                    className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2 rounded-xl text-xs flex items-center space-x-1.5 shadow-md transition-all cursor-pointer"
+                  >
+                    <Save className="w-3.5 h-3.5" />
+                    <span>Save Video Slides</span>
+                  </button>
+                </div>
+              </div>
+
+              {activeVideoSlides.length === 0 ? (
+                <div className="p-12 text-center bg-[#12151f] border border-white/10 rounded-2xl space-y-3">
+                  <Video className="w-10 h-10 text-gray-600 mx-auto" />
+                  <p className="text-sm font-semibold text-gray-300">No Video Slides Added Yet</p>
+                  <p className="text-xs text-gray-500 max-w-md mx-auto">
+                    Paste a YouTube link in the red box above to add high-definition operational demonstration videos to this product page.
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {activeVideoSlides.map((slide, idx) => {
+                    const videoId = extractYouTubeId(slide.id);
+                    const isDirectVideo = slide.id?.endsWith('.mp4') || slide.id?.endsWith('.webm') || slide.id?.includes('/uploads/');
+
+                    return (
+                      <div
+                        key={idx}
+                        className="bg-[#12151f] border border-white/10 rounded-2xl p-5 space-y-4 hover:border-white/20 transition-all flex flex-col justify-between shadow-lg"
+                      >
+                        <div className="space-y-4">
+                          <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                            <span className="text-xs font-bold text-cyan-400 flex items-center space-x-2">
+                              <span className="w-5 h-5 rounded-full bg-red-600/30 text-red-400 flex items-center justify-center text-[10px]">
+                                {idx + 1}
+                              </span>
+                              <span>SLIDE {String(idx + 1).padStart(2, '0')}</span>
+                            </span>
+
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteVideoSlide(idx)}
+                              className="text-gray-400 hover:text-red-400 text-xs font-semibold flex items-center space-x-1 cursor-pointer transition-colors"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                              <span>Delete</span>
+                            </button>
+                          </div>
+
+                          {/* Live 16:9 YouTube Player Preview */}
+                          <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-black border border-white/10 shadow-inner">
+                            {isDirectVideo ? (
+                              <video src={slide.id} controls className="w-full h-full object-contain" />
+                            ) : videoId ? (
+                              <iframe
+                                src={`https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1`}
+                                title={slide.title}
+                                className="w-full h-full border-0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                              />
+                            ) : (
+                              <div className="w-full h-full flex flex-col items-center justify-center text-gray-500 space-y-2">
+                                <Video className="w-8 h-8 opacity-40" />
+                                <span className="text-xs font-mono">Paste a valid YouTube link below</span>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* YouTube URL Copy-Paste Input Field */}
+                          <div className="space-y-1">
+                            <label className="block text-[11px] font-bold text-gray-300 uppercase tracking-wider">
+                              YouTube Video URL (Copy & Paste)
+                            </label>
+                            <div className="flex items-center space-x-2">
+                              <input
+                                type="text"
+                                value={slide.id.startsWith('http') || slide.id.startsWith('/') ? slide.id : `https://www.youtube.com/watch?v=${slide.id}`}
+                                onChange={(e) => handleUpdateSlideField(idx, 'id', extractYouTubeId(e.target.value) || e.target.value)}
+                                placeholder="https://www.youtube.com/watch?v=..."
+                                className="flex-1 bg-black/60 border border-white/15 rounded-xl px-3.5 py-2 text-xs text-cyan-300 font-mono focus:border-red-500 focus:outline-none"
+                              />
+                              {!isDirectVideo && videoId && (
+                                <a
+                                  href={`https://www.youtube.com/watch?v=${videoId}`}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="p-2 bg-white/5 hover:bg-white/15 rounded-xl text-gray-300 hover:text-white transition-colors"
+                                  title="Test on YouTube"
+                                >
+                                  <ExternalLink className="w-4 h-4" />
+                                </a>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Slide Title */}
+                          <div className="space-y-1">
+                            <label className="block text-[11px] font-bold text-gray-300 uppercase tracking-wider">
+                              Slide Title
+                            </label>
+                            <input
+                              type="text"
+                              value={slide.title}
+                              onChange={(e) => handleUpdateSlideField(idx, 'title', e.target.value)}
+                              placeholder="e.g. Field Dexterity Test"
+                              className="w-full bg-black/60 border border-white/15 rounded-xl px-3.5 py-2 text-xs text-white focus:border-cyan-400 focus:outline-none"
+                            />
+                          </div>
+
+                          {/* Category Badge */}
+                          <div className="space-y-1">
+                            <label className="block text-[11px] font-bold text-gray-300 uppercase tracking-wider">
+                              Category Badge
+                            </label>
+                            <input
+                              type="text"
+                              value={slide.category}
+                              onChange={(e) => handleUpdateSlideField(idx, 'category', e.target.value)}
+                              placeholder="e.g. Real-World Field Demo"
+                              className="w-full bg-black/60 border border-white/15 rounded-xl px-3.5 py-2 text-xs text-cyan-400 focus:border-cyan-400 focus:outline-none"
+                            />
+                          </div>
+
+                          {/* Description */}
+                          <div className="space-y-1">
+                            <label className="block text-[11px] font-bold text-gray-300 uppercase tracking-wider">
+                              Description
+                            </label>
+                            <textarea
+                              rows={2}
+                              value={slide.description}
+                              onChange={(e) => handleUpdateSlideField(idx, 'description', e.target.value)}
+                              placeholder="Describe what the robot is performing in this demonstration..."
+                              className="w-full bg-black/60 border border-white/15 rounded-xl px-3.5 py-2 text-xs text-gray-300 focus:border-cyan-400 focus:outline-none resize-none"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="pt-3 border-t border-white/5 flex items-center justify-between">
+                          <span className="text-[10px] text-gray-500 font-mono">
+                            Video ID: {videoId || 'N/A'}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={handleSaveAllVideoSlides}
+                            className="bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center space-x-1 transition-colors cursor-pointer"
+                          >
+                            <Check className="w-3.5 h-3.5" />
+                            <span>Save Slide</span>
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -1358,6 +1759,7 @@ export default function AdminDashboardPage() {
         <AdminProductEditorDrawer
           product={editingProduct}
           isOpen={!!editingProduct}
+          initialTab={drawerInitialTab}
           onClose={() => setEditingProduct(null)}
           onProductUpdated={(updated) => {
             setEditingProduct(null);

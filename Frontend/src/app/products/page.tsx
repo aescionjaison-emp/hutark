@@ -34,7 +34,7 @@ export default function ProductsPage() {
           ========================================================================= */}
       <section className="py-20 bg-gradient-to-b from-gray-50 to-white border-b border-gray-100">
         <div className="site-container text-center max-w-4xl space-y-4">
-          <span className="inline-block px-3.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-blue-50 text-brand-blue border border-blue-100">
+          <span className="block text-xs font-bold uppercase tracking-widest text-gray-500">
             HUTARK Fleet Portfolio
           </span>
           <h1 className="text-4xl sm:text-6xl font-extrabold text-gray-900 tracking-tight">
