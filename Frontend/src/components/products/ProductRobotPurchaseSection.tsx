@@ -138,32 +138,32 @@ export default function ProductRobotPurchaseSection({
             />
 
             {/* =====================================================================
-                REAL FLOATING "BUY ME" CAPSULE BUTTON
-                Hovering directly above the concentric holographic rings on the palm
-                Center: X = 39.61%, Y = 74.50%
+                REAL "BUY ME" CAPSULE BUTTON NESTLED ON HAND
+                Positioned directly on the robot's open palm & glowing holographic rings
+                Center: X = 40.00%, Y = 80.20%
                 ===================================================================== */}
             <div
               className="absolute pointer-events-auto z-20"
               style={{
-                left: '39.61%',
-                top: '74.50%',
+                left: '40.00%',
+                top: '80.20%',
                 width: '14.5%',
                 minWidth: '175px',
-                maxWidth: '285px',
+                maxWidth: '280px',
                 transform: 'translate(-50%, -50%)',
               }}
             >
               {/* Floating Animation Wrapper */}
               <motion.div
                 animate={{
-                  y: isHovered ? -8 : [0, -5, 0],
-                  scale: isHovered ? 1.06 : 1,
+                  y: isHovered ? -5 : [0, -2, 0],
+                  scale: isHovered ? 1.05 : 1,
                 }}
                 transition={{
                   y: isHovered 
-                    ? { duration: 0.25, ease: 'easeOut' }
-                    : { repeat: Infinity, duration: 3.2, ease: 'easeInOut' },
-                  scale: { duration: 0.25, ease: 'easeOut' }
+                    ? { duration: 0.2, ease: 'easeOut' }
+                    : { repeat: Infinity, duration: 4.0, ease: 'easeInOut' },
+                  scale: { duration: 0.2, ease: 'easeOut' }
                 }}
                 className="relative w-full flex items-center justify-center"
               >
