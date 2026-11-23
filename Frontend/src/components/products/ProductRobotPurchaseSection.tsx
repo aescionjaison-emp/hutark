@@ -10,8 +10,7 @@ import {
   Phone, 
   Building2, 
   User, 
-  PackageCheck,
-  Sparkles
+  PackageCheck
 } from 'lucide-react';
 import { ProductData } from '../../types';
 
@@ -210,16 +209,6 @@ export default function ProductRobotPurchaseSection({
                   {/* Hover Sheen Sweep Animation */}
                   <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/30 to-transparent pointer-events-none" />
                 </button>
-
-                {/* Floating Interactive Badge Prompt on Hover */}
-                <div 
-                  className={`absolute -top-12 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-black/90 text-white text-[11px] font-mono tracking-wider shadow-2xl border border-white/20 whitespace-nowrap pointer-events-none transition-all duration-200 flex items-center space-x-1.5 ${
-                    isHovered ? 'opacity-100 -translate-y-1' : 'opacity-0 translate-y-2'
-                  }`}
-                >
-                  <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-spin" style={{ animationDuration: '3s' }} />
-                  <span>Click to Configure &amp; Acquire {product.name}</span>
-                </div>
               </motion.div>
             </div>
           </div>
@@ -235,7 +224,7 @@ export default function ProductRobotPurchaseSection({
       </section>
 
       {/* =========================================================================
-          CINEMATIC PURCHASE & PROCUREMENT CONFIGURATION MODAL
+          CLEAN, WHITE, PROFESSIONAL ENTERPRISE PURCHASE MODAL
           Direct purchase workflow for the currently viewed robot
           ========================================================================= */}
       <AnimatePresence>
@@ -247,24 +236,21 @@ export default function ProductRobotPurchaseSection({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsModalOpen(false)}
-              className="fixed inset-0 bg-black/80 backdrop-blur-md"
+              className="fixed inset-0 bg-black/40 backdrop-blur-sm"
             />
 
-            {/* Modal Dialog Card */}
+            {/* Modal Dialog Card: Clean, White, Simple, Professional */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              initial={{ opacity: 0, scale: 0.96, y: 16 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              transition={{ duration: 0.25, ease: 'easeOut' }}
-              className="relative w-full max-w-2xl bg-[#0f1219] border border-white/15 rounded-3xl shadow-2xl p-6 sm:p-8 text-white z-10 overflow-hidden my-auto"
+              exit={{ opacity: 0, scale: 0.96, y: 16 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+              className="relative w-full max-w-2xl bg-white border border-gray-100 rounded-3xl shadow-2xl p-6 sm:p-10 text-gray-900 z-10 overflow-hidden my-auto"
             >
-              {/* Glow Accent */}
-              <div className="absolute top-0 right-0 w-72 h-72 bg-blue-600/15 rounded-full blur-[80px] pointer-events-none" />
-
               {/* Close Button */}
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="absolute top-6 right-6 p-2 rounded-full bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-colors cursor-pointer"
+                className="absolute top-6 right-6 p-2 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-400 hover:text-gray-700 transition-colors cursor-pointer"
                 aria-label="Close dialog"
               >
                 <X className="w-5 h-5" />
@@ -272,18 +258,18 @@ export default function ProductRobotPurchaseSection({
 
               {formSubmitted ? (
                 /* Success State */
-                <div className="text-center py-12 space-y-4">
-                  <div className="w-16 h-16 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto border border-emerald-500/30">
+                <div className="text-center py-10 space-y-4">
+                  <div className="w-16 h-16 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center mx-auto">
                     <CheckCircle2 className="w-8 h-8" />
                   </div>
-                  <h3 className="text-2xl font-bold text-white tracking-tight">
+                  <h3 className="text-2xl font-bold text-gray-900 tracking-tight">
                     Procurement Request Received
                   </h3>
-                  <p className="text-sm text-gray-300 max-w-md mx-auto leading-relaxed">
-                    Thank you for ordering <strong className="text-white">{product.name}</strong>. An enterprise solutions specialist will contact you within 24 hours with allocation details, delivery timelines, and official purchase documentation.
+                  <p className="text-sm text-gray-600 max-w-md mx-auto leading-relaxed">
+                    Thank you for ordering <strong className="text-gray-900">{product.name}</strong>. An enterprise solutions specialist will contact you within 24 hours with allocation details, delivery timelines, and official purchase documentation.
                   </p>
-                  <div className="pt-4">
-                    <span className="text-xs text-emerald-400 font-mono">
+                  <div className="pt-3">
+                    <span className="text-xs text-gray-500 font-mono bg-gray-100 px-3 py-1 rounded-full border border-gray-200">
                       Order Reference: HTK-{product.id}-{Date.now().toString().slice(-6)}
                     </span>
                   </div>
@@ -293,16 +279,14 @@ export default function ProductRobotPurchaseSection({
                 <div className="space-y-6">
                   {/* Header */}
                   <div>
-                    <div className="flex items-center space-x-2 text-xs font-mono text-cyan-400 uppercase tracking-widest">
-                      <span>Enterprise Direct Acquisition</span>
-                      <span>•</span>
-                      <span>{product.series}</span>
-                    </div>
-                    <h3 className="text-2xl sm:text-3xl font-black text-white tracking-tight mt-1">
+                    <span className="text-xs font-semibold text-gray-400 uppercase tracking-widest block">
+                      Enterprise Direct Acquisition • {product.series}
+                    </span>
+                    <h3 className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight mt-1">
                       Purchase {product.name}
                     </h3>
-                    <p className="text-xs text-gray-400 mt-1">
-                      Select your deployment tier and provide commercial details for instant purchase processing and logistics allocation.
+                    <p className="text-xs sm:text-sm text-gray-500 mt-1">
+                      Select your deployment tier and provide commercial details for direct purchase processing and logistics allocation.
                     </p>
                   </div>
 
@@ -319,7 +303,7 @@ export default function ProductRobotPurchaseSection({
                         id: 'fleet',
                         title: 'Commercial Fleet',
                         badge: 'Production Tier',
-                        desc: 'Volume production (5-50 units) with SLA & enterprise support.',
+                        desc: 'Volume production (5–50 units) with SLA & enterprise support.',
                       },
                       {
                         id: 'research',
@@ -334,19 +318,23 @@ export default function ProductRobotPurchaseSection({
                           key={tier.id}
                           type="button"
                           onClick={() => setDeploymentType(tier.id as any)}
-                          className={`p-3.5 rounded-2xl text-left border transition-all cursor-pointer ${
+                          className={`p-4 rounded-2xl text-left border transition-all cursor-pointer ${
                             isSelected
-                              ? 'bg-blue-600/20 border-cyan-400 text-white shadow-lg shadow-blue-500/10'
-                              : 'bg-white/5 border-white/10 text-gray-400 hover:text-white hover:border-white/20'
+                              ? 'bg-blue-50/60 border-2 border-brand-blue text-gray-900 shadow-sm'
+                              : 'bg-gray-50/70 border-gray-200 text-gray-700 hover:border-gray-300 hover:bg-gray-50'
                           }`}
                         >
                           <div className="flex items-center justify-between">
-                            <span className="text-xs font-bold text-white">{tier.title}</span>
-                            <span className="text-[10px] font-mono text-cyan-400 bg-cyan-950/80 px-1.5 py-0.5 rounded">
+                            <span className="text-xs font-bold text-gray-900">{tier.title}</span>
+                            <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${
+                              isSelected
+                                ? 'bg-blue-100 text-brand-blue font-bold'
+                                : 'bg-gray-200/80 text-gray-600'
+                            }`}>
                               {tier.badge}
                             </span>
                           </div>
-                          <p className="text-[11px] text-gray-400 mt-1 leading-snug">
+                          <p className="text-[11px] text-gray-500 mt-1.5 leading-snug">
                             {tier.desc}
                           </p>
                         </button>
@@ -358,35 +346,35 @@ export default function ProductRobotPurchaseSection({
                   <form onSubmit={handleSubmitInquiry} className="space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-[11px] font-semibold text-gray-300 uppercase tracking-wider mb-1">
+                        <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-1">
                           Full Name *
                         </label>
                         <div className="relative">
-                          <User className="w-3.5 h-3.5 text-gray-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                          <User className="w-3.5 h-3.5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
                           <input
                             type="text"
                             required
                             value={formData.name}
                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                             placeholder="e.g. Dr. Alex Mercer"
-                            className="w-full bg-[#181c28] border border-white/15 rounded-xl pl-9 pr-3 py-2.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400"
+                            className="w-full bg-gray-50/70 border border-gray-200 focus:bg-white focus:border-brand-blue focus:ring-2 focus:ring-blue-100 rounded-xl pl-9 pr-3.5 py-2.5 text-xs text-gray-900 placeholder-gray-400 transition-all outline-none"
                           />
                         </div>
                       </div>
 
                       <div>
-                        <label className="block text-[11px] font-semibold text-gray-300 uppercase tracking-wider mb-1">
+                        <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-1">
                           Organization / Company *
                         </label>
                         <div className="relative">
-                          <Building2 className="w-3.5 h-3.5 text-gray-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                          <Building2 className="w-3.5 h-3.5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
                           <input
                             type="text"
                             required
                             value={formData.company}
                             onChange={(e) => setFormData({ ...formData, company: e.target.value })}
                             placeholder="e.g. Apex Robotics Inc."
-                            className="w-full bg-[#181c28] border border-white/15 rounded-xl pl-9 pr-3 py-2.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400"
+                            className="w-full bg-gray-50/70 border border-gray-200 focus:bg-white focus:border-brand-blue focus:ring-2 focus:ring-blue-100 rounded-xl pl-9 pr-3.5 py-2.5 text-xs text-gray-900 placeholder-gray-400 transition-all outline-none"
                           />
                         </div>
                       </div>
@@ -394,50 +382,50 @@ export default function ProductRobotPurchaseSection({
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-[11px] font-semibold text-gray-300 uppercase tracking-wider mb-1">
+                        <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-1">
                           Business Email *
                         </label>
                         <div className="relative">
-                          <Mail className="w-3.5 h-3.5 text-gray-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                          <Mail className="w-3.5 h-3.5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
                           <input
                             type="email"
                             required
                             value={formData.email}
                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                             placeholder="work@company.com"
-                            className="w-full bg-[#181c28] border border-white/15 rounded-xl pl-9 pr-3 py-2.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400"
+                            className="w-full bg-gray-50/70 border border-gray-200 focus:bg-white focus:border-brand-blue focus:ring-2 focus:ring-blue-100 rounded-xl pl-9 pr-3.5 py-2.5 text-xs text-gray-900 placeholder-gray-400 transition-all outline-none"
                           />
                         </div>
                       </div>
 
                       <div>
-                        <label className="block text-[11px] font-semibold text-gray-300 uppercase tracking-wider mb-1">
+                        <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-1">
                           Direct Contact Phone *
                         </label>
                         <div className="relative">
-                          <Phone className="w-3.5 h-3.5 text-gray-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                          <Phone className="w-3.5 h-3.5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
                           <input
                             type="tel"
                             required
                             value={formData.phone}
                             onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                             placeholder="+1 (555) 019-2834"
-                            className="w-full bg-[#181c28] border border-white/15 rounded-xl pl-9 pr-3 py-2.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400"
+                            className="w-full bg-gray-50/70 border border-gray-200 focus:bg-white focus:border-brand-blue focus:ring-2 focus:ring-blue-100 rounded-xl pl-9 pr-3.5 py-2.5 text-xs text-gray-900 placeholder-gray-400 transition-all outline-none"
                           />
                         </div>
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-semibold text-gray-300 uppercase tracking-wider mb-1">
-                        Application Scenario & Customization Requirements (Optional)
+                      <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-1">
+                        Application Scenario &amp; Customization Requirements (Optional)
                       </label>
                       <textarea
                         rows={2}
                         value={formData.notes}
                         onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                         placeholder={`Tell us about your intended operational use case for ${product.name}...`}
-                        className="w-full bg-[#181c28] border border-white/15 rounded-xl px-3 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 resize-none"
+                        className="w-full bg-gray-50/70 border border-gray-200 focus:bg-white focus:border-brand-blue focus:ring-2 focus:ring-blue-100 rounded-xl px-3.5 py-2.5 text-xs text-gray-900 placeholder-gray-400 transition-all outline-none resize-none"
                       />
                     </div>
 
@@ -445,17 +433,17 @@ export default function ProductRobotPurchaseSection({
                       <button
                         type="button"
                         onClick={scrollToContact}
-                        className="text-xs text-gray-400 hover:text-white transition-colors underline cursor-pointer"
+                        className="text-xs text-gray-500 hover:text-brand-blue transition-colors underline cursor-pointer"
                       >
                         Or complete full form on page ↓
                       </button>
 
                       <button
                         type="submit"
-                        className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold px-8 py-3 rounded-xl text-xs flex items-center justify-center space-x-2 shadow-lg shadow-blue-600/30 transition-all active:scale-95 cursor-pointer"
+                        className="w-full sm:w-auto bg-brand-blue hover:bg-blue-600 text-white font-bold px-8 py-3.5 rounded-xl text-xs flex items-center justify-center space-x-2 shadow-md hover:shadow-lg transition-all active:scale-95 cursor-pointer"
                       >
                         <PackageCheck className="w-4 h-4" />
-                        <span>Confirm & Submit Purchase Inquiry</span>
+                        <span>Confirm &amp; Submit Purchase Inquiry</span>
                       </button>
                     </div>
                   </form>
