@@ -30,6 +30,7 @@ import ProductRobotPurchaseSection from './ProductRobotPurchaseSection';
 import AdminProductEditorDrawer from './AdminProductEditorDrawer';
 import { getProductData } from '../../services/productStore';
 import { adminAuth } from '../../services/adminAuth';
+import { inquiryStore } from '../../services/inquiryStore';
 
 interface ProductDetailViewProps {
   product: ProductData;
@@ -85,9 +86,25 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormSubmitted(true);
+    try {
+      await inquiryStore.saveInquiry({
+        type: 'product_inquiry',
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        company: formData.company,
+        industry: formData.industry,
+        productName: currentProduct.name,
+        productId: currentProduct.id,
+        message: formData.message,
+        status: 'new',
+      });
+    } catch (err) {
+      console.error('Failed to save product inquiry:', err);
+    }
   };
 
   const scrollToSection = (id: string) => {
@@ -303,7 +320,7 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
               {/* Action Buttons */}
               <div className="pt-4 flex flex-wrap gap-4 items-center">
                 <button
-                  onClick={() => scrollToSection('contact-section')}
+                  onClick={() => scrollToSection('robot-buy-section')}
                   style={{ backgroundColor: primaryColor }}
                   className="hover:opacity-95 text-white font-bold px-8 py-3.5 rounded-full transition-all shadow-lg hover:shadow-xl text-sm flex items-center space-x-2.5 active:scale-95 cursor-pointer"
                 >
@@ -696,162 +713,7 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
       />
 
       {/* =========================================================================
-          9. IN-LINE CONTACT US SECTION (MATCHING SCREENSHOT BOTTOM DARK FORM)
-          ========================================================================= */}
-      <section id="contact-section" className="relative py-24 bg-[#111319] text-white overflow-hidden">
-        {/* Blurred Robot Background */}
-        <div className="absolute inset-0 z-0">
-          <Image
-            src="/uploads/images/20261029/763c5b4b30767904e5cddda22e083597.png"
-            alt="Contact Background"
-            fill
-            className="object-cover opacity-20 filter blur-sm"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#111319] via-[#111319]/80 to-[#111319]" />
-        </div>
-
-        <div className="site-container relative z-10 max-w-4xl">
-          <div className="text-center space-y-3 mb-12">
-            <span className="text-xs font-bold uppercase tracking-[0.2em] text-cyan-400">
-              COMMERCIAL INQUIRIES & DEPLOYMENT
-            </span>
-            <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
-              Contact Us
-            </h2>
-            <p className="text-sm sm:text-base text-gray-300 font-light max-w-xl mx-auto">
-              Request on-site pilot trials, enterprise pricing, or custom hardware modifications for {currentProduct.name}.
-            </p>
-          </div>
-
-          <div className="bg-white/10 backdrop-blur-xl border border-white/15 p-8 sm:p-12 rounded-3xl shadow-2xl">
-            {formSubmitted ? (
-              <div className="text-center py-12 space-y-4">
-                <CheckCircle2 className="w-16 h-16 text-cyan-400 mx-auto" />
-                <h4 className="text-2xl font-bold text-white">Inquiry Received</h4>
-                <p className="text-sm text-gray-300 max-w-md mx-auto">
-                  Thank you for your interest in {product.name}. Our enterprise robotics deployment team will contact you within 24 hours.
-                </p>
-                <button
-                  onClick={() => setFormSubmitted(false)}
-                  className="mt-4 text-xs font-bold text-cyan-400 hover:underline"
-                >
-                  Send another inquiry
-                </button>
-              </div>
-            ) : (
-              <form onSubmit={handleFormSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-300 mb-2">
-                      Full Name *
-                    </label>
-                    <input
-                      type="text"
-                      name="name"
-                      required
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      placeholder="e.g. Dr. Jane Chen"
-                      className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-300 mb-2">
-                      Work Email *
-                    </label>
-                    <input
-                      type="email"
-                      name="email"
-                      required
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      placeholder="e.g. jane@enterprise.com"
-                      className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-300 mb-2">
-                      Phone Number *
-                    </label>
-                    <input
-                      type="tel"
-                      name="phone"
-                      required
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                      placeholder="e.g. +1 (555) 019-2834"
-                      className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-300 mb-2">
-                      Organization / Company *
-                    </label>
-                    <input
-                      type="text"
-                      name="company"
-                      required
-                      value={formData.company}
-                      onChange={handleInputChange}
-                      placeholder="e.g. Global Logistics Labs"
-                      className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-gray-300 mb-2">
-                    Industry Sector
-                  </label>
-                  <select
-                    name="industry"
-                    value={formData.industry}
-                    onChange={handleInputChange}
-                    className="w-full bg-[#1e222d] border border-white/20 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-400"
-                  >
-                    <option value="Automotive">Automotive & Heavy Industry</option>
-                    <option value="Electronics">3C & Semiconductor Manufacturing</option>
-                    <option value="Warehousing">Logistics & Supply Chain</option>
-                    <option value="Research">Academic & University Research</option>
-                    <option value="Commercial">Hospitality & Commercial Services</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-gray-300 mb-2">
-                    Project Requirements / Operational Scope
-                  </label>
-                  <textarea
-                    rows={4}
-                    name="message"
-                    required
-                    value={formData.message}
-                    onChange={handleInputChange}
-                    placeholder={`Tell us about your workstation setup, required cycle times, and deployment timeline for ${product.name}...`}
-                    className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400"
-                  />
-                </div>
-
-                <div className="pt-2 text-right">
-                  <button
-                    type="submit"
-                    className="bg-[#0062c5] hover:bg-blue-600 text-white font-bold px-10 py-3.5 rounded-full transition-all shadow-lg hover:shadow-cyan-500/25 text-sm inline-flex items-center space-x-2"
-                  >
-                    <span>Submit Deployment Inquiry</span>
-                    <Send className="w-4 h-4" />
-                  </button>
-                </div>
-              </form>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* =========================================================================
-          10. EXPLORE RELATED MODELS IN THE LINEUP
+          9. EXPLORE RELATED MODELS IN THE LINEUP
           ========================================================================= */}
       <section className="py-20 bg-white border-t border-gray-100">
         <div className="site-container">

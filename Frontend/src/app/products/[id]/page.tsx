@@ -4,7 +4,13 @@ import { PRODUCTS } from '../../../data/products';
 import ProductDetailView from '../../../components/products/ProductDetailView';
 
 export function generateStaticParams() {
-  return Object.keys(PRODUCTS).map((id) => ({
+  const paramSet = new Set<string>();
+  Object.keys(PRODUCTS).forEach((id) => {
+    paramSet.add(id);
+    paramSet.add(id.toLowerCase());
+    paramSet.add(id.replace(/_/g, '-').toLowerCase());
+  });
+  return Array.from(paramSet).map((id) => ({
     id: id,
   }));
 }
@@ -38,5 +44,9 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
     .slice(0, 3)
     .map((k) => PRODUCTS[k]);
 
-  return <ProductDetailView product={product} relatedProducts={relatedProducts} />;
+  return (
+    <React.Suspense fallback={<div className="min-h-screen bg-white" />}>
+      <ProductDetailView product={product} relatedProducts={relatedProducts} />
+    </React.Suspense>
+  );
 }

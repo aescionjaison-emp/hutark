@@ -50,7 +50,32 @@ export interface LeaderProfile {
   name: string;
   role: string;
   bio: string;
+  department?: string;
   img?: string;
+  tags?: string[];
+  education?: string;
+}
+
+export interface CeoProfile {
+  name: string;
+  role: string;
+  quote: string;
+  bio: string;
+  achievements: string[];
+  img: string;
+  stats: { label: string; value: string }[];
+}
+
+export interface OpenRole {
+  id: string;
+  title: string;
+  department: string;
+  location: string;
+  type: string;
+  experience: string;
+  summary: string;
+  responsibilities: string[];
+  requirements: string[];
 }
 
 export interface GlobalSiteSettings {
@@ -70,7 +95,7 @@ export interface FullSiteContent {
     intelligences: IntelligenceCard[];
     productsGrid: HomeProductItem[];
     featuredNews: NewsItem;
-    newsList: { title: string; date: string; link: string }[];
+    newsList: NewsItem[];
   };
   rd: {
     badge: string;
@@ -84,7 +109,9 @@ export interface FullSiteContent {
     heroDesc: string;
     coreValues: CoreValue[];
     milestones: Milestone[];
+    ceo: CeoProfile;
     leadership: LeaderProfile[];
+    openRoles: OpenRole[];
   };
 }
 
@@ -163,9 +190,9 @@ export const DEFAULT_SITE_CONTENT: FullSiteContent = {
       link: "/news"
     },
     newsList: [
-      { title: "HUTARK Unveils GO-3 Preview, Takes Top Spot on Three Embodied AI Benchmarks", date: "2026-10-30", link: "/news" },
-      { title: "World Robot Conference 2026: A3 Ultra Demonstrates Whole-Body Obstacle Negotiation", date: "2026-08-25", link: "/news" },
-      { title: "Strategic Partnership Signed for Mass Deployment of Humanoid Robots in Smart Logistics", date: "2026-07-12", link: "/news" }
+      { title: "HUTARK Unveils GO-3 Preview, Takes Top Spot on Three Embodied AI Benchmarks", date: "2026-10-30", img: "/uploads/images/20261029/33d570751012965d2455b2f1c9a6d43d.jpg", link: "/news" },
+      { title: "World Robot Conference 2026: A3 Ultra Demonstrates Whole-Body Obstacle Negotiation", date: "2026-08-25", img: "/uploads/images/20261029/492548ce8722aa332e87aa47ce1019e5.png", link: "/news" },
+      { title: "Strategic Partnership Signed for Mass Deployment of Humanoid Robots in Smart Logistics", date: "2026-07-12", img: "/uploads/images/20261030/3b46c5afb682b2c6798d153344ad4cc3.jpg", link: "/news" }
     ]
   },
   rd: {
@@ -211,10 +238,194 @@ export const DEFAULT_SITE_CONTENT: FullSiteContent = {
       { year: "2024", title: "Bipedal Locomotion Breakthrough", desc: "Debuted full-body bipedal dynamic balance with real-time push recovery and blind terrain adaptation." },
       { year: "2023", title: "Foundation of HUTARK", desc: "Established with the vision of accelerating embodied artificial intelligence into physical reality." }
     ],
+    ceo: {
+      name: "Deng Taihua",
+      role: "Chairman of the Board & Chief Executive Officer",
+      quote: "The convergence of physical foundation AI, microsecond-deterministic motor dynamics, and sub-millimeter dexterity is the defining technological renaissance of our generation. At HUTARK, our mission is to scale safe, capable, and economically accessible general-purpose humanoid intelligence to every enterprise worldwide.",
+      bio: "Deng Taihua has over 25 years of global executive leadership in telecommunications, computing infrastructure, and intelligent hardware systems. Prior to leading HUTARK, he served as a Senior Vice President at Huawei, directing multi-billion-dollar global product lines across wireless networks and smart computing architectures. At HUTARK, Deng leads corporate strategy, global supply chain scaling, commercialization of general-purpose humanoid fleets, and the mission to liberate human labor through physical AI.",
+      achievements: [
+        "Spearheaded HUTARK's scaling to 20,000+ general-purpose embodied robots produced",
+        "Architected global expansion across Asian, European, and North American industrial hubs",
+        "Pioneered enterprise deployments across Tier-1 automotive and cleanroom electronics sectors"
+      ],
+      img: "/uploads/images/20261029/33d570751012965d2455b2f1c9a6d43d.jpg",
+      stats: [
+        { label: "Robots Produced", value: "20,000+" },
+        { label: "Core AI Patents", value: "300+" },
+        { label: "R&D Engineers", value: "80%" }
+      ]
+    },
     leadership: [
-      { name: "Deng Taihua", role: "Chairman & Chief Executive Officer", bio: "Former executive leading global communication and smart hardware engineering divisions, guiding HUTARK's commercial strategy." },
-      { name: "Dr. Peng Zhihui", role: "Chief Technology Officer & Co-Founder", bio: "Pioneering roboticist and embedded architecture designer, directing actuator innovation and whole-body dynamic control." },
-      { name: "Dr. Lin Chen", role: "Chief Scientist — Physical AI", bio: "Leading expert in reinforcement learning and Sim2Real foundation models, architect of the GO-3 embodied neural system." }
+      {
+        name: "Dr. Peng Zhihui",
+        role: "Chief Technology Officer & Co-Founder",
+        department: "Hardware & Actuator Dynamics",
+        bio: "Pioneering roboticist and embedded hardware designer. Directs AHA3 modular compliance joints, harmonic drive dynamics, and full-body dynamic balance architectures.",
+        img: "/uploads/team/peng_zhihui.svg",
+        tags: ["AHA3 Actuation", "Bipedal Control", "Embedded HW"],
+        education: "M.S. & Ph.D. in Robotics and Information Systems"
+      },
+      {
+        name: "Dr. Lin Chen",
+        role: "Chief Scientist — Physical AI",
+        department: "AI Research & Sim2Real",
+        bio: "Architect of the GO-3 multimodal vision-language-action foundation model. Leads reinforcement learning, cross-embodiment policy transfer, and synthetic simulation scaling.",
+        img: "/uploads/team/lin_chen.svg",
+        tags: ["GO-3 Model", "Reinforcement Learning", "Sim2Real"],
+        education: "Ph.D. in Computer Science & Robotics (Postdoc Stanford)"
+      },
+      {
+        name: "Dr. Katherine Zhao",
+        role: "VP of Hardware Engineering",
+        department: "Mechanical & Structural Dynamics",
+        bio: "Directs mechanical structural engineering, titanium-aluminum composite chassis design, and planetary reducer thermal dissipation across the A and X humanoid series.",
+        img: "/uploads/team/katherine_zhao.svg",
+        tags: ["Harmonic Reducers", "Thermal Systems", "Structural Mechanics"],
+        education: "Ph.D. in Mechanical Engineering"
+      },
+      {
+        name: "Marcus Vance",
+        role: "VP of Global Enterprise Deployment",
+        department: "Commercial Operations & Fleet Delivery",
+        bio: "Leads global commercial operations, enterprise SLA delivery, and industrial manufacturing line integrations across automotive, electronics, and micro-fulfillment clients.",
+        img: "/uploads/team/marcus_vance.svg",
+        tags: ["Enterprise Fleet", "Tier-1 Auto", "Global Operations"],
+        education: "M.S. in Industrial Engineering & Operations Research"
+      },
+      {
+        name: "Sofia Patel",
+        role: "Head of Human-Robot Collaboration & Safety",
+        department: "Safety Standards & Compliance",
+        bio: "Directs whole-body collision mitigation, soft-skin compliance, force-limiting algorithms, and international ISO 13482 functional safety certification.",
+        img: "/uploads/team/sofia_patel.svg",
+        tags: ["ISO 13482", "Safe Collaboration", "Ergonomics"],
+        education: "Ph.D. in Robotics Safety & Biomechanics"
+      },
+      {
+        name: "Dr. Ethan Wei",
+        role: "Director of Link-U OS & Systems",
+        department: "Real-Time Embedded Systems",
+        bio: "Directs the microsecond-deterministic Link-U Robot Operating System, real-time CAN-FD bus scheduling, and 3D semantic neural mapping on heterogeneous neural compute.",
+        img: "/uploads/team/ethan_wei.svg",
+        tags: ["Link-U OS", "Real-Time Microkernel", "Spatial SLAM"],
+        education: "Ph.D. in Computer Engineering & Real-Time Kernels"
+      }
+    ],
+    openRoles: [
+      {
+        id: "role-ai-policy",
+        title: "Senior Embodied AI Policy Researcher (Sim2Real)",
+        department: "Physical AI & Deep Learning",
+        location: "Shanghai R&D Campus / Hybrid",
+        type: "Full-Time",
+        experience: "5+ Years",
+        summary: "Lead reinforcement learning and imitation learning policy development for dexterous dual-arm manipulation using the GO-3 foundation model architecture.",
+        responsibilities: [
+          "Train large-scale vision-language-action (VLA) foundation policies on multi-modal robotic telemetry datasets.",
+          "Develop domain-randomization and Sim2Real transfer pipelines using Isaac Sim / MuJoCo testbeds.",
+          "Collaborate with hardware teams to optimize low-latency neural inference on embedded edge accelerators."
+        ],
+        requirements: [
+          "Ph.D. or Master's in Computer Science, Robotics, or Machine Learning with top-tier conference publications (NeurIPS, ICRA, IROS, RSS).",
+          "Proficiency in PyTorch, JAX, reinforcement learning algorithms (PPO, SAC, Diffusion Policy), and real-time inference.",
+          "Demonstrated track record of deploying policies onto physical robotic arms or bipedal platforms."
+        ]
+      },
+      {
+        id: "role-actuator-mech",
+        title: "Principal Actuator & Dynamic Systems Engineer",
+        department: "Robotics Hardware & Actuators",
+        location: "Shanghai R&D Campus",
+        type: "Full-Time",
+        experience: "7+ Years",
+        summary: "Architect next-generation high-torque-density planar harmonic reducers and cycloidal planetary drives with integrated optical absolute encoders.",
+        responsibilities: [
+          "Design ultra-compact, high-overload modular rotary actuators exceeding 380 N·m torque density.",
+          "Perform multi-physics FEA stress, thermal dissipation, and dynamic vibration simulations.",
+          "Work with precision tooling partners for sub-micron machining tolerances and accelerated lifetime fatigue validation."
+        ],
+        requirements: [
+          "Degree in Mechanical Engineering or Mechatronics with extensive experience in precision gearhead design.",
+          "Deep expertise in gear design standards (AGMA, DIN), bearing selection, and high-efficiency PMSM motor integration.",
+          "Proficiency in CAD (SolidWorks/Creo/NX) and FEA simulation packages (ANSYS/Abaqus)."
+        ]
+      },
+      {
+        id: "role-kernel-os",
+        title: "Embedded Real-Time OS Kernel Architect (Link-U OS)",
+        department: "Embedded Systems & Link-U OS",
+        location: "Beijing AI Lab",
+        type: "Full-Time",
+        experience: "5+ Years",
+        summary: "Architect microsecond-deterministic microkernel abstractions and CAN-FD / EtherCAT bus drivers coordinating 32+ multi-DoF joint nodes.",
+        responsibilities: [
+          "Design core scheduling, IPC, and shared-memory communication mechanisms for Link-U OS hard real-time kernel.",
+          "Implement determinism benchmarks ensuring jitter < 5 microseconds across multi-core ARM/RISC-V architectures.",
+          "Integrate hardware security modules (HSM) and encrypted over-the-air (OTA) bootloaders."
+        ],
+        requirements: [
+          "BS/MS in Computer Science, Computer Engineering, or Electrical Engineering.",
+          "Expert knowledge of real-time operating systems (RTOS: FreeRTOS, Zephyr, QNX, PREEMPT_RT Linux).",
+          "Mastery of modern C, C++, and Rust with low-level register manipulation, memory-mapped I/O, and driver architecture."
+        ]
+      },
+      {
+        id: "role-fleet-solutions",
+        title: "Robotics Fleet Solutions Architect",
+        department: "Solutions & Enterprise Deployment",
+        location: "Munich, Germany / Hybrid",
+        type: "Full-Time",
+        experience: "4+ Years",
+        summary: "Lead customer engineering, factory integration, and autonomous fleet deployment for Tier-1 automotive and smart warehouse automation accounts in Europe.",
+        responsibilities: [
+          "Architect end-to-end integration between HUTARK Fleet Management System and enterprise MES/WMS platforms.",
+          "Conduct on-site operational feasibility assessments, cycle-time optimizations, and robotic workcell design.",
+          "Deliver tier-1 enterprise technical support and train customer robotics maintenance teams."
+        ],
+        requirements: [
+          "Bachelor's or Master's in Robotics, Industrial Automation, or Systems Engineering.",
+          "Strong background in industrial protocols (OPC UA, MQTT, ROS2, REST APIs) and automated material handling.",
+          "Fluent English; German language proficiency is a strong advantage. Willingness to travel across European industrial sites."
+        ]
+      },
+      {
+        id: "role-vision-slam",
+        title: "Computer Vision & Spatial SLAM Engineer",
+        department: "Physical AI & Deep Learning",
+        location: "Shanghai R&D Campus",
+        type: "Full-Time",
+        experience: "3+ Years",
+        summary: "Develop high-speed 6-DoF visual-inertial odometry, dense 3D semantic mapping, and dynamic obstacle avoidance algorithms for bipedal navigation.",
+        responsibilities: [
+          "Develop real-time VIO/LiDAR-inertial state estimation systems robust to rapid head motion and dynamic illumination changes.",
+          "Implement multi-camera depth estimation, 3D Gaussian splatting representations, and semantic occupancy grids.",
+          "Benchmark navigation reliability on complex multi-floor industrial facilities and cluttered environments."
+        ],
+        requirements: [
+          "Master's or Ph.D. in Computer Science, Robotics, or Electrical Engineering.",
+          "Proficiency in C++, CUDA, OpenCV, Ceres Solver, GTSAM, and point-cloud processing (PCL).",
+          "Hands-on experience with hardware sensor synchronization (ToF, Stereo, IMU, Solid-State LiDAR)."
+        ]
+      },
+      {
+        id: "role-safety-lead",
+        title: "Human-Robot Safety & Standards Compliance Lead",
+        department: "Robotics Hardware & Actuators",
+        location: "Shanghai R&D Campus / Hybrid",
+        type: "Full-Time",
+        experience: "5+ Years",
+        summary: "Oversee ISO 13482 and ISO 10218 safety certification, impact force limiting, and functional safety architecture across our entire humanoid lineup.",
+        responsibilities: [
+          "Lead hazard identification and risk assessment (HIRA) per ISO 12100 and ISO 13482 standards.",
+          "Design hardware-in-the-loop (HIL) safety interlocks, emergency stop architectures, and torque monitoring watchdogs.",
+          "Liaise with international testing authorities (TÜV, CE, UL) for global commercial type-approvals."
+        ],
+        requirements: [
+          "Degree in Electrical Engineering, Mechatronics, or Safety Engineering.",
+          "Certified Functional Safety Expert (CFSE/TÜV) or equivalent with experience in machinery safety directives.",
+          "Deep understanding of dual-channel safety PLCs, ISO 13849 (PLd/PLe), and IEC 61508."
+        ]
+      }
     ]
   }
 };
@@ -230,11 +441,19 @@ export const siteContentStore = {
       if (stored) {
         const parsed = JSON.parse(stored);
         // Deep merge with defaults to ensure all keys exist
+        const parsedAbout = parsed.about || {};
+        const aboutMerged = {
+          ...DEFAULT_SITE_CONTENT.about,
+          ...parsedAbout,
+          ceo: parsedAbout.ceo ? { ...DEFAULT_SITE_CONTENT.about.ceo, ...parsedAbout.ceo } : DEFAULT_SITE_CONTENT.about.ceo,
+          openRoles: parsedAbout.openRoles && parsedAbout.openRoles.length > 0 ? parsedAbout.openRoles : DEFAULT_SITE_CONTENT.about.openRoles,
+          leadership: parsedAbout.leadership && parsedAbout.leadership.length > 0 ? parsedAbout.leadership : DEFAULT_SITE_CONTENT.about.leadership,
+        };
         return {
           global: { ...DEFAULT_SITE_CONTENT.global, ...(parsed.global || {}) },
           home: { ...DEFAULT_SITE_CONTENT.home, ...(parsed.home || {}) },
           rd: { ...DEFAULT_SITE_CONTENT.rd, ...(parsed.rd || {}) },
-          about: { ...DEFAULT_SITE_CONTENT.about, ...(parsed.about || {}) }
+          about: aboutMerged
         };
       }
     } catch (e) {

@@ -34,11 +34,28 @@ import {
   Layers,
   ArrowRight,
   Sliders,
-  Play
+  Play,
+  Inbox,
+  ShoppingCart,
+  PackageCheck,
+  PhoneCall,
+  MessageSquare,
+  Clock,
+  Filter,
+  Sparkles,
+  CheckCheck,
+  UserCheck,
+  X,
+  Edit3,
+  Briefcase,
+  Users,
+  ArrowUp,
+  ArrowDown
 } from 'lucide-react';
 import { PRODUCTS } from '../../data/products';
 import { ProductData, YouTubeVideoSlide } from '../../types';
 import { adminAuth } from '../../services/adminAuth';
+import { inquiryStore, InquiryItem, InquiryType, InquiryStatus } from '../../services/inquiryStore';
 import { 
   siteContentStore, 
   FullSiteContent, 
@@ -53,7 +70,7 @@ import {
 } from '../../services/siteContentStore';
 import { 
   getProductData, 
-  saveProductData,
+  saveProductData, 
   isProductCustomized, 
   resetProductData, 
   exportAllCustomizations, 
@@ -62,7 +79,7 @@ import {
 import MediaUploadZone from '../../components/admin/MediaUploadZone';
 import AdminProductEditorDrawer from '../../components/products/AdminProductEditorDrawer';
 
-type AdminTab = 'products' | 'youtube' | 'home' | 'rd' | 'about' | 'global' | 'media' | 'security';
+type AdminTab = 'products' | 'inquiries' | 'youtube' | 'home' | 'rd' | 'about' | 'global' | 'media' | 'security';
 
 export default function AdminDashboardPage() {
   // Auth state
@@ -107,6 +124,14 @@ export default function AdminDashboardPage() {
   const [newPassword, setNewPassword] = useState('');
   const [credNotice, setCredNotice] = useState<{ success: boolean; msg: string } | null>(null);
 
+  // Inquiries & Orders Dashboard State
+  const [inquiries, setInquiries] = useState<InquiryItem[]>([]);
+  const [inquirySearch, setInquirySearch] = useState('');
+  const [inquiryTypeFilter, setInquiryTypeFilter] = useState<string>('all');
+  const [inquiryStatusFilter, setInquiryStatusFilter] = useState<string>('all');
+  const [selectedInquiryModal, setSelectedInquiryModal] = useState<InquiryItem | null>(null);
+  const [modalAdminNotes, setModalAdminNotes] = useState('');
+
   const productList = Object.values(PRODUCTS);
 
   useEffect(() => {
@@ -118,6 +143,15 @@ export default function AdminDashboardPage() {
     // Load site content
     setSiteContent(siteContentStore.getSiteContent());
 
+    // Load inquiries
+    setInquiries(inquiryStore.getInquiries());
+
+    // Subscribe to inquiry updates across the browser
+    const handleInqUpdate = () => {
+      setInquiries([...inquiryStore.getInquiries()]);
+    };
+    window.addEventListener('hutark_inquiries_updated', handleInqUpdate);
+
     // Load product statuses
     const statusMap: Record<string, boolean> = {};
     productList.forEach((p) => {
@@ -125,8 +159,61 @@ export default function AdminDashboardPage() {
     });
     setCustomizedList(statusMap);
 
-    return () => unsub();
+    return () => {
+      unsub();
+      window.removeEventListener('hutark_inquiries_updated', handleInqUpdate);
+    };
   }, []);
+
+  // Handlers for Inquiries & Orders
+  const handleUpdateInquiryStatus = (id: string, status: InquiryStatus) => {
+    inquiryStore.updateInquiryStatus(id, status);
+    setInquiries([...inquiryStore.getInquiries()]);
+    if (selectedInquiryModal && selectedInquiryModal.id === id) {
+      setSelectedInquiryModal({ ...selectedInquiryModal, status });
+    }
+  };
+
+  const handleDeleteInquiry = (id: string) => {
+    if (confirm(`Delete inquiry / order #${id}? This action cannot be undone.`)) {
+      inquiryStore.deleteInquiry(id);
+      setInquiries([...inquiryStore.getInquiries()]);
+      if (selectedInquiryModal && selectedInquiryModal.id === id) {
+        setSelectedInquiryModal(null);
+      }
+    }
+  };
+
+  const handleOpenInquiryModal = (item: InquiryItem) => {
+    setSelectedInquiryModal(item);
+    setModalAdminNotes(item.adminNotes || '');
+  };
+
+  const handleSaveModalNotes = () => {
+    if (!selectedInquiryModal) return;
+    inquiryStore.updateInquiryNotes(selectedInquiryModal.id, modalAdminNotes);
+    setSelectedInquiryModal({ ...selectedInquiryModal, adminNotes: modalAdminNotes });
+    setInquiries([...inquiryStore.getInquiries()]);
+    setSaveNotice(`Saved internal notes for #${selectedInquiryModal.id}`);
+    setTimeout(() => setSaveNotice(null), 2500);
+  };
+
+  const handleMarkAllContacted = () => {
+    inquiries.forEach((item) => {
+      if (item.status === 'new' || item.status === 'in_review') {
+        inquiryStore.updateInquiryStatus(item.id, 'contacted');
+      }
+    });
+    setInquiries([...inquiryStore.getInquiries()]);
+    setSaveNotice('Marked all pending inquiries as Contacted.');
+    setTimeout(() => setSaveNotice(null), 2500);
+  };
+
+  const handleExportInquiries = () => {
+    inquiryStore.exportToCSV();
+  };
+
+  const unreadInquiriesCount = inquiries.filter((i) => i.status === 'new').length;
 
   // Sync active video slides whenever selected robot changes
   useEffect(() => {
@@ -143,6 +230,7 @@ export default function AdminDashboardPage() {
     const newSlide: YouTubeVideoSlide = {
       id: newId,
       title: `${prod.name} Field Operational Demonstration`,
+      categoryTag: 'Live Robot Demonstration',
       category: 'Live Robot Demonstration',
       description: 'Recorded real-world operational testing of dexterity and autonomous intelligence.'
     };
@@ -290,35 +378,35 @@ export default function AdminDashboardPage() {
   };
 
   // =========================================================================
-  // 1. LOCKED ADMIN LOGIN SCREEN (IF NOT AUTHENTICATED)
+  // 1. LOCKED ADMIN LOGIN SCREEN (IF NOT AUTHENTICATED) - CLEAN WHITE UI
   // =========================================================================
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-[#07090e] text-white flex items-center justify-center p-4">
-        {/* Atmospheric Glow */}
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-blue-600/15 blur-[120px] pointer-events-none rounded-full" />
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 via-white to-gray-100 text-gray-900 flex items-center justify-center p-4">
+        {/* Soft Decorative Ambient Gradient */}
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-blue-100/60 blur-[120px] pointer-events-none rounded-full" />
 
-        <div className="relative z-10 max-w-md w-full bg-[#10141f] border border-white/10 rounded-3xl p-8 shadow-2xl space-y-6">
+        <div className="relative z-10 max-w-md w-full bg-white border border-gray-200/90 rounded-3xl p-8 sm:p-10 shadow-xl space-y-6">
           <div className="text-center space-y-3">
-            <div className="w-16 h-16 rounded-2xl bg-blue-500/10 border border-blue-500/30 text-blue-400 flex items-center justify-center mx-auto shadow-inner">
+            <div className="w-16 h-16 rounded-2xl bg-blue-50 border border-blue-200 text-brand-blue flex items-center justify-center mx-auto shadow-sm">
               <Lock className="w-8 h-8" />
             </div>
-            <h2 className="text-2xl font-bold tracking-tight text-white">HUTARK Master CMS</h2>
-            <p className="text-xs text-gray-400 font-light">
-              Restricted Access. Please authenticate with Admin ID & Password.
+            <h2 className="text-2xl font-extrabold tracking-tight text-gray-900">HUTARK Master CMS</h2>
+            <p className="text-xs text-gray-500 font-light">
+              Restricted Access. Please authenticate with Admin ID &amp; Password.
             </p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-4">
             {loginError && (
-              <div className="p-3 bg-red-950/50 border border-red-500/50 rounded-xl text-xs text-red-300 flex items-center space-x-2">
-                <AlertCircle className="w-4 h-4 flex-shrink-0 text-red-400" />
+              <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-600 flex items-center space-x-2">
+                <AlertCircle className="w-4 h-4 flex-shrink-0 text-red-500" />
                 <span>{loginError}</span>
               </div>
             )}
 
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-gray-300">Admin ID</label>
+              <label className="text-xs font-semibold text-gray-700">Admin ID</label>
               <input
                 type="text"
                 value={adminIdInput}
@@ -326,12 +414,12 @@ export default function AdminDashboardPage() {
                 placeholder="Enter Admin ID (default: admin)"
                 autoFocus
                 required
-                className="w-full bg-[#171d2b] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:bg-[#1c2333] transition-colors"
+                className="w-full bg-[#f8f9fc] border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-blue focus:bg-white transition-all"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-gray-300">Password</label>
+              <label className="text-xs font-semibold text-gray-700">Password</label>
               <div className="relative">
                 <input
                   type={showPassword ? 'text' : 'password'}
@@ -339,12 +427,12 @@ export default function AdminDashboardPage() {
                   onChange={(e) => setPasswordInput(e.target.value)}
                   placeholder="Enter Password (default: admin)"
                   required
-                  className="w-full bg-[#171d2b] border border-white/10 rounded-xl px-4 py-2.5 pr-10 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:bg-[#1c2333] transition-colors"
+                  className="w-full bg-[#f8f9fc] border border-gray-200 rounded-xl px-4 py-2.5 pr-10 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-blue focus:bg-white transition-all"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -353,15 +441,15 @@ export default function AdminDashboardPage() {
 
             <button
               type="submit"
-              className="w-full mt-2 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition-all shadow-lg hover:shadow-blue-500/25 text-sm cursor-pointer"
+              className="w-full mt-2 bg-brand-blue hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition-all shadow-md text-sm cursor-pointer"
             >
               Sign In to Admin Studio
             </button>
           </form>
 
-          <div className="pt-4 border-t border-white/10 text-center">
-            <Link href="/" className="text-xs text-gray-500 hover:text-gray-300 transition-colors">
-              ← Return to Public Website
+          <div className="pt-4 border-t border-gray-100 text-center">
+            <Link href="/" className="text-xs text-gray-500 hover:text-brand-blue transition-colors">
+              &larr; Return to Public Website
             </Link>
           </div>
         </div>
@@ -381,40 +469,40 @@ export default function AdminDashboardPage() {
   });
 
   // =========================================================================
-  // 2. AUTHENTICATED MASTER ADMIN STUDIO
+  // 2. AUTHENTICATED MASTER ADMIN STUDIO - CLEAN LIGHT ENTERPRISE UI
   // =========================================================================
   return (
-    <div className="min-h-screen bg-[#080a10] text-gray-100 pt-16 pb-20">
+    <div className="min-h-screen bg-[#f8f9fc] text-gray-900 pt-16 pb-20">
       {/* Save Notification Toast */}
       {saveNotice && (
-        <div className="fixed top-20 right-6 z-50 bg-emerald-600 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center space-x-2 text-xs font-bold animate-fadeIn">
+        <div className="fixed top-20 right-6 z-50 bg-emerald-600 text-white px-5 py-3 rounded-2xl shadow-xl flex items-center space-x-2 text-xs font-bold animate-fadeIn">
           <CheckCircle className="w-4 h-4" />
           <span>{saveNotice}</span>
         </div>
       )}
 
       {/* HEADER BAR */}
-      <header className="border-b border-white/10 bg-[#0d1018]/90 backdrop-blur-md sticky top-0 z-40">
+      <header className="border-b border-gray-200 bg-white/95 backdrop-blur-md sticky top-0 z-40 shadow-sm">
         <div className="site-container py-3.5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-400 flex items-center justify-center text-white shadow-md">
+            <div className="w-9 h-9 rounded-xl bg-brand-blue flex items-center justify-center text-white shadow-sm">
               <Shield className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <h1 className="text-lg font-bold text-white tracking-tight">HUTARK Master CMS Studio</h1>
-                <span className="text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-500/30 font-mono px-2 py-0.5 rounded-full uppercase">
+                <h1 className="text-lg font-bold text-gray-900 tracking-tight">HUTARK Master CMS Studio</h1>
+                <span className="text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 font-mono px-2 py-0.5 rounded-full uppercase font-bold">
                   Authenticated
                 </span>
               </div>
-              <p className="text-[11px] text-gray-400">Complete Website Content, Media & Robot Management</p>
+              <p className="text-[11px] text-gray-500">Complete Website Content, Media &amp; Fleet Management</p>
             </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={handleSaveSiteContent}
-              className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow-md hover:shadow-blue-500/25 transition-all"
+              className="bg-brand-blue hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow-sm transition-all"
             >
               <Save className="w-3.5 h-3.5" />
               <span>Save Website Changes</span>
@@ -423,7 +511,7 @@ export default function AdminDashboardPage() {
             <button
               onClick={handleExportFullBackup}
               title="Download full JSON backup of website and product customizations"
-              className="bg-white/10 hover:bg-white/15 text-gray-200 px-3 py-2 rounded-xl text-xs font-semibold flex items-center space-x-1 transition-colors"
+              className="bg-white hover:bg-gray-100 text-gray-700 border border-gray-200 px-3 py-2 rounded-xl text-xs font-semibold flex items-center space-x-1 transition-colors"
             >
               <Download className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Export Backup</span>
@@ -431,7 +519,7 @@ export default function AdminDashboardPage() {
 
             <label
               title="Import JSON backup"
-              className="bg-white/10 hover:bg-white/15 text-gray-200 px-3 py-2 rounded-xl text-xs font-semibold flex items-center space-x-1 cursor-pointer transition-colors"
+              className="bg-white hover:bg-gray-100 text-gray-700 border border-gray-200 px-3 py-2 rounded-xl text-xs font-semibold flex items-center space-x-1 cursor-pointer transition-colors"
             >
               <Upload className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Restore</span>
@@ -441,7 +529,7 @@ export default function AdminDashboardPage() {
             <Link
               href="/"
               target="_blank"
-              className="bg-white/5 hover:bg-white/10 text-gray-300 px-3 py-2 rounded-xl text-xs font-semibold flex items-center space-x-1 transition-colors"
+              className="bg-white hover:bg-gray-100 text-gray-700 border border-gray-200 px-3 py-2 rounded-xl text-xs font-semibold flex items-center space-x-1 transition-colors"
             >
               <ExternalLink className="w-3.5 h-3.5" />
               <span>Live Site</span>
@@ -449,7 +537,7 @@ export default function AdminDashboardPage() {
 
             <button
               onClick={handleLogout}
-              className="bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 px-3 py-2 rounded-xl text-xs font-bold flex items-center space-x-1 transition-colors"
+              className="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-3 py-2 rounded-xl text-xs font-bold flex items-center space-x-1 transition-colors"
             >
               <LogOut className="w-3.5 h-3.5" />
               <span>Lock / Exit</span>
@@ -459,10 +547,17 @@ export default function AdminDashboardPage() {
 
         {/* CMS NAVIGATION TABS */}
         <div className="site-container overflow-x-auto no-scrollbar">
-          <nav className="flex space-x-1 py-1 border-t border-white/5 text-xs font-semibold">
+          <nav className="flex space-x-1.5 py-1.5 border-t border-gray-100 text-xs font-semibold">
             {[
               { id: 'products', label: 'Robot Matrix (14 Models)', icon: Cpu },
-              { id: 'youtube', label: '📹 YouTube Video Slides', icon: Video },
+              { 
+                id: 'inquiries', 
+                label: 'Orders & Inquiries', 
+                icon: Inbox, 
+                badgeCount: unreadInquiriesCount,
+                highlight: true 
+              },
+              { id: 'youtube', label: 'YouTube Video Slides', icon: Video },
               { id: 'home', label: 'Home Page Editor', icon: Home },
               { id: 'rd', label: 'R & D / Tech Editor', icon: FlaskConical },
               { id: 'about', label: 'About Page Editor', icon: Building2 },
@@ -476,14 +571,21 @@ export default function AdminDashboardPage() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as AdminTab)}
-                  className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl transition-all whitespace-nowrap cursor-pointer ${
+                  className={`flex items-center space-x-2 px-3.5 py-2 rounded-xl transition-all whitespace-nowrap cursor-pointer text-xs ${
                     isActive
-                      ? 'bg-blue-600/20 text-cyan-300 border border-blue-500/40 shadow-sm'
-                      : 'text-gray-400 hover:text-white hover:bg-white/5'
+                      ? 'bg-brand-blue text-white shadow-sm font-bold'
+                      : tab.highlight
+                      ? 'text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                   }`}
                 >
                   <Icon className="w-4 h-4" />
                   <span>{tab.label}</span>
+                  {typeof tab.badgeCount === 'number' && tab.badgeCount > 0 && (
+                    <span className="ml-1 px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-700">
+                      {tab.badgeCount} New
+                    </span>
+                  )}
                 </button>
               );
             })}
@@ -501,8 +603,8 @@ export default function AdminDashboardPage() {
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
-                <h2 className="text-xl font-bold text-white">Robot Detail Pages Customizer</h2>
-                <p className="text-xs text-gray-400">
+                <h2 className="text-xl font-bold text-gray-900">Robot Detail Pages Customizer</h2>
+                <p className="text-xs text-gray-500 font-light">
                   Select any robot model to edit its typography, CGI images, video slides, hardware modules, and specifications.
                 </p>
               </div>
@@ -516,17 +618,17 @@ export default function AdminDashboardPage() {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     placeholder="Search robot model..."
-                    className="w-full bg-[#131722] border border-white/10 rounded-xl pl-9 pr-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-400"
+                    className="w-full bg-white border border-gray-200 rounded-xl pl-9 pr-3 py-2 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition-all"
                   />
                 </div>
 
-                <div className="flex items-center space-x-1 bg-[#131722] border border-white/10 p-1 rounded-xl text-xs">
+                <div className="flex items-center space-x-1 bg-white border border-gray-200 p-1 rounded-xl text-xs">
                   {['all', 'A Series', 'X Series', 'G Series', 'D Series', 'C Series'].map((s) => (
                     <button
                       key={s}
                       onClick={() => setSelectedSeries(s)}
                       className={`px-3 py-1.5 rounded-lg font-medium transition-colors ${
-                        selectedSeries === s ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'
+                        selectedSeries === s ? 'bg-brand-blue text-white shadow-sm' : 'text-gray-600 hover:text-gray-900'
                       }`}
                     >
                       {s === 'all' ? 'All' : s.replace(' Series', '')}
@@ -545,7 +647,7 @@ export default function AdminDashboardPage() {
                 return (
                   <div
                     key={prod.id}
-                    className="bg-[#12151f] border border-white/10 rounded-2xl p-5 hover:border-cyan-500/50 transition-all flex flex-col justify-between group shadow-lg"
+                    className="bg-white border border-gray-200/90 rounded-2xl p-5 hover:border-blue-300 hover:shadow-md transition-all flex flex-col justify-between group shadow-sm"
                   >
                     <div>
                       <div className="flex items-center justify-between mb-3">
@@ -553,17 +655,17 @@ export default function AdminDashboardPage() {
                           {prod.series}
                         </span>
                         {isCustomized ? (
-                          <span className="text-[10px] font-bold text-amber-400 bg-amber-950/80 px-2 py-0.5 rounded-full border border-amber-800/40">
+                          <span className="text-[10px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
                             Customized
                           </span>
                         ) : (
-                          <span className="text-[10px] font-bold text-gray-400 bg-white/5 px-2 py-0.5 rounded-full">
+                          <span className="text-[10px] font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
                             Default
                           </span>
                         )}
                       </div>
 
-                      <div className="relative h-44 w-full bg-[#0a0c12] rounded-xl flex items-center justify-center p-3 mb-4 border border-white/5 overflow-hidden">
+                      <div className="relative h-44 w-full bg-[#f8f9fc] rounded-xl flex items-center justify-center p-3 mb-4 border border-gray-100 overflow-hidden">
                         <Image
                           src={currentData.heroImg || prod.heroImg}
                           alt={prod.name}
@@ -573,17 +675,17 @@ export default function AdminDashboardPage() {
                         />
                       </div>
 
-                      <h3 className="text-base font-bold text-white">{currentData.name}</h3>
-                      <p className="text-xs text-gray-400 mt-1 line-clamp-2">{currentData.tagline}</p>
+                      <h3 className="text-base font-bold text-gray-900">{currentData.name}</h3>
+                      <p className="text-xs text-gray-500 mt-1 line-clamp-2">{currentData.tagline}</p>
                     </div>
 
-                    <div className="pt-4 border-t border-white/5 mt-4 flex items-center space-x-2">
+                    <div className="pt-4 border-t border-gray-100 mt-4 flex items-center space-x-2">
                       <button
                         onClick={() => {
                           setDrawerInitialTab('styles');
                           setEditingProduct(currentData);
                         }}
-                        className="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center space-x-1.5 transition-all shadow-md cursor-pointer"
+                        className="flex-1 bg-brand-blue hover:bg-blue-700 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center space-x-1.5 transition-all shadow-sm cursor-pointer"
                       >
                         <Sliders className="w-3.5 h-3.5" />
                         <span>Edit Page</span>
@@ -594,7 +696,7 @@ export default function AdminDashboardPage() {
                           setSelectedVideoRobotId(prod.id);
                           setActiveTab('youtube');
                         }}
-                        className="bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 px-3 py-2 rounded-xl text-xs font-bold flex items-center space-x-1 transition-colors cursor-pointer"
+                        className="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-3 py-2 rounded-xl text-xs font-bold flex items-center space-x-1 transition-colors cursor-pointer"
                         title="Edit YouTube Video Slides"
                       >
                         <Video className="w-3.5 h-3.5" />
@@ -604,7 +706,7 @@ export default function AdminDashboardPage() {
                       <Link
                         href={`/products/${prod.id}`}
                         target="_blank"
-                        className="bg-white/10 hover:bg-white/20 text-gray-300 p-2 rounded-xl text-xs transition-colors"
+                        className="bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200 p-2 rounded-xl text-xs transition-colors"
                         title="View Live Page"
                       >
                         <ExternalLink className="w-3.5 h-3.5" />
@@ -618,298 +720,540 @@ export default function AdminDashboardPage() {
         )}
 
         {/* =========================================================================
-            TAB: YOUTUBE VIDEO SLIDES (URL COPY & PASTE METHOD)
+            TAB 2: CUSTOMER INQUIRIES & PRODUCT ORDERS DASHBOARD
+            Receives all Buy Me orders, Product inquiries, Contact forms, and Careers
             ========================================================================= */}
-        {activeTab === 'youtube' && (
-          <div className="space-y-8 max-w-6xl">
+        {activeTab === 'inquiries' && (
+          <div className="space-y-6">
             {/* Header & Subtitle */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
-                <h2 className="text-xl font-bold text-white flex items-center space-x-2.5">
-                  <span className="p-2 bg-red-600/20 text-red-500 rounded-xl border border-red-500/30">
-                    <Video className="w-5 h-5" />
+                <h2 className="text-xl font-bold text-gray-900 flex items-center space-x-2.5">
+                  <span className="p-2 bg-blue-50 text-brand-blue rounded-xl border border-blue-200">
+                    <Inbox className="w-5 h-5" />
                   </span>
-                  <span>YouTube Video Slides Manager (URL Copy-Paste Method)</span>
+                  <span>Customer Inquiries &amp; Product Procurement Orders</span>
                 </h2>
-                <p className="text-xs text-gray-400 mt-1">
-                  Manage high-definition YouTube video slide carousels across all 14 robot product pages. Paste any YouTube URL for instant auto-embed, live player preview, and slide customization.
+                <p className="text-xs text-gray-500 font-light mt-1">
+                  Centralized inbox receiving all user submissions across the website: &quot;BUY ME&quot; robot orders, product page inquiries, commercial contact requests, and career applications.
                 </p>
               </div>
 
-              <button
-                onClick={() => {
-                  const currentData = getProductData(selectedVideoRobotId);
-                  setDrawerInitialTab('videos');
-                  setEditingProduct(currentData);
-                }}
-                className="bg-white/10 hover:bg-white/20 text-white font-bold px-4 py-2 rounded-xl text-xs flex items-center space-x-2 transition-all cursor-pointer whitespace-nowrap"
-              >
-                <Sliders className="w-3.5 h-3.5 text-cyan-400" />
-                <span>Open in Full Robot Customizer</span>
-              </button>
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleExportInquiries}
+                  className="bg-white hover:bg-gray-100 text-gray-700 border border-gray-200 font-bold px-4 py-2 rounded-xl text-xs flex items-center space-x-1.5 transition-all cursor-pointer shadow-sm"
+                >
+                  <Download className="w-3.5 h-3.5 text-brand-blue" />
+                  <span>Export to CSV</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleMarkAllContacted}
+                  className="bg-blue-50 hover:bg-blue-100 text-brand-blue border border-blue-200 font-bold px-4 py-2 rounded-xl text-xs flex items-center space-x-1.5 transition-all cursor-pointer"
+                >
+                  <CheckCheck className="w-3.5 h-3.5" />
+                  <span>Mark All Pending as Contacted</span>
+                </button>
+              </div>
             </div>
 
-            {/* ROBOT SELECTOR CHIPS */}
-            <div className="bg-[#12151f] border border-white/10 rounded-2xl p-5 space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold uppercase tracking-widest text-gray-400">
-                  Select Robot to Edit Video Slides:
-                </span>
-                <span className="text-xs text-cyan-400 font-mono">
-                  Currently Editing: <strong className="text-white">{getProductData(selectedVideoRobotId).name}</strong> ({selectedVideoRobotId})
-                </span>
+            {/* KPI Summary Cards */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <div className="bg-white border border-gray-200 rounded-2xl p-5 space-y-1 shadow-sm">
+                <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Total Submissions</span>
+                <div className="text-2xl font-black text-gray-900">{inquiries.length}</div>
+                <div className="text-[10px] text-gray-400">All-time queries &amp; orders</div>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2">
-                {productList.map((prod) => {
-                  const isSelected = prod.id === selectedVideoRobotId;
-                  const count = (getProductData(prod.id).youtubeVideos || []).length;
+              <div className="bg-white border border-amber-300 rounded-2xl p-5 space-y-1 shadow-sm">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-bold text-amber-700 uppercase tracking-wider">Action Required</span>
+                  <div className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse" />
+                </div>
+                <div className="text-2xl font-black text-amber-600">{unreadInquiriesCount}</div>
+                <div className="text-[10px] text-amber-600/80">Pending review &amp; reply</div>
+              </div>
+
+              <div className="bg-white border border-gray-200 rounded-2xl p-5 space-y-1 shadow-sm">
+                <span className="text-[11px] font-bold text-brand-blue uppercase tracking-wider">BUY ME Orders</span>
+                <div className="text-2xl font-black text-brand-blue">
+                  {inquiries.filter((i) => i.type === 'buy_me_order').length}
+                </div>
+                <div className="text-[10px] text-gray-400">Direct robot procurement</div>
+              </div>
+
+              <div className="bg-white border border-gray-200 rounded-2xl p-5 space-y-1 shadow-sm">
+                <span className="text-[11px] font-bold text-emerald-700 uppercase tracking-wider">Resolved / Done</span>
+                <div className="text-2xl font-black text-emerald-600">
+                  {inquiries.filter((i) => i.status === 'completed' || i.status === 'contacted').length}
+                </div>
+                <div className="text-[10px] text-gray-400">Contacted or completed</div>
+              </div>
+            </div>
+
+            {/* Search & Filter Toolbar */}
+            <div className="bg-white border border-gray-200 rounded-2xl p-4 space-y-3 shadow-sm">
+              <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+                {/* Search Box */}
+                <div className="relative flex-1">
+                  <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    value={inquirySearch}
+                    onChange={(e) => setInquirySearch(e.target.value)}
+                    placeholder="Search by customer name, company, email, phone, model or ID..."
+                    className="w-full bg-[#f8f9fc] border border-gray-200 rounded-xl pl-10 pr-4 py-2 text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue focus:bg-white transition-all"
+                  />
+                  {inquirySearch && (
+                    <button
+                      onClick={() => setInquirySearch('')}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 text-xs"
+                    >
+                      Clear
+                    </button>
+                  )}
+                </div>
+
+                {/* Status Dropdown Filter */}
+                <div className="flex items-center space-x-2">
+                  <Filter className="w-4 h-4 text-gray-400" />
+                  <select
+                    value={inquiryStatusFilter}
+                    onChange={(e) => setInquiryStatusFilter(e.target.value)}
+                    className="bg-[#f8f9fc] border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue cursor-pointer"
+                  >
+                    <option value="all">All Statuses ({inquiries.length})</option>
+                    <option value="new">New ({inquiries.filter((i) => i.status === 'new').length})</option>
+                    <option value="in_review">In Review ({inquiries.filter((i) => i.status === 'in_review').length})</option>
+                    <option value="contacted">Contacted ({inquiries.filter((i) => i.status === 'contacted').length})</option>
+                    <option value="completed">Completed ({inquiries.filter((i) => i.status === 'completed').length})</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Type Category Filter Pills (No Emojis) */}
+              <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t border-gray-100 text-xs">
+                {[
+                  { id: 'all', label: 'All Submissions', icon: Inbox, count: inquiries.length },
+                  {
+                    id: 'buy_me_order',
+                    label: 'BUY ME Orders',
+                    icon: ShoppingCart,
+                    count: inquiries.filter((i) => i.type === 'buy_me_order').length,
+                  },
+                  {
+                    id: 'product_inquiry',
+                    label: 'Product Inquiries',
+                    icon: Cpu,
+                    count: inquiries.filter((i) => i.type === 'product_inquiry').length,
+                  },
+                  {
+                    id: 'contact_form',
+                    label: 'Contact Submissions',
+                    icon: Mail,
+                    count: inquiries.filter((i) => i.type === 'contact_form').length,
+                  },
+                  {
+                    id: 'career_application',
+                    label: 'Job Applications',
+                    icon: Briefcase,
+                    count: inquiries.filter((i) => i.type === 'career_application').length,
+                  },
+                ].map((f) => {
+                  const Icon = f.icon;
+                  const isSelected = inquiryTypeFilter === f.id;
                   return (
                     <button
-                      key={prod.id}
-                      onClick={() => setSelectedVideoRobotId(prod.id)}
-                      className={`p-2.5 rounded-xl text-left border transition-all cursor-pointer ${
+                      key={f.id}
+                      onClick={() => setInquiryTypeFilter(f.id)}
+                      className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl font-medium transition-all cursor-pointer ${
                         isSelected
-                          ? 'bg-red-600/20 border-red-500 text-white shadow-lg shadow-red-500/10'
-                          : 'bg-[#181c28] border-white/5 text-gray-400 hover:text-white hover:border-white/20'
+                          ? 'bg-brand-blue text-white font-bold shadow-sm'
+                          : 'bg-gray-100 text-gray-600 hover:text-gray-900 hover:bg-gray-200'
                       }`}
                     >
-                      <div className="text-[10px] font-mono text-gray-400 uppercase tracking-wider">{prod.id}</div>
-                      <div className="text-xs font-bold truncate text-white">{prod.name.replace('HUTARK ', '')}</div>
-                      <div className="text-[10px] text-gray-400 mt-1 flex items-center space-x-1">
-                        <Video className="w-3 h-3 text-red-400" />
-                        <span>{count} slide{count === 1 ? '' : 's'}</span>
-                      </div>
+                      <Icon className="w-3.5 h-3.5" />
+                      <span>{f.label}</span>
+                      <span className="ml-1 opacity-75 font-mono text-[11px]">({f.count})</span>
                     </button>
                   );
                 })}
               </div>
             </div>
 
-            {/* PRIMARY URL COPY-PASTE METHOD SECTION */}
-            <div className="bg-gradient-to-br from-red-950/60 via-[#181a24] to-[#12151e] border-2 border-red-500/50 p-6 rounded-2xl space-y-4 shadow-xl">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3 text-white font-bold text-sm">
-                  <div className="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center text-white shadow-lg shadow-red-600/30">
-                    <Video className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h3 className="text-base font-bold text-white tracking-tight">
-                      Paste YouTube Video Link for {getProductData(selectedVideoRobotId).name}
-                    </h3>
-                    <p className="text-xs text-gray-400 font-light">
-                      Supports direct YouTube URLs (e.g. https://www.youtube.com/watch?v=... or https://youtu.be/...)
-                    </p>
-                  </div>
-                </div>
-                <span className="text-[10px] font-mono font-bold bg-red-950 text-red-400 border border-red-500/30 px-3 py-1 rounded-full uppercase tracking-wider">
-                  Instant Auto-Embed
-                </span>
+            {/* Inquiries List View */}
+            <div className="space-y-4">
+              {(() => {
+                const q = inquirySearch.toLowerCase();
+                const filtered = inquiries.filter((item) => {
+                  const matchesSearch =
+                    !q ||
+                    item.name.toLowerCase().includes(q) ||
+                    item.company.toLowerCase().includes(q) ||
+                    item.email.toLowerCase().includes(q) ||
+                    (item.phone && item.phone.toLowerCase().includes(q)) ||
+                    (item.productName && item.productName.toLowerCase().includes(q)) ||
+                    item.id.toLowerCase().includes(q) ||
+                    (item.message && item.message.toLowerCase().includes(q));
+
+                  const matchesType = inquiryTypeFilter === 'all' || item.type === inquiryTypeFilter;
+                  const matchesStatus = inquiryStatusFilter === 'all' || item.status === inquiryStatusFilter;
+
+                  return matchesSearch && matchesType && matchesStatus;
+                });
+
+                if (filtered.length === 0) {
+                  return (
+                    <div className="bg-white border border-gray-200 rounded-2xl p-12 text-center space-y-3 shadow-sm">
+                      <Inbox className="w-12 h-12 text-gray-400 mx-auto" />
+                      <h4 className="text-base font-bold text-gray-700">No Submissions Found</h4>
+                      <p className="text-xs text-gray-500 max-w-sm mx-auto font-light">
+                        No customer inquiries or robot orders match your active search or filter criteria.
+                      </p>
+                      <button
+                        onClick={() => {
+                          setInquirySearch('');
+                          setInquiryTypeFilter('all');
+                          setInquiryStatusFilter('all');
+                        }}
+                        className="text-xs text-brand-blue hover:underline font-bold"
+                      >
+                        Reset All Filters
+                      </button>
+                    </div>
+                  );
+                }
+
+                return filtered.map((item) => {
+                  const isNew = item.status === 'new';
+
+                  return (
+                    <div
+                      key={item.id}
+                      className={`bg-white rounded-2xl p-5 border transition-all space-y-4 shadow-sm ${
+                        isNew
+                          ? 'border-amber-300 ring-1 ring-amber-200/50'
+                          : 'border-gray-200/90 hover:border-blue-300 hover:shadow-md'
+                      }`}
+                    >
+                      {/* Top Row: ID, Badges, Status Changer, Timestamp */}
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-gray-100">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="font-mono text-xs font-bold text-gray-700 bg-gray-100 px-2.5 py-1 rounded-lg border border-gray-200">
+                            #{item.id}
+                          </span>
+
+                          {/* Type Badge */}
+                          {item.type === 'buy_me_order' && (
+                            <span className="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 uppercase tracking-wider">
+                              <ShoppingCart className="w-3 h-3 text-amber-600" />
+                              <span>BUY ME Order</span>
+                            </span>
+                          )}
+                          {item.type === 'product_inquiry' && (
+                            <span className="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold bg-blue-50 text-brand-blue border border-blue-200 uppercase tracking-wider">
+                              <Cpu className="w-3 h-3 text-brand-blue" />
+                              <span>Product Detail Inquiry</span>
+                            </span>
+                          )}
+                          {item.type === 'contact_form' && (
+                            <span className="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 uppercase tracking-wider">
+                              <Mail className="w-3 h-3 text-emerald-600" />
+                              <span>Contact Page Form</span>
+                            </span>
+                          )}
+                          {item.type === 'career_application' && (
+                            <span className="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold bg-purple-50 text-purple-700 border border-purple-200 uppercase tracking-wider">
+                              <Briefcase className="w-3 h-3 text-purple-600" />
+                              <span>Career Application</span>
+                            </span>
+                          )}
+
+                          {item.deploymentTier && (
+                            <span className="px-2.5 py-1 rounded-lg text-[10px] font-mono text-purple-700 bg-purple-50 border border-purple-200">
+                              Tier: {item.deploymentTier}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Status Selector & Timestamp */}
+                        <div className="flex items-center space-x-3">
+                          <span className="text-[11px] text-gray-400 flex items-center space-x-1">
+                            <Clock className="w-3 h-3" />
+                            <span>{new Date(item.createdAt).toLocaleString()}</span>
+                          </span>
+
+                          <select
+                            value={item.status}
+                            onChange={(e) => handleUpdateInquiryStatus(item.id, e.target.value as InquiryStatus)}
+                            className={`text-xs font-bold px-3 py-1 rounded-xl border focus:outline-none cursor-pointer ${
+                              item.status === 'new'
+                                ? 'bg-amber-50 text-amber-700 border-amber-200'
+                                : item.status === 'in_review'
+                                ? 'bg-blue-50 text-blue-700 border-blue-200'
+                                : item.status === 'contacted'
+                                ? 'bg-purple-50 text-purple-700 border-purple-200'
+                                : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                            }`}
+                          >
+                            <option value="new">Status: New</option>
+                            <option value="in_review">Status: In Review</option>
+                            <option value="contacted">Status: Contacted</option>
+                            <option value="completed">Status: Completed</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      {/* Main Data Columns */}
+                      <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+                        {/* Customer Info */}
+                        <div className="md:col-span-4 space-y-1.5">
+                          <div className="flex items-center space-x-2">
+                            <UserCheck className="w-4 h-4 text-brand-blue" />
+                            <span className="text-sm font-bold text-gray-900">{item.name}</span>
+                          </div>
+                          <div className="text-xs text-gray-600 flex items-center space-x-2 pl-6">
+                            <span>{item.company}</span>
+                          </div>
+                          <div className="text-xs text-gray-600 flex items-center space-x-2 pl-6">
+                            <Mail className="w-3.5 h-3.5 text-gray-400" />
+                            <a href={`mailto:${item.email}`} className="text-brand-blue hover:underline font-mono">
+                              {item.email}
+                            </a>
+                          </div>
+                          {item.phone && (
+                            <div className="text-xs text-gray-600 flex items-center space-x-2 pl-6">
+                              <PhoneCall className="w-3.5 h-3.5 text-gray-400" />
+                              <span className="font-mono">{item.phone}</span>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Order & Requirements Details */}
+                        <div className="md:col-span-8 space-y-2">
+                          {item.productName && (
+                            <div className="flex items-center space-x-2">
+                              <span className="text-xs font-semibold text-gray-500">Robot Target:</span>
+                              <span className="text-xs font-bold text-gray-900 bg-gray-100 px-2.5 py-0.5 rounded-md border border-gray-200">
+                                {item.productName}
+                              </span>
+                            </div>
+                          )}
+
+                          {item.message && (
+                            <div className="bg-gray-50 border border-gray-200/80 rounded-xl p-3 text-xs text-gray-700 font-light leading-relaxed">
+                              {item.message}
+                            </div>
+                          )}
+
+                          {item.adminNotes && (
+                            <div className="bg-amber-50/70 border border-amber-200 rounded-xl p-2.5 text-xs text-amber-800 space-y-1">
+                              <span className="font-bold text-[10px] uppercase text-amber-700 flex items-center space-x-1">
+                                <Edit3 className="w-3 h-3" />
+                                <span>Internal Notes:</span>
+                              </span>
+                              <p className="font-light">{item.adminNotes}</p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Card Action Footer */}
+                      <div className="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-gray-100">
+                        <div className="flex items-center space-x-2">
+                          <button
+                            type="button"
+                            onClick={() => handleOpenInquiryModal(item)}
+                            className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-3 py-1.5 rounded-lg text-xs flex items-center space-x-1.5 transition-colors border border-gray-200"
+                          >
+                            <FileText className="w-3.5 h-3.5 text-brand-blue" />
+                            <span>View Full Details &amp; Notes</span>
+                          </button>
+
+                          <a
+                            href={`mailto:${item.email}?subject=RE: HUTARK Inquiry #${item.id} - ${item.productName || 'Robotics Deployment'}&body=Hello ${item.name},%0D%0A%0D%0AThank you for contacting HUTARK regarding ${item.productName || 'our robots'}.`}
+                            className="bg-blue-50 hover:bg-blue-100 text-brand-blue font-bold px-3 py-1.5 rounded-lg text-xs flex items-center space-x-1.5 transition-colors border border-blue-200"
+                          >
+                            <Mail className="w-3.5 h-3.5" />
+                            <span>Direct Email Reply</span>
+                          </a>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteInquiry(item.id)}
+                          className="text-gray-400 hover:text-red-500 hover:bg-red-50 p-1.5 rounded-lg text-xs transition-colors"
+                          title="Delete submission"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                });
+              })()}
+            </div>
+          </div>
+        )}
+
+        {/* =========================================================================
+            TAB 3: YOUTUBE VIDEO SLIDES MANAGER
+            ========================================================================= */}
+        {activeTab === 'youtube' && (
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">YouTube Video Slides Manager</h2>
+                <p className="text-xs text-gray-500 font-light">
+                  Add, edit, and organize YouTube demonstration videos for every robot showroom detail page.
+                </p>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-2.5 pt-1">
-                <div className="relative flex-1">
-                  <input
-                    type="text"
-                    value={adminVideoUrlInput}
-                    onChange={(e) => setAdminVideoUrlInput(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                        handleAddVideoUrl();
-                      }
-                    }}
-                    placeholder="Paste YouTube video link here: https://www.youtube.com/watch?v=..."
-                    className="w-full bg-black/80 border border-white/20 rounded-xl px-4 py-3 text-xs text-cyan-300 placeholder-gray-500 focus:outline-none focus:border-red-500 font-mono shadow-inner"
-                  />
-                </div>
+              {/* Robot Model Selector */}
+              <div className="flex items-center space-x-2">
+                <span className="text-xs font-semibold text-gray-700">Target Robot:</span>
+                <select
+                  value={selectedVideoRobotId}
+                  onChange={(e) => setSelectedVideoRobotId(e.target.value)}
+                  className="bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs font-bold text-brand-blue focus:outline-none focus:ring-2 focus:ring-brand-blue/20"
+                >
+                  {productList.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name} ({p.id})
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Add New Video Bar */}
+            <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm space-y-4">
+              <h3 className="text-sm font-bold text-gray-900 flex items-center space-x-2">
+                <Plus className="w-4 h-4 text-brand-blue" />
+                <span>Add YouTube Video to {getProductData(selectedVideoRobotId).name}</span>
+              </h3>
+
+              <div className="flex flex-col sm:flex-row gap-3">
+                <input
+                  type="text"
+                  value={adminVideoUrlInput}
+                  onChange={(e) => setAdminVideoUrlInput(e.target.value)}
+                  placeholder="Paste YouTube link (e.g. https://www.youtube.com/watch?v=7zI3u19q_e0 or ID)..."
+                  className="flex-1 bg-[#f8f9fc] border border-gray-200 rounded-xl px-4 py-2.5 text-xs text-gray-900 font-mono focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:bg-white"
+                />
                 <button
                   type="button"
                   onClick={handleAddVideoUrl}
-                  className="bg-red-600 hover:bg-red-500 text-white font-bold px-6 py-3 rounded-xl text-xs flex items-center justify-center space-x-2 transition-all shadow-lg hover:shadow-red-500/25 active:scale-95 cursor-pointer whitespace-nowrap"
+                  className="bg-brand-blue hover:bg-blue-700 text-white font-bold px-5 py-2.5 rounded-xl text-xs flex items-center justify-center space-x-1.5 shadow-sm transition-all"
                 >
                   <Plus className="w-4 h-4" />
-                  <span>Add Video Slide</span>
+                  <span>Add Slide</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleAddBlankSlide}
+                  className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-4 py-2.5 rounded-xl text-xs transition-colors border border-gray-200"
+                >
+                  Add Template Slide
                 </button>
               </div>
             </div>
 
-            {/* ACTIVE VIDEO SLIDES LIST */}
-            <div className="space-y-6">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-white/10 pb-4">
-                <div>
-                  <h3 className="text-base font-bold text-white flex items-center space-x-2">
-                    <span>Active Video Slides for {getProductData(selectedVideoRobotId).name}</span>
-                    <span className="text-xs font-mono bg-white/10 px-2 py-0.5 rounded text-cyan-300">
-                      {activeVideoSlides.length}
-                    </span>
-                  </h3>
-                  <p className="text-xs text-gray-400 mt-0.5">
-                    These slides appear automatically under the product specifications on the live product page.
-                  </p>
-                </div>
-
-                <div className="flex items-center space-x-2">
-                  <button
-                    type="button"
-                    onClick={handleAddBlankSlide}
-                    className="bg-white/5 hover:bg-white/10 text-gray-300 px-3 py-2 rounded-xl text-xs font-semibold flex items-center space-x-1.5 border border-white/10 transition-colors cursor-pointer"
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                    <span>Add Blank Slide</span>
-                  </button>
-
+            {/* Video Slides Grid */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-gray-600 uppercase tracking-wider">
+                  Active Video Slides ({activeVideoSlides.length})
+                </span>
+                {activeVideoSlides.length > 0 && (
                   <button
                     type="button"
                     onClick={handleSaveAllVideoSlides}
-                    className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2 rounded-xl text-xs flex items-center space-x-1.5 shadow-md transition-all cursor-pointer"
+                    className="bg-brand-blue hover:bg-blue-700 text-white font-bold px-4 py-1.5 rounded-xl text-xs flex items-center space-x-1 shadow-sm transition-all"
                   >
                     <Save className="w-3.5 h-3.5" />
-                    <span>Save Video Slides</span>
+                    <span>Save All Video Slides</span>
                   </button>
-                </div>
+                )}
               </div>
 
               {activeVideoSlides.length === 0 ? (
-                <div className="p-12 text-center bg-[#12151f] border border-white/10 rounded-2xl space-y-3">
-                  <Video className="w-10 h-10 text-gray-600 mx-auto" />
-                  <p className="text-sm font-semibold text-gray-300">No Video Slides Added Yet</p>
-                  <p className="text-xs text-gray-500 max-w-md mx-auto">
-                    Paste a YouTube link in the red box above to add high-definition operational demonstration videos to this product page.
-                  </p>
+                <div className="bg-white border border-gray-200 rounded-2xl p-10 text-center space-y-2 shadow-sm">
+                  <Video className="w-10 h-10 text-gray-400 mx-auto" />
+                  <p className="text-sm font-semibold text-gray-700">No custom video slides attached yet</p>
+                  <p className="text-xs text-gray-500 font-light">Paste a YouTube link above to add demonstration videos.</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {activeVideoSlides.map((slide, idx) => {
                     const videoId = extractYouTubeId(slide.id);
-                    const isDirectVideo = slide.id?.endsWith('.mp4') || slide.id?.endsWith('.webm') || slide.id?.includes('/uploads/');
-
                     return (
                       <div
                         key={idx}
-                        className="bg-[#12151f] border border-white/10 rounded-2xl p-5 space-y-4 hover:border-white/20 transition-all flex flex-col justify-between shadow-lg"
+                        className="bg-white border border-gray-200/90 rounded-2xl p-5 shadow-sm space-y-4 flex flex-col justify-between hover:shadow-md transition-all"
                       >
-                        <div className="space-y-4">
-                          <div className="flex items-center justify-between border-b border-white/10 pb-3">
-                            <span className="text-xs font-bold text-cyan-400 flex items-center space-x-2">
-                              <span className="w-5 h-5 rounded-full bg-red-600/30 text-red-400 flex items-center justify-center text-[10px]">
-                                {idx + 1}
-                              </span>
-                              <span>SLIDE {String(idx + 1).padStart(2, '0')}</span>
-                            </span>
-
-                            <button
-                              type="button"
-                              onClick={() => handleDeleteVideoSlide(idx)}
-                              className="text-gray-400 hover:text-red-400 text-xs font-semibold flex items-center space-x-1 cursor-pointer transition-colors"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                              <span>Delete</span>
-                            </button>
-                          </div>
-
-                          {/* Live 16:9 YouTube Player Preview */}
-                          <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-black border border-white/10 shadow-inner">
-                            {isDirectVideo ? (
-                              <video src={slide.id} controls className="w-full h-full object-contain" />
-                            ) : videoId ? (
+                        <div className="space-y-3">
+                          {/* Video Preview Frame */}
+                          <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-black shadow-sm">
+                            {videoId ? (
                               <iframe
-                                src={`https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1`}
+                                src={`https://www.youtube-nocookie.com/embed/${videoId}`}
                                 title={slide.title}
                                 className="w-full h-full border-0"
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                 allowFullScreen
                               />
                             ) : (
-                              <div className="w-full h-full flex flex-col items-center justify-center text-gray-500 space-y-2">
-                                <Video className="w-8 h-8 opacity-40" />
-                                <span className="text-xs font-mono">Paste a valid YouTube link below</span>
+                              <div className="w-full h-full flex items-center justify-center text-xs text-gray-500">
+                                Invalid Video ID
                               </div>
                             )}
                           </div>
 
-                          {/* YouTube URL Copy-Paste Input Field */}
                           <div className="space-y-1">
-                            <label className="block text-[11px] font-bold text-gray-300 uppercase tracking-wider">
-                              YouTube Video URL (Copy & Paste)
-                            </label>
-                            <div className="flex items-center space-x-2">
-                              <input
-                                type="text"
-                                value={slide.id.startsWith('http') || slide.id.startsWith('/') ? slide.id : `https://www.youtube.com/watch?v=${slide.id}`}
-                                onChange={(e) => handleUpdateSlideField(idx, 'id', extractYouTubeId(e.target.value) || e.target.value)}
-                                placeholder="https://www.youtube.com/watch?v=..."
-                                className="flex-1 bg-black/60 border border-white/15 rounded-xl px-3.5 py-2 text-xs text-cyan-300 font-mono focus:border-red-500 focus:outline-none"
-                              />
-                              {!isDirectVideo && videoId && (
-                                <a
-                                  href={`https://www.youtube.com/watch?v=${videoId}`}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className="p-2 bg-white/5 hover:bg-white/15 rounded-xl text-gray-300 hover:text-white transition-colors"
-                                  title="Test on YouTube"
-                                >
-                                  <ExternalLink className="w-4 h-4" />
-                                </a>
-                              )}
-                            </div>
-                          </div>
-
-                          {/* Slide Title */}
-                          <div className="space-y-1">
-                            <label className="block text-[11px] font-bold text-gray-300 uppercase tracking-wider">
-                              Slide Title
-                            </label>
+                            <label className="block text-[11px] font-semibold text-gray-700">Slide Title</label>
                             <input
                               type="text"
                               value={slide.title}
                               onChange={(e) => handleUpdateSlideField(idx, 'title', e.target.value)}
-                              placeholder="e.g. Field Dexterity Test"
-                              className="w-full bg-black/60 border border-white/15 rounded-xl px-3.5 py-2 text-xs text-white focus:border-cyan-400 focus:outline-none"
+                              className="w-full bg-[#f8f9fc] border border-gray-200 rounded-xl px-3 py-1.5 text-xs text-gray-900 focus:bg-white focus:ring-1 focus:ring-brand-blue"
                             />
                           </div>
 
-                          {/* Category Badge */}
                           <div className="space-y-1">
-                            <label className="block text-[11px] font-bold text-gray-300 uppercase tracking-wider">
-                              Category Badge
-                            </label>
+                            <label className="block text-[11px] font-semibold text-gray-700">Category Tag</label>
                             <input
                               type="text"
-                              value={slide.category}
+                              value={slide.category || slide.categoryTag || ''}
                               onChange={(e) => handleUpdateSlideField(idx, 'category', e.target.value)}
-                              placeholder="e.g. Real-World Field Demo"
-                              className="w-full bg-black/60 border border-white/15 rounded-xl px-3.5 py-2 text-xs text-cyan-400 focus:border-cyan-400 focus:outline-none"
+                              className="w-full bg-[#f8f9fc] border border-gray-200 rounded-xl px-3 py-1.5 text-xs text-brand-blue font-semibold focus:bg-white focus:ring-1 focus:ring-brand-blue"
                             />
                           </div>
 
-                          {/* Description */}
                           <div className="space-y-1">
-                            <label className="block text-[11px] font-bold text-gray-300 uppercase tracking-wider">
-                              Description
-                            </label>
+                            <label className="block text-[11px] font-semibold text-gray-700">Description</label>
                             <textarea
                               rows={2}
                               value={slide.description}
                               onChange={(e) => handleUpdateSlideField(idx, 'description', e.target.value)}
-                              placeholder="Describe what the robot is performing in this demonstration..."
-                              className="w-full bg-black/60 border border-white/15 rounded-xl px-3.5 py-2 text-xs text-gray-300 focus:border-cyan-400 focus:outline-none resize-none"
+                              className="w-full bg-[#f8f9fc] border border-gray-200 rounded-xl px-3 py-1.5 text-xs text-gray-700 focus:bg-white focus:ring-1 focus:ring-brand-blue resize-none font-light"
                             />
                           </div>
                         </div>
 
-                        <div className="pt-3 border-t border-white/5 flex items-center justify-between">
-                          <span className="text-[10px] text-gray-500 font-mono">
-                            Video ID: {videoId || 'N/A'}
-                          </span>
+                        <div className="pt-3 border-t border-gray-100 flex items-center justify-between">
                           <button
                             type="button"
-                            onClick={handleSaveAllVideoSlides}
-                            className="bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center space-x-1 transition-colors cursor-pointer"
+                            onClick={() => handleDeleteVideoSlide(idx)}
+                            className="text-xs text-red-500 hover:text-red-700 font-semibold flex items-center space-x-1"
                           >
-                            <Check className="w-3.5 h-3.5" />
-                            <span>Save Slide</span>
+                            <Trash2 className="w-3.5 h-3.5" />
+                            <span>Remove</span>
                           </button>
+                          <span className="text-[10px] text-gray-400 font-mono">{videoId}</span>
                         </div>
                       </div>
                     );
@@ -921,80 +1265,34 @@ export default function AdminDashboardPage() {
         )}
 
         {/* =========================================================================
-            TAB 2: HOME PAGE EDITOR
+            TAB 4: HOME PAGE CONTENT EDITOR
             ========================================================================= */}
         {activeTab === 'home' && (
-          <div className="space-y-8 max-w-5xl">
+          <div className="space-y-6 max-w-5xl">
             <div>
-              <h2 className="text-xl font-bold text-white">Home Page Content & Media Editor</h2>
-              <p className="text-xs text-gray-400">
-                Upload images or videos via drag & drop, configure headlines, product showcases, and interactive intelligence cards.
+              <h2 className="text-xl font-bold text-gray-900">Home Page Content &amp; Banners</h2>
+              <p className="text-xs text-gray-500 font-light">
+                Configure the top full-screen hero slideshow, the three embodied intelligence pillars, and latest corporate news.
               </p>
             </div>
 
-            {/* 1. HERO SLIDES */}
-            <div className="bg-[#12151f] border border-white/10 rounded-2xl p-6 space-y-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-sm font-bold text-white flex items-center space-x-2">
-                    <Layers className="w-4 h-4 text-cyan-400" />
-                    <span>Hero Panoramic Banner Slides ({siteContent.home.heroSlides.length})</span>
-                  </h3>
-                  <p className="text-xs text-gray-400 mt-0.5">
-                    Drag and drop panoramic images or video reels for the full-bleed hero carousel.
-                  </p>
-                </div>
-
-                <button
-                  onClick={() => {
-                    const newSlides = [
-                      ...siteContent.home.heroSlides,
-                      {
-                        title: 'New Innovation Banner',
-                        titleFormatted: 'New Innovation <br /> Breakthrough Showcase',
-                        img: '/uploads/images/20261103/710faba11315ce158d297edc209d14bf.png',
-                        link: '/products'
-                      }
-                    ];
-                    setSiteContent({
-                      ...siteContent,
-                      home: { ...siteContent.home, heroSlides: newSlides }
-                    });
-                  }}
-                  className="bg-blue-600/30 hover:bg-blue-600/50 text-cyan-300 border border-blue-500/40 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1"
-                >
-                  <Plus className="w-3.5 h-3.5" />
-                  <span>Add Slide</span>
-                </button>
-              </div>
+            {/* 1. HERO SLIDESHOW */}
+            <div className="bg-white border border-gray-200/90 rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
+              <h3 className="text-sm font-bold text-gray-900 flex items-center space-x-2">
+                <Play className="w-4 h-4 text-brand-blue" />
+                <span>Full-Screen Hero Slideshow ({siteContent.home.heroSlides.length} Slides)</span>
+              </h3>
 
               <div className="space-y-6">
                 {siteContent.home.heroSlides.map((slide, idx) => (
-                  <div key={idx} className="bg-black/40 border border-white/10 rounded-xl p-5 space-y-4">
-                    <div className="flex items-center justify-between text-xs font-bold text-cyan-400">
-                      <span>Slide #{idx + 1}</span>
-                      {siteContent.home.heroSlides.length > 1 && (
-                        <button
-                          onClick={() => {
-                            const newSlides = siteContent.home.heroSlides.filter((_, i) => i !== idx);
-                            setSiteContent({
-                              ...siteContent,
-                              home: { ...siteContent.home, heroSlides: newSlides }
-                            });
-                          }}
-                          className="text-gray-500 hover:text-red-400 flex items-center space-x-1"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                          <span>Remove</span>
-                        </button>
-                      )}
-                    </div>
+                  <div key={idx} className="bg-[#f8f9fc] border border-gray-200/80 rounded-2xl p-5 space-y-4">
+                    <span className="text-xs font-bold text-brand-blue uppercase tracking-wider">Slide 0{idx + 1}</span>
 
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                      <div className="lg:col-span-6">
+                      <div className="lg:col-span-6 space-y-2">
                         <MediaUploadZone
-                          label={`Slide #${idx + 1} Image / Video Asset`}
-                          description="Drag & drop high-res banner image or MP4 video file from File Manager"
+                          label="Slide Banner Image"
+                          description="High-resolution 16:9 banner image"
                           value={slide.img}
                           onChange={(url) => {
                             const newSlides = [...siteContent.home.heroSlides];
@@ -1004,13 +1302,13 @@ export default function AdminDashboardPage() {
                               home: { ...siteContent.home, heroSlides: newSlides }
                             });
                           }}
-                          mediaType="any"
+                          mediaType="image"
                         />
                       </div>
 
                       <div className="lg:col-span-6 space-y-3">
                         <div>
-                          <label className="block text-xs font-semibold text-gray-300 mb-1">Headline Title</label>
+                          <label className="block text-xs font-semibold text-gray-700 mb-1">Headline Title</label>
                           <input
                             type="text"
                             value={slide.title}
@@ -1022,12 +1320,12 @@ export default function AdminDashboardPage() {
                                 home: { ...siteContent.home, heroSlides: newSlides }
                               });
                             }}
-                            className="w-full bg-[#1b202c] border border-white/15 rounded-xl px-3 py-2 text-xs text-white"
+                            className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-900 font-bold focus:ring-1 focus:ring-brand-blue"
                           />
                         </div>
 
                         <div>
-                          <label className="block text-xs font-semibold text-gray-300 mb-1">
+                          <label className="block text-xs font-semibold text-gray-700 mb-1">
                             Formatted HTML Title (Allows &lt;br /&gt;)
                           </label>
                           <input
@@ -1041,12 +1339,12 @@ export default function AdminDashboardPage() {
                                 home: { ...siteContent.home, heroSlides: newSlides }
                               });
                             }}
-                            className="w-full bg-[#1b202c] border border-white/15 rounded-xl px-3 py-2 text-xs text-white font-mono"
+                            className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-900 font-mono focus:ring-1 focus:ring-brand-blue"
                           />
                         </div>
 
                         <div>
-                          <label className="block text-xs font-semibold text-gray-300 mb-1">Target Link</label>
+                          <label className="block text-xs font-semibold text-gray-700 mb-1">Target Link</label>
                           <input
                             type="text"
                             value={slide.link}
@@ -1059,7 +1357,7 @@ export default function AdminDashboardPage() {
                               });
                             }}
                             placeholder="/products/A3Ultra"
-                            className="w-full bg-[#1b202c] border border-white/15 rounded-xl px-3 py-2 text-xs text-cyan-300 font-mono"
+                            className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs text-brand-blue font-mono focus:ring-1 focus:ring-brand-blue"
                           />
                         </div>
                       </div>
@@ -1070,22 +1368,22 @@ export default function AdminDashboardPage() {
             </div>
 
             {/* 2. EMBODIED INTELLIGENCE CARDS */}
-            <div className="bg-[#12151f] border border-white/10 rounded-2xl p-6 space-y-6">
-              <h3 className="text-sm font-bold text-white flex items-center space-x-2">
-                <Video className="w-4 h-4 text-cyan-400" />
+            <div className="bg-white border border-gray-200/90 rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
+              <h3 className="text-sm font-bold text-gray-900 flex items-center space-x-2">
+                <Video className="w-4 h-4 text-brand-blue" />
                 <span>Embodied Intelligence Cards (3 Pillars)</span>
               </h3>
 
               <div className="space-y-6">
                 {siteContent.home.intelligences.map((intel, idx) => (
-                  <div key={idx} className="bg-black/40 border border-white/10 rounded-xl p-5 space-y-4">
-                    <span className="text-xs font-bold text-cyan-400">Card 0{idx + 1} — {intel.title}</span>
+                  <div key={idx} className="bg-[#f8f9fc] border border-gray-200/80 rounded-2xl p-5 space-y-4">
+                    <span className="text-xs font-bold text-brand-blue uppercase tracking-wider">Pillar 0{idx + 1} — {intel.title}</span>
 
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                      <div className="lg:col-span-6 space-y-4">
+                      <div className="lg:col-span-6 space-y-3">
                         <MediaUploadZone
                           label="Background Video (.mp4 / .webm)"
-                          description="Drag & drop background loop video from file manager"
+                          description="Drag & drop background loop video"
                           value={intel.video}
                           onChange={(url) => {
                             const newIntels = [...siteContent.home.intelligences];
@@ -1116,7 +1414,7 @@ export default function AdminDashboardPage() {
 
                       <div className="lg:col-span-6 space-y-3">
                         <div>
-                          <label className="block text-xs font-semibold text-gray-300 mb-1">Section Title</label>
+                          <label className="block text-xs font-semibold text-gray-700 mb-1">Section Title</label>
                           <input
                             type="text"
                             value={intel.title}
@@ -1128,12 +1426,12 @@ export default function AdminDashboardPage() {
                                 home: { ...siteContent.home, intelligences: newIntels }
                               });
                             }}
-                            className="w-full bg-[#1b202c] border border-white/15 rounded-xl px-3 py-2 text-xs text-white font-bold"
+                            className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-900 font-bold focus:ring-1 focus:ring-brand-blue"
                           />
                         </div>
 
                         <div>
-                          <label className="block text-xs font-semibold text-gray-300 mb-1">Subtitle</label>
+                          <label className="block text-xs font-semibold text-gray-700 mb-1">Subtitle</label>
                           <input
                             type="text"
                             value={intel.subtitle}
@@ -1145,12 +1443,12 @@ export default function AdminDashboardPage() {
                                 home: { ...siteContent.home, intelligences: newIntels }
                               });
                             }}
-                            className="w-full bg-[#1b202c] border border-white/15 rounded-xl px-3 py-2 text-xs text-blue-300"
+                            className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs text-brand-blue font-semibold focus:ring-1 focus:ring-brand-blue"
                           />
                         </div>
 
                         <div>
-                          <label className="block text-xs font-semibold text-gray-300 mb-1">Description Copy</label>
+                          <label className="block text-xs font-semibold text-gray-700 mb-1">Description Copy</label>
                           <textarea
                             rows={3}
                             value={intel.desc}
@@ -1162,7 +1460,7 @@ export default function AdminDashboardPage() {
                                 home: { ...siteContent.home, intelligences: newIntels }
                               });
                             }}
-                            className="w-full bg-[#1b202c] border border-white/15 rounded-xl px-3 py-2 text-xs text-gray-300 leading-relaxed"
+                            className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-700 font-light focus:ring-1 focus:ring-brand-blue"
                           />
                         </div>
                       </div>
@@ -1171,96 +1469,25 @@ export default function AdminDashboardPage() {
                 ))}
               </div>
             </div>
-
-            {/* 3. FEATURED PRODUCTS GRID */}
-            <div className="bg-[#12151f] border border-white/10 rounded-2xl p-6 space-y-6">
-              <h3 className="text-sm font-bold text-white flex items-center space-x-2">
-                <Cpu className="w-4 h-4 text-cyan-400" />
-                <span>Featured Products Showcase (Home Page Grid)</span>
-              </h3>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {siteContent.home.productsGrid.map((p, idx) => (
-                  <div key={idx} className="bg-black/40 border border-white/10 rounded-xl p-4 space-y-3">
-                    <input
-                      type="text"
-                      value={p.name}
-                      onChange={(e) => {
-                        const newGrid = [...siteContent.home.productsGrid];
-                        newGrid[idx] = { ...newGrid[idx], name: e.target.value };
-                        setSiteContent({
-                          ...siteContent,
-                          home: { ...siteContent.home, productsGrid: newGrid }
-                        });
-                      }}
-                      className="w-full bg-[#1b202c] border border-white/15 rounded-lg px-2.5 py-1.5 text-xs text-white font-bold"
-                    />
-
-                    <MediaUploadZone
-                      label="Card Photo"
-                      value={p.img}
-                      onChange={(url) => {
-                        const newGrid = [...siteContent.home.productsGrid];
-                        newGrid[idx] = { ...newGrid[idx], img: url };
-                        setSiteContent({
-                          ...siteContent,
-                          home: { ...siteContent.home, productsGrid: newGrid }
-                        });
-                      }}
-                      mediaType="image"
-                    />
-
-                    <input
-                      type="text"
-                      value={p.link}
-                      onChange={(e) => {
-                        const newGrid = [...siteContent.home.productsGrid];
-                        newGrid[idx] = { ...newGrid[idx], link: e.target.value };
-                        setSiteContent({
-                          ...siteContent,
-                          home: { ...siteContent.home, productsGrid: newGrid }
-                        });
-                      }}
-                      className="w-full bg-[#1b202c] border border-white/15 rounded-lg px-2.5 py-1 text-[11px] text-cyan-300 font-mono"
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
         )}
 
         {/* =========================================================================
-            TAB 3: R & D / TECH PAGE EDITOR
+            TAB 5: R & D / TECHNOLOGY ARCHITECTURE EDITOR
             ========================================================================= */}
         {activeTab === 'rd' && (
           <div className="space-y-6 max-w-4xl">
             <div>
-              <h2 className="text-xl font-bold text-white">R & D / Technology Architecture Editor</h2>
-              <p className="text-xs text-gray-400">
-                Configure research pillars, Link-U OS specifications, and bio-inspired hardware highlights.
+              <h2 className="text-xl font-bold text-gray-900">R &amp; D Architecture &amp; Innovation</h2>
+              <p className="text-xs text-gray-500 font-light">
+                Configure the technical pillars of Link-U OS, AHA3 modular actuators, and the GO-3 embodied neural system.
               </p>
             </div>
 
-            <div className="bg-[#12151f] border border-white/10 rounded-2xl p-6 space-y-4">
-              <h3 className="text-sm font-bold text-white">Hero Header</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="bg-white border border-gray-200/90 rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
+              <div className="space-y-4">
                 <div>
-                  <label className="block text-xs font-semibold text-gray-300 mb-1">Badge</label>
-                  <input
-                    type="text"
-                    value={siteContent.rd.badge}
-                    onChange={(e) =>
-                      setSiteContent({
-                        ...siteContent,
-                        rd: { ...siteContent.rd, badge: e.target.value }
-                      })
-                    }
-                    className="w-full bg-[#1b202c] border border-white/15 rounded-xl px-3 py-2 text-xs text-white"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-gray-300 mb-1">Headline</label>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">Hero Section Title</label>
                   <input
                     type="text"
                     value={siteContent.rd.heroTitle}
@@ -1270,99 +1497,110 @@ export default function AdminDashboardPage() {
                         rd: { ...siteContent.rd, heroTitle: e.target.value }
                       })
                     }
-                    className="w-full bg-[#1b202c] border border-white/15 rounded-xl px-3 py-2 text-xs text-white font-bold"
+                    className="w-full bg-[#f8f9fc] border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-900 font-bold focus:bg-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">Hero Description</label>
+                  <textarea
+                    rows={2}
+                    value={siteContent.rd.heroDesc}
+                    onChange={(e) =>
+                      setSiteContent({
+                        ...siteContent,
+                        rd: { ...siteContent.rd, heroDesc: e.target.value }
+                      })
+                    }
+                    className="w-full bg-[#f8f9fc] border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-700 font-light focus:bg-white"
                   />
                 </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-gray-300 mb-1">Description</label>
-                <textarea
-                  rows={3}
-                  value={siteContent.rd.heroDesc}
-                  onChange={(e) =>
-                    setSiteContent({
-                      ...siteContent,
-                      rd: { ...siteContent.rd, heroDesc: e.target.value }
-                    })
-                  }
-                  className="w-full bg-[#1b202c] border border-white/15 rounded-xl px-3 py-2 text-xs text-gray-300"
-                />
-              </div>
-            </div>
+              {/* Pillars */}
+              <div className="space-y-4 pt-4 border-t border-gray-100">
+                <h3 className="text-sm font-bold text-gray-900">Core Technology Pillars</h3>
+                <div className="space-y-4">
+                  {siteContent.rd.pillars.map((pillar, idx) => (
+                    <div key={idx} className="bg-[#f8f9fc] border border-gray-200/80 rounded-2xl p-5 space-y-3">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-[11px] text-gray-500 mb-1">Pillar Title</label>
+                          <input
+                            type="text"
+                            value={pillar.title}
+                            onChange={(e) => {
+                              const newPillars = [...siteContent.rd.pillars];
+                              newPillars[idx] = { ...newPillars[idx], title: e.target.value };
+                              setSiteContent({
+                                ...siteContent,
+                                rd: { ...siteContent.rd, pillars: newPillars }
+                              });
+                            }}
+                            className="w-full bg-white border border-gray-200 rounded-xl px-3 py-1.5 text-xs text-gray-900 font-bold"
+                          />
+                        </div>
 
-            {/* 4 Pillars */}
-            <div className="bg-[#12151f] border border-white/10 rounded-2xl p-6 space-y-4">
-              <h3 className="text-sm font-bold text-white">Four R & D Pillars</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {siteContent.rd.pillars.map((pil, idx) => (
-                  <div key={idx} className="bg-black/40 border border-white/10 rounded-xl p-4 space-y-3">
-                    <input
-                      type="text"
-                      value={pil.title}
-                      onChange={(e) => {
-                        const newPillars = [...siteContent.rd.pillars];
-                        newPillars[idx] = { ...newPillars[idx], title: e.target.value };
-                        setSiteContent({
-                          ...siteContent,
-                          rd: { ...siteContent.rd, pillars: newPillars }
-                        });
-                      }}
-                      className="w-full bg-[#1b202c] border border-white/15 rounded-lg px-2.5 py-1.5 text-xs text-white font-bold"
-                    />
+                        <div>
+                          <label className="block text-[11px] text-gray-500 mb-1">Subtitle</label>
+                          <input
+                            type="text"
+                            value={pillar.subtitle}
+                            onChange={(e) => {
+                              const newPillars = [...siteContent.rd.pillars];
+                              newPillars[idx] = { ...newPillars[idx], subtitle: e.target.value };
+                              setSiteContent({
+                                ...siteContent,
+                                rd: { ...siteContent.rd, pillars: newPillars }
+                              });
+                            }}
+                            className="w-full bg-white border border-gray-200 rounded-xl px-3 py-1.5 text-xs text-brand-blue font-semibold"
+                          />
+                        </div>
+                      </div>
 
-                    <input
-                      type="text"
-                      value={pil.subtitle}
-                      onChange={(e) => {
-                        const newPillars = [...siteContent.rd.pillars];
-                        newPillars[idx] = { ...newPillars[idx], subtitle: e.target.value };
-                        setSiteContent({
-                          ...siteContent,
-                          rd: { ...siteContent.rd, pillars: newPillars }
-                        });
-                      }}
-                      className="w-full bg-[#1b202c] border border-white/15 rounded-lg px-2.5 py-1 text-xs text-cyan-300 font-semibold"
-                    />
-
-                    <textarea
-                      rows={3}
-                      value={pil.desc}
-                      onChange={(e) => {
-                        const newPillars = [...siteContent.rd.pillars];
-                        newPillars[idx] = { ...newPillars[idx], desc: e.target.value };
-                        setSiteContent({
-                          ...siteContent,
-                          rd: { ...siteContent.rd, pillars: newPillars }
-                        });
-                      }}
-                      className="w-full bg-[#1b202c] border border-white/15 rounded-lg px-2.5 py-1.5 text-xs text-gray-300"
-                    />
-                  </div>
-                ))}
+                      <div>
+                        <label className="block text-[11px] text-gray-500 mb-1">Technical Overview</label>
+                        <textarea
+                          rows={3}
+                          value={pillar.desc}
+                          onChange={(e) => {
+                            const newPillars = [...siteContent.rd.pillars];
+                            newPillars[idx] = { ...newPillars[idx], desc: e.target.value };
+                            setSiteContent({
+                              ...siteContent,
+                              rd: { ...siteContent.rd, pillars: newPillars }
+                            });
+                          }}
+                          className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-700 font-light"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
         )}
 
         {/* =========================================================================
-            TAB 4: ABOUT PAGE EDITOR
+            TAB 6: ABOUT PAGE CONTENT, CEO & LEADERSHIP TEAM EDITOR
             ========================================================================= */}
         {activeTab === 'about' && (
-          <div className="space-y-6 max-w-4xl">
+          <div className="space-y-6 max-w-5xl">
             <div>
-              <h2 className="text-xl font-bold text-white">About Page Content & Leadership Editor</h2>
-              <p className="text-xs text-gray-400">
-                Update company vision, mission values, historical timeline milestones, and executive leadership profiles.
+              <h2 className="text-xl font-bold text-gray-900">About Page Content, CEO &amp; Leadership Editor</h2>
+              <p className="text-xs text-gray-500 font-light">
+                Update company vision, mission values, historical timeline milestones, executive CEO spotlight, team profiles, and career openings.
               </p>
             </div>
 
             {/* Core Values */}
-            <div className="bg-[#12151f] border border-white/10 rounded-2xl p-6 space-y-4">
-              <h3 className="text-sm font-bold text-white">Core Values</h3>
+            <div className="bg-white border border-gray-200/90 rounded-2xl p-6 sm:p-8 space-y-4 shadow-sm">
+              <h3 className="text-sm font-bold text-gray-900">Core Values</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {siteContent.about.coreValues.map((val, idx) => (
-                  <div key={idx} className="bg-black/40 border border-white/10 rounded-xl p-4 space-y-2">
+                  <div key={idx} className="bg-[#f8f9fc] border border-gray-200/80 rounded-2xl p-4 space-y-2">
                     <input
                       type="text"
                       value={val.title}
@@ -1374,7 +1612,7 @@ export default function AdminDashboardPage() {
                           about: { ...siteContent.about, coreValues: updated }
                         });
                       }}
-                      className="w-full bg-[#1b202c] border border-white/15 rounded-lg px-2.5 py-1.5 text-xs text-white font-bold"
+                      className="w-full bg-white border border-gray-200 rounded-xl px-3 py-1.5 text-xs text-gray-900 font-bold"
                     />
                     <textarea
                       rows={2}
@@ -1387,7 +1625,7 @@ export default function AdminDashboardPage() {
                           about: { ...siteContent.about, coreValues: updated }
                         });
                       }}
-                      className="w-full bg-[#1b202c] border border-white/15 rounded-lg px-2.5 py-1.5 text-xs text-gray-300"
+                      className="w-full bg-white border border-gray-200 rounded-xl px-3 py-1.5 text-xs text-gray-600 font-light"
                     />
                   </div>
                 ))}
@@ -1395,11 +1633,11 @@ export default function AdminDashboardPage() {
             </div>
 
             {/* Milestones */}
-            <div className="bg-[#12151f] border border-white/10 rounded-2xl p-6 space-y-4">
-              <h3 className="text-sm font-bold text-white">Company Milestones</h3>
+            <div className="bg-white border border-gray-200/90 rounded-2xl p-6 sm:p-8 space-y-4 shadow-sm">
+              <h3 className="text-sm font-bold text-gray-900">Company Milestones</h3>
               <div className="space-y-3">
                 {siteContent.about.milestones.map((m, idx) => (
-                  <div key={idx} className="bg-black/40 border border-white/10 rounded-xl p-4 flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+                  <div key={idx} className="bg-[#f8f9fc] border border-gray-200/80 rounded-2xl p-4 flex flex-col sm:flex-row gap-3 items-start sm:items-center">
                     <input
                       type="text"
                       value={m.year}
@@ -1411,7 +1649,7 @@ export default function AdminDashboardPage() {
                           about: { ...siteContent.about, milestones: updated }
                         });
                       }}
-                      className="w-24 bg-[#1b202c] border border-white/15 rounded-lg px-3 py-1.5 text-xs text-cyan-400 font-bold font-mono"
+                      className="w-24 bg-white border border-gray-200 rounded-xl px-3 py-1.5 text-xs text-brand-blue font-bold font-mono"
                     />
                     <input
                       type="text"
@@ -1424,63 +1662,762 @@ export default function AdminDashboardPage() {
                           about: { ...siteContent.about, milestones: updated }
                         });
                       }}
-                      className="flex-1 bg-[#1b202c] border border-white/15 rounded-lg px-3 py-1.5 text-xs text-white font-bold"
+                      className="flex-1 bg-white border border-gray-200 rounded-xl px-3 py-1.5 text-xs text-gray-900 font-bold"
                     />
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Leadership Profiles */}
-            <div className="bg-[#12151f] border border-white/10 rounded-2xl p-6 space-y-4">
-              <h3 className="text-sm font-bold text-white">Executive Leadership Team</h3>
-              <div className="space-y-4">
-                {siteContent.about.leadership.map((lead, idx) => (
-                  <div key={idx} className="bg-black/40 border border-white/10 rounded-xl p-4 space-y-3">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <input
-                        type="text"
-                        value={lead.name}
-                        onChange={(e) => {
-                          const updated = [...siteContent.about.leadership];
-                          updated[idx] = { ...updated[idx], name: e.target.value };
-                          setSiteContent({
-                            ...siteContent,
-                            about: { ...siteContent.about, leadership: updated }
-                          });
-                        }}
-                        placeholder="Executive Name"
-                        className="w-full bg-[#1b202c] border border-white/15 rounded-lg px-3 py-1.5 text-xs text-white font-bold"
-                      />
-                      <input
-                        type="text"
-                        value={lead.role}
-                        onChange={(e) => {
-                          const updated = [...siteContent.about.leadership];
-                          updated[idx] = { ...updated[idx], role: e.target.value };
-                          setSiteContent({
-                            ...siteContent,
-                            about: { ...siteContent.about, leadership: updated }
-                          });
-                        }}
-                        placeholder="Title / Role"
-                        className="w-full bg-[#1b202c] border border-white/15 rounded-lg px-3 py-1.5 text-xs text-cyan-300"
-                      />
-                    </div>
-                    <textarea
-                      rows={2}
-                      value={lead.bio}
+            {/* CEO Spotlight Editor */}
+            <div className="bg-white border border-gray-200/90 rounded-2xl p-6 sm:p-8 space-y-5 shadow-sm">
+              <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+                <h3 className="text-sm font-bold text-gray-900 flex items-center space-x-2">
+                  <Sparkles className="w-4 h-4 text-brand-blue" />
+                  <span>CEO Spotlight &amp; Executive Philosophy</span>
+                </h3>
+                <span className="text-[11px] font-mono text-brand-blue bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-200">
+                  Featured Executive Card
+                </span>
+              </div>
+
+              {/* CEO Portrait Media Upload Zone */}
+              <div className="space-y-2">
+                <MediaUploadZone
+                  label="CEO Portrait / Keynote Photo (Upload, Drag & Drop, or URL)"
+                  description="High-resolution executive portrait or keynote stage photography"
+                  value={siteContent.about?.ceo?.img || '/uploads/images/20261029/33d570751012965d2455b2f1c9a6d43d.jpg'}
+                  onChange={(url) => {
+                    const currentCeo = siteContent.about?.ceo || {
+                      name: 'Deng Taihua',
+                      role: 'Chairman of the Board & Chief Executive Officer',
+                      quote: '',
+                      bio: '',
+                      achievements: [],
+                      img: '',
+                      stats: []
+                    };
+                    setSiteContent({
+                      ...siteContent,
+                      about: {
+                        ...siteContent.about,
+                        ceo: { ...currentCeo, img: url }
+                      }
+                    });
+                  }}
+                  mediaType="image"
+                />
+              </div>
+
+              <div className="bg-[#f8f9fc] border border-gray-200/80 rounded-2xl p-5 space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-700 mb-1">CEO Full Name</label>
+                    <input
+                      type="text"
+                      value={siteContent.about?.ceo?.name || 'Deng Taihua'}
                       onChange={(e) => {
-                        const updated = [...siteContent.about.leadership];
-                        updated[idx] = { ...updated[idx], bio: e.target.value };
+                        const currentCeo = siteContent.about?.ceo || {
+                          name: 'Deng Taihua',
+                          role: 'Chairman of the Board & Chief Executive Officer',
+                          quote: '',
+                          bio: '',
+                          achievements: [],
+                          img: '/uploads/images/20261029/33d570751012965d2455b2f1c9a6d43d.jpg',
+                          stats: []
+                        };
                         setSiteContent({
                           ...siteContent,
-                          about: { ...siteContent.about, leadership: updated }
+                          about: {
+                            ...siteContent.about,
+                            ceo: { ...currentCeo, name: e.target.value }
+                          }
                         });
                       }}
-                      placeholder="Executive Biography"
-                      className="w-full bg-[#1b202c] border border-white/15 rounded-lg px-3 py-1.5 text-xs text-gray-300"
+                      className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-900 font-bold"
                     />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-700 mb-1">Executive Title</label>
+                    <input
+                      type="text"
+                      value={siteContent.about?.ceo?.role || 'Chairman of the Board & Chief Executive Officer'}
+                      onChange={(e) => {
+                        const currentCeo = siteContent.about?.ceo || {
+                          name: 'Deng Taihua',
+                          role: 'Chairman of the Board & Chief Executive Officer',
+                          quote: '',
+                          bio: '',
+                          achievements: [],
+                          img: '/uploads/images/20261029/33d570751012965d2455b2f1c9a6d43d.jpg',
+                          stats: []
+                        };
+                        setSiteContent({
+                          ...siteContent,
+                          about: {
+                            ...siteContent.about,
+                            ceo: { ...currentCeo, role: e.target.value }
+                          }
+                        });
+                      }}
+                      className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs text-brand-blue font-semibold"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">Executive Vision Quote</label>
+                  <textarea
+                    rows={3}
+                    value={siteContent.about?.ceo?.quote || ''}
+                    onChange={(e) => {
+                      const currentCeo = siteContent.about?.ceo || {
+                        name: 'Deng Taihua',
+                        role: 'Chairman of the Board & Chief Executive Officer',
+                        quote: '',
+                        bio: '',
+                        achievements: [],
+                        img: '/uploads/images/20261029/33d570751012965d2455b2f1c9a6d43d.jpg',
+                        stats: []
+                      };
+                      setSiteContent({
+                        ...siteContent,
+                        about: {
+                          ...siteContent.about,
+                          ceo: { ...currentCeo, quote: e.target.value }
+                        }
+                      });
+                    }}
+                    placeholder="Enter CEO visionary quote..."
+                    className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-800"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">Executive Biography</label>
+                  <textarea
+                    rows={4}
+                    value={siteContent.about?.ceo?.bio || ''}
+                    onChange={(e) => {
+                      const currentCeo = siteContent.about?.ceo || {
+                        name: 'Deng Taihua',
+                        role: 'Chairman of the Board & Chief Executive Officer',
+                        quote: '',
+                        bio: '',
+                        achievements: [],
+                        img: '/uploads/images/20261029/33d570751012965d2455b2f1c9a6d43d.jpg',
+                        stats: []
+                      };
+                      setSiteContent({
+                        ...siteContent,
+                        about: {
+                          ...siteContent.about,
+                          ceo: { ...currentCeo, bio: e.target.value }
+                        }
+                      });
+                    }}
+                    placeholder="Enter CEO career and background narrative..."
+                    className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-700 font-light"
+                  />
+                </div>
+
+                {/* CEO Key Stats / Metric Badges */}
+                <div className="space-y-2 pt-2 border-t border-gray-200">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-xs font-semibold text-gray-700">
+                      CEO Spotlight Metric Badges
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const currentCeo = siteContent.about?.ceo || {
+                          name: 'Deng Taihua',
+                          role: 'Chairman of the Board & Chief Executive Officer',
+                          quote: '',
+                          bio: '',
+                          achievements: [],
+                          img: '/uploads/images/20261029/33d570751012965d2455b2f1c9a6d43d.jpg',
+                          stats: []
+                        };
+                        const updatedStats = [...(currentCeo.stats || []), { label: 'New Metric', value: '100+' }];
+                        setSiteContent({
+                          ...siteContent,
+                          about: {
+                            ...siteContent.about,
+                            ceo: { ...currentCeo, stats: updatedStats }
+                          }
+                        });
+                      }}
+                      className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-blue-50 text-brand-blue border border-blue-200 hover:bg-blue-100 transition-colors"
+                    >
+                      <Plus className="w-3 h-3" />
+                      <span>Add Metric</span>
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    {((siteContent.about?.ceo?.stats) || [
+                      { label: "Robots Produced", value: "20,000+" },
+                      { label: "Core AI Patents", value: "300+" },
+                      { label: "R&D Engineers", value: "80%" }
+                    ]).map((stat, sIdx) => (
+                      <div key={sIdx} className="bg-white border border-gray-200 rounded-xl p-3 space-y-1.5 relative shadow-sm">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const currentCeo = siteContent.about?.ceo || {
+                              name: 'Deng Taihua',
+                              role: 'Chairman of the Board & Chief Executive Officer',
+                              quote: '',
+                              bio: '',
+                              achievements: [],
+                              img: '',
+                              stats: []
+                            };
+                            const updatedStats = [...(currentCeo.stats || [])];
+                            updatedStats.splice(sIdx, 1);
+                            setSiteContent({
+                              ...siteContent,
+                              about: {
+                                ...siteContent.about,
+                                ceo: { ...currentCeo, stats: updatedStats }
+                              }
+                            });
+                          }}
+                          className="absolute top-2 right-2 text-gray-400 hover:text-red-500 p-1"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                        <input
+                          type="text"
+                          value={stat.value}
+                          onChange={(e) => {
+                            const currentCeo = siteContent.about?.ceo || {
+                              name: 'Deng Taihua',
+                              role: 'Chairman of the Board & Chief Executive Officer',
+                              quote: '',
+                              bio: '',
+                              achievements: [],
+                              img: '',
+                              stats: []
+                            };
+                            const updatedStats = [...(currentCeo.stats || [])];
+                            updatedStats[sIdx] = { ...updatedStats[sIdx], value: e.target.value };
+                            setSiteContent({
+                              ...siteContent,
+                              about: {
+                                ...siteContent.about,
+                                ceo: { ...currentCeo, stats: updatedStats }
+                              }
+                            });
+                          }}
+                          placeholder="e.g. 20,000+"
+                          className="w-24 bg-[#f8f9fc] border border-gray-200 rounded-lg px-2 py-1 text-xs text-gray-900 font-bold"
+                        />
+                        <input
+                          type="text"
+                          value={stat.label}
+                          onChange={(e) => {
+                            const currentCeo = siteContent.about?.ceo || {
+                              name: 'Deng Taihua',
+                              role: 'Chairman of the Board & Chief Executive Officer',
+                              quote: '',
+                              bio: '',
+                              achievements: [],
+                              img: '',
+                              stats: []
+                            };
+                            const updatedStats = [...(currentCeo.stats || [])];
+                            updatedStats[sIdx] = { ...updatedStats[sIdx], label: e.target.value };
+                            setSiteContent({
+                              ...siteContent,
+                              about: {
+                                ...siteContent.about,
+                                ceo: { ...currentCeo, stats: updatedStats }
+                              }
+                            });
+                          }}
+                          placeholder="Metric Name"
+                          className="w-full bg-[#f8f9fc] border border-gray-200 rounded-lg px-2 py-1 text-[11px] text-gray-600"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* CEO Achievements List */}
+                <div className="space-y-2 pt-2 border-t border-gray-200">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-xs font-semibold text-gray-700">
+                      Strategic Milestones Under Leadership
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const currentCeo = siteContent.about?.ceo || {
+                          name: 'Deng Taihua',
+                          role: 'Chairman of the Board & Chief Executive Officer',
+                          quote: '',
+                          bio: '',
+                          achievements: [],
+                          img: '',
+                          stats: []
+                        };
+                        const updatedAch = [...(currentCeo.achievements || []), 'New Strategic Milestone'];
+                        setSiteContent({
+                          ...siteContent,
+                          about: {
+                            ...siteContent.about,
+                            ceo: { ...currentCeo, achievements: updatedAch }
+                          }
+                        });
+                      }}
+                      className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-blue-50 text-brand-blue border border-blue-200 hover:bg-blue-100 transition-colors"
+                    >
+                      <Plus className="w-3 h-3" />
+                      <span>Add Milestone</span>
+                    </button>
+                  </div>
+
+                  <div className="space-y-2">
+                    {((siteContent.about?.ceo?.achievements) || [
+                      "Spearheaded HUTARK's scaling to 20,000+ general-purpose embodied robots produced",
+                      "Architected global expansion across Asian, European, and North American industrial hubs",
+                      "Pioneered enterprise deployments across Tier-1 automotive and cleanroom electronics sectors"
+                    ]).map((ach, aIdx) => (
+                      <div key={aIdx} className="flex items-center space-x-2">
+                        <input
+                          type="text"
+                          value={ach}
+                          onChange={(e) => {
+                            const currentCeo = siteContent.about?.ceo || {
+                              name: 'Deng Taihua',
+                              role: 'Chairman of the Board & Chief Executive Officer',
+                              quote: '',
+                              bio: '',
+                              achievements: [],
+                              img: '',
+                              stats: []
+                            };
+                            const updatedAch = [...(currentCeo.achievements || [])];
+                            updatedAch[aIdx] = e.target.value;
+                            setSiteContent({
+                              ...siteContent,
+                              about: {
+                                ...siteContent.about,
+                                ceo: { ...currentCeo, achievements: updatedAch }
+                              }
+                            });
+                          }}
+                          className="flex-1 bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-xs text-gray-800"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const currentCeo = siteContent.about?.ceo || {
+                              name: 'Deng Taihua',
+                              role: 'Chairman of the Board & Chief Executive Officer',
+                              quote: '',
+                              bio: '',
+                              achievements: [],
+                              img: '',
+                              stats: []
+                            };
+                            const updatedAch = [...(currentCeo.achievements || [])];
+                            updatedAch.splice(aIdx, 1);
+                            setSiteContent({
+                              ...siteContent,
+                              about: {
+                                ...siteContent.about,
+                                ceo: { ...currentCeo, achievements: updatedAch }
+                              }
+                            });
+                          }}
+                          className="p-1.5 rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-500 transition-colors"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Our Leadership & Engineering Team Editor */}
+            <div className="bg-white border border-gray-200/90 rounded-2xl p-6 sm:p-8 space-y-5 shadow-sm">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-100 pb-4">
+                <div>
+                  <h3 className="text-sm font-bold text-gray-900 flex items-center space-x-2">
+                    <Users className="w-4 h-4 text-brand-blue" />
+                    <span>Our Leadership &amp; Engineering Team</span>
+                  </h3>
+                  <p className="text-xs text-gray-500 font-light">
+                    Configure portrait images, roles, bios, and credentials for all team leaders.
+                  </p>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <span className="text-xs text-gray-500 font-mono">
+                    {(siteContent.about?.leadership || []).length} Members
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const newMember = {
+                        name: "New Team Member",
+                        role: "Principal Systems Engineer",
+                        department: "Robotics R&D",
+                        bio: "Pioneering physical artificial intelligence and hardware-software integration for general-purpose humanoids.",
+                        img: "/uploads/team/peng_zhihui.svg",
+                        tags: ["Robotics", "Systems"],
+                        education: "Ph.D. / M.S. in Engineering"
+                      };
+                      setSiteContent({
+                        ...siteContent,
+                        about: {
+                          ...siteContent.about,
+                          leadership: [...(siteContent.about?.leadership || []), newMember]
+                        }
+                      });
+                    }}
+                    className="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-brand-blue hover:bg-blue-700 text-white text-xs font-bold shadow-sm transition-colors cursor-pointer"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>Add Team Member</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="space-y-5">
+                {(siteContent.about?.leadership || []).map((lead, idx) => (
+                  <div key={idx} className="bg-[#f8f9fc] border border-gray-200/80 rounded-2xl p-5 space-y-4">
+                    {/* Member Header Bar */}
+                    <div className="flex items-center justify-between border-b border-gray-200 pb-3">
+                      <div className="flex items-center space-x-2">
+                        <span className="px-2.5 py-0.5 rounded-md text-[10px] font-mono font-bold bg-blue-50 text-brand-blue border border-blue-200">
+                          Member 0{idx + 1}
+                        </span>
+                        <span className="text-xs font-bold text-gray-900 truncate max-w-[200px]">
+                          {lead.name}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center space-x-1">
+                        {idx > 0 && (
+                          <button
+                            type="button"
+                            title="Move Up"
+                            onClick={() => {
+                              const updated = [...(siteContent.about?.leadership || [])];
+                              const temp = updated[idx - 1];
+                              updated[idx - 1] = updated[idx];
+                              updated[idx] = temp;
+                              setSiteContent({
+                                ...siteContent,
+                                about: { ...siteContent.about, leadership: updated }
+                              });
+                            }}
+                            className="p-1 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-200 transition-colors"
+                          >
+                            <ArrowUp className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                        {idx < (siteContent.about?.leadership || []).length - 1 && (
+                          <button
+                            type="button"
+                            title="Move Down"
+                            onClick={() => {
+                              const updated = [...(siteContent.about?.leadership || [])];
+                              const temp = updated[idx + 1];
+                              updated[idx + 1] = updated[idx];
+                              updated[idx] = temp;
+                              setSiteContent({
+                                ...siteContent,
+                                about: { ...siteContent.about, leadership: updated }
+                              });
+                            }}
+                            className="p-1 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-200 transition-colors"
+                          >
+                            <ArrowDown className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          title="Delete Member"
+                          onClick={() => {
+                            const updated = [...(siteContent.about?.leadership || [])];
+                            updated.splice(idx, 1);
+                            setSiteContent({
+                              ...siteContent,
+                              about: { ...siteContent.about, leadership: updated }
+                            });
+                          }}
+                          className="p-1 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors ml-1"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Member Image & Details Grid */}
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+                      {/* Left: Image Upload & Preview */}
+                      <div className="lg:col-span-5 space-y-3">
+                        <MediaUploadZone
+                          label="Portrait Photo (Upload or URL)"
+                          description="Upload member photo, headshot, or paste SVG/image link"
+                          value={lead.img || ''}
+                          onChange={(url) => {
+                            const updated = [...(siteContent.about?.leadership || [])];
+                            updated[idx] = { ...updated[idx], img: url };
+                            setSiteContent({
+                              ...siteContent,
+                              about: { ...siteContent.about, leadership: updated }
+                            });
+                          }}
+                          mediaType="image"
+                        />
+                      </div>
+
+                      {/* Right: Core Fields */}
+                      <div className="lg:col-span-7 space-y-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-[11px] text-gray-600 mb-1">Full Name</label>
+                            <input
+                              type="text"
+                              value={lead.name}
+                              onChange={(e) => {
+                                const updated = [...(siteContent.about?.leadership || [])];
+                                updated[idx] = { ...updated[idx], name: e.target.value };
+                                setSiteContent({
+                                  ...siteContent,
+                                  about: { ...siteContent.about, leadership: updated }
+                                });
+                              }}
+                              className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-xs text-gray-900 font-bold"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[11px] text-gray-600 mb-1">Title / Executive Role</label>
+                            <input
+                              type="text"
+                              value={lead.role}
+                              onChange={(e) => {
+                                const updated = [...(siteContent.about?.leadership || [])];
+                                updated[idx] = { ...updated[idx], role: e.target.value };
+                                setSiteContent({
+                                  ...siteContent,
+                                  about: { ...siteContent.about, leadership: updated }
+                                });
+                              }}
+                              className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-xs text-brand-blue font-semibold"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-[11px] text-gray-600 mb-1">Department</label>
+                            <input
+                              type="text"
+                              value={lead.department || ''}
+                              onChange={(e) => {
+                                const updated = [...(siteContent.about?.leadership || [])];
+                                updated[idx] = { ...updated[idx], department: e.target.value };
+                                setSiteContent({
+                                  ...siteContent,
+                                  about: { ...siteContent.about, leadership: updated }
+                                });
+                              }}
+                              placeholder="e.g. Hardware Dynamics"
+                              className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-xs text-gray-700"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[11px] text-gray-600 mb-1">Education / Credentials</label>
+                            <input
+                              type="text"
+                              value={lead.education || ''}
+                              onChange={(e) => {
+                                const updated = [...(siteContent.about?.leadership || [])];
+                                updated[idx] = { ...updated[idx], education: e.target.value };
+                                setSiteContent({
+                                  ...siteContent,
+                                  about: { ...siteContent.about, leadership: updated }
+                                });
+                              }}
+                              placeholder="e.g. Ph.D. in Robotics, Stanford"
+                              className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-xs text-gray-700"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-[11px] text-gray-600 mb-1">
+                            Specialty Tags (Comma-separated)
+                          </label>
+                          <input
+                            type="text"
+                            value={(lead.tags || []).join(', ')}
+                            onChange={(e) => {
+                              const updated = [...(siteContent.about?.leadership || [])];
+                              const tagsArray = e.target.value
+                                .split(',')
+                                .map((t) => t.trim())
+                                .filter((t) => t.length > 0);
+                              updated[idx] = { ...updated[idx], tags: tagsArray };
+                              setSiteContent({
+                                ...siteContent,
+                                about: { ...siteContent.about, leadership: updated }
+                              });
+                            }}
+                            placeholder="e.g. AHA3 Actuation, Bipedal Control, Embedded HW"
+                            className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-xs text-gray-800 font-mono"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Member Biography */}
+                    <div>
+                      <label className="block text-[11px] text-gray-600 mb-1">Biography Narrative</label>
+                      <textarea
+                        rows={3}
+                        value={lead.bio}
+                        onChange={(e) => {
+                          const updated = [...(siteContent.about?.leadership || [])];
+                          updated[idx] = { ...updated[idx], bio: e.target.value };
+                          setSiteContent({
+                            ...siteContent,
+                            about: { ...siteContent.about, leadership: updated }
+                          });
+                        }}
+                        className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-700 font-light"
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Open Roles & Careers Editor */}
+            <div className="bg-white border border-gray-200/90 rounded-2xl p-6 sm:p-8 space-y-4 shadow-sm">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-bold text-gray-900 flex items-center space-x-2">
+                  <Briefcase className="w-4 h-4 text-brand-blue" />
+                  <span>Opening Roles (Careers Section)</span>
+                </h3>
+                <span className="text-xs text-gray-500 font-mono">
+                  {(siteContent.about?.openRoles || []).length} Roles Active
+                </span>
+              </div>
+
+              <div className="space-y-4">
+                {(siteContent.about?.openRoles || []).map((role, idx) => (
+                  <div key={role.id || idx} className="bg-[#f8f9fc] border border-gray-200/80 rounded-2xl p-4 space-y-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-[11px] text-gray-600 mb-1">Job Title</label>
+                        <input
+                          type="text"
+                          value={role.title}
+                          onChange={(e) => {
+                            const updated = [...(siteContent.about?.openRoles || [])];
+                            updated[idx] = { ...updated[idx], title: e.target.value };
+                            setSiteContent({
+                              ...siteContent,
+                              about: { ...siteContent.about, openRoles: updated }
+                            });
+                          }}
+                          className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-xs text-gray-900 font-bold"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] text-gray-600 mb-1">Department</label>
+                        <input
+                          type="text"
+                          value={role.department}
+                          onChange={(e) => {
+                            const updated = [...(siteContent.about?.openRoles || [])];
+                            updated[idx] = { ...updated[idx], department: e.target.value };
+                            setSiteContent({
+                              ...siteContent,
+                              about: { ...siteContent.about, openRoles: updated }
+                            });
+                          }}
+                          className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-xs text-brand-blue font-semibold"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <div>
+                        <label className="block text-[11px] text-gray-600 mb-1">Location</label>
+                        <input
+                          type="text"
+                          value={role.location}
+                          onChange={(e) => {
+                            const updated = [...(siteContent.about?.openRoles || [])];
+                            updated[idx] = { ...updated[idx], location: e.target.value };
+                            setSiteContent({
+                              ...siteContent,
+                              about: { ...siteContent.about, openRoles: updated }
+                            });
+                          }}
+                          className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-xs text-gray-700"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] text-gray-600 mb-1">Employment Type</label>
+                        <input
+                          type="text"
+                          value={role.type}
+                          onChange={(e) => {
+                            const updated = [...(siteContent.about?.openRoles || [])];
+                            updated[idx] = { ...updated[idx], type: e.target.value };
+                            setSiteContent({
+                              ...siteContent,
+                              about: { ...siteContent.about, openRoles: updated }
+                            });
+                          }}
+                          className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-xs text-gray-700"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] text-gray-600 mb-1">Experience</label>
+                        <input
+                          type="text"
+                          value={role.experience}
+                          onChange={(e) => {
+                            const updated = [...(siteContent.about?.openRoles || [])];
+                            updated[idx] = { ...updated[idx], experience: e.target.value };
+                            setSiteContent({
+                              ...siteContent,
+                              about: { ...siteContent.about, openRoles: updated }
+                            });
+                          }}
+                          className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-xs text-gray-700"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] text-gray-600 mb-1">Summary Description</label>
+                      <textarea
+                        rows={2}
+                        value={role.summary}
+                        onChange={(e) => {
+                          const updated = [...(siteContent.about?.openRoles || [])];
+                          updated[idx] = { ...updated[idx], summary: e.target.value };
+                          setSiteContent({
+                            ...siteContent,
+                            about: { ...siteContent.about, openRoles: updated }
+                          });
+                        }}
+                        className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-xs text-gray-700 font-light"
+                      />
+                    </div>
                   </div>
                 ))}
               </div>
@@ -1489,18 +2426,18 @@ export default function AdminDashboardPage() {
         )}
 
         {/* =========================================================================
-            TAB 5: GLOBAL BRANDING & THEME
+            TAB 7: GLOBAL BRANDING & THEME
             ========================================================================= */}
         {activeTab === 'global' && (
           <div className="space-y-6 max-w-3xl">
             <div>
-              <h2 className="text-xl font-bold text-white">Global Branding & Theme Settings</h2>
-              <p className="text-xs text-gray-400">
+              <h2 className="text-xl font-bold text-gray-900">Global Branding &amp; Theme Settings</h2>
+              <p className="text-xs text-gray-500 font-light">
                 Configure corporate identity, brand logo upload, global typography, accent color, and legal copyright.
               </p>
             </div>
 
-            <div className="bg-[#12151f] border border-white/10 rounded-2xl p-6 space-y-6">
+            <div className="bg-white border border-gray-200/90 rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
               {/* Site Logo Drag & Drop */}
               <MediaUploadZone
                 label="Official Site Logo"
@@ -1517,7 +2454,7 @@ export default function AdminDashboardPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-gray-300 mb-1.5">Site Name / Brand Title</label>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1.5">Site Name / Brand Title</label>
                   <input
                     type="text"
                     value={siteContent.global.siteName}
@@ -1527,12 +2464,12 @@ export default function AdminDashboardPage() {
                         global: { ...siteContent.global, siteName: e.target.value }
                       })
                     }
-                    className="w-full bg-[#1b202c] border border-white/15 rounded-xl px-3 py-2 text-xs text-white font-bold"
+                    className="w-full bg-[#f8f9fc] border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-900 font-bold focus:bg-white"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-gray-300 mb-1.5">Global Font Family</label>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1.5">Global Font Family</label>
                   <input
                     type="text"
                     value={siteContent.global.fontFamily}
@@ -1542,12 +2479,12 @@ export default function AdminDashboardPage() {
                         global: { ...siteContent.global, fontFamily: e.target.value }
                       })
                     }
-                    className="w-full bg-[#1b202c] border border-white/15 rounded-xl px-3 py-2 text-xs text-white font-mono"
+                    className="w-full bg-[#f8f9fc] border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-900 font-mono focus:bg-white"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-gray-300 mb-1.5">Primary Accent Color</label>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1.5">Primary Accent Color</label>
                   <div className="flex items-center space-x-3">
                     <input
                       type="color"
@@ -1569,13 +2506,13 @@ export default function AdminDashboardPage() {
                           global: { ...siteContent.global, accentColor: e.target.value }
                         })
                       }
-                      className="w-32 bg-[#1b202c] border border-white/15 rounded-xl px-3 py-2 text-xs text-white font-mono"
+                      className="w-32 bg-[#f8f9fc] border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-900 font-mono focus:bg-white"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-gray-300 mb-1.5">Contact Support Email</label>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1.5">Contact Support Email</label>
                   <input
                     type="email"
                     value={siteContent.global.contactEmail}
@@ -1585,13 +2522,13 @@ export default function AdminDashboardPage() {
                         global: { ...siteContent.global, contactEmail: e.target.value }
                       })
                     }
-                    className="w-full bg-[#1b202c] border border-white/15 rounded-xl px-3 py-2 text-xs text-white"
+                    className="w-full bg-[#f8f9fc] border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-900 focus:bg-white"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-gray-300 mb-1.5">Footer Copyright Notice</label>
+                <label className="block text-xs font-semibold text-gray-700 mb-1.5">Footer Copyright Notice</label>
                 <input
                   type="text"
                   value={siteContent.global.footerCopyright}
@@ -1601,7 +2538,7 @@ export default function AdminDashboardPage() {
                       global: { ...siteContent.global, footerCopyright: e.target.value }
                     })
                   }
-                  className="w-full bg-[#1b202c] border border-white/15 rounded-xl px-3 py-2 text-xs text-white font-mono"
+                  className="w-full bg-[#f8f9fc] border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-900 font-mono focus:bg-white"
                 />
               </div>
 
@@ -1609,7 +2546,7 @@ export default function AdminDashboardPage() {
                 <button
                   type="button"
                   onClick={handleResetSiteContent}
-                  className="text-xs text-red-400 hover:text-red-300 flex items-center space-x-1"
+                  className="text-xs text-red-600 hover:text-red-700 flex items-center space-x-1"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
                   <span>Reset All Site Content to Factory Default</span>
@@ -1620,18 +2557,18 @@ export default function AdminDashboardPage() {
         )}
 
         {/* =========================================================================
-            TAB 6: CENTRAL MEDIA DROPZONE / FILE MANAGER
+            TAB 8: CENTRAL MEDIA DROPZONE / FILE MANAGER
             ========================================================================= */}
         {activeTab === 'media' && (
           <div className="space-y-6 max-w-4xl">
             <div>
-              <h2 className="text-xl font-bold text-white">Central Media Upload Dropzone</h2>
-              <p className="text-xs text-gray-400">
-                Drag and drop any files (images, diagrams, videos, icons) directly from Windows File Explorer onto this dropzone. Files are auto-stored into <code className="text-cyan-300">/uploads/user_uploaded/</code>.
+              <h2 className="text-xl font-bold text-gray-900">Central Media Upload Dropzone</h2>
+              <p className="text-xs text-gray-500 font-light">
+                Drag and drop any files (images, diagrams, videos, icons) directly from Windows File Explorer onto this dropzone.
               </p>
             </div>
 
-            <div className="bg-[#12151f] border border-white/10 rounded-2xl p-6 space-y-6">
+            <div className="bg-white border border-gray-200/90 rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
               <MediaUploadZone
                 label="Direct Media Dropzone"
                 description="Drop any image (PNG, JPG, WebP, SVG) or video (MP4, WebM) here to get instant permanent public URL"
@@ -1646,15 +2583,15 @@ export default function AdminDashboardPage() {
 
               {/* Uploaded Gallery */}
               {uploadedFiles.length > 0 && (
-                <div className="space-y-3 pt-4 border-t border-white/10">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-cyan-400">
+                <div className="space-y-3 pt-4 border-t border-gray-100">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-brand-blue">
                     Recently Uploaded In This Session ({uploadedFiles.length})
                   </h4>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                     {uploadedFiles.map((f, i) => (
-                      <div key={i} className="bg-black/50 border border-white/10 rounded-xl p-3 space-y-2">
-                        <div className="relative h-28 w-full bg-gray-900 rounded-lg overflow-hidden flex items-center justify-center">
+                      <div key={i} className="bg-[#f8f9fc] border border-gray-200 rounded-xl p-3 space-y-2">
+                        <div className="relative h-28 w-full bg-white rounded-lg overflow-hidden flex items-center justify-center border border-gray-100">
                           {f.includes('.mp4') || f.includes('.webm') ? (
                             <video src={f} controls className="w-full h-full object-contain" />
                           ) : (
@@ -1662,12 +2599,12 @@ export default function AdminDashboardPage() {
                           )}
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className="text-[10px] text-gray-400 font-mono truncate max-w-[140px]">{f}</span>
+                          <span className="text-[10px] text-gray-500 font-mono truncate max-w-[140px]">{f}</span>
                           <button
                             onClick={() => handleCopy(f)}
-                            className="text-[11px] bg-blue-600/30 hover:bg-blue-600 text-cyan-300 hover:text-white px-2 py-1 rounded-lg transition-colors flex items-center space-x-1"
+                            className="text-[11px] bg-blue-50 hover:bg-blue-100 text-brand-blue px-2 py-1 rounded-lg transition-colors flex items-center space-x-1 border border-blue-200 font-medium"
                           >
-                            {copiedUrl === f ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                            {copiedUrl === f ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
                             <span>{copiedUrl === f ? 'Copied' : 'Copy'}</span>
                           </button>
                         </div>
@@ -1681,78 +2618,225 @@ export default function AdminDashboardPage() {
         )}
 
         {/* =========================================================================
-            TAB 7: ADMIN SECURITY & CREDENTIALS
+            TAB 9: ADMIN SECURITY & CREDENTIALS
             ========================================================================= */}
         {activeTab === 'security' && (
           <div className="space-y-6 max-w-xl">
             <div>
-              <h2 className="text-xl font-bold text-white">Admin Authentication & Security</h2>
-              <p className="text-xs text-gray-400">
+              <h2 className="text-xl font-bold text-gray-900">Admin Authentication &amp; Security</h2>
+              <p className="text-xs text-gray-500 font-light">
                 Change your secret Admin ID and password to protect website editing privileges.
               </p>
             </div>
 
-            <div className="bg-[#12151f] border border-white/10 rounded-2xl p-6 space-y-6">
+            <div className="bg-white border border-gray-200/90 rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
               <form onSubmit={handleUpdateCreds} className="space-y-4">
                 {credNotice && (
                   <div
                     className={`p-3 rounded-xl text-xs flex items-center space-x-2 ${
                       credNotice.success
-                        ? 'bg-emerald-950/60 border border-emerald-500/40 text-emerald-300'
-                        : 'bg-red-950/60 border border-red-500/40 text-red-300'
+                        ? 'bg-emerald-50 border border-emerald-200 text-emerald-700'
+                        : 'bg-red-50 border border-red-200 text-red-700'
                     }`}
                   >
-                    {credNotice.success ? <CheckCircle className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
+                    {credNotice.success ? <CheckCircle className="w-4 h-4 text-emerald-600" /> : <AlertCircle className="w-4 h-4 text-red-500" />}
                     <span>{credNotice.msg}</span>
                   </div>
                 )}
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-gray-300">New Admin ID / Username</label>
+                  <label className="text-xs font-semibold text-gray-700">New Admin ID / Username</label>
                   <input
                     type="text"
                     value={newAdminId}
                     onChange={(e) => setNewAdminId(e.target.value)}
                     placeholder="Enter new Admin ID"
                     required
-                    className="w-full bg-[#1b202c] border border-white/15 rounded-xl px-4 py-2.5 text-xs text-white"
+                    className="w-full bg-[#f8f9fc] border border-gray-200 rounded-xl px-4 py-2.5 text-xs text-gray-900 focus:bg-white focus:ring-1 focus:ring-brand-blue"
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-gray-300">New Password</label>
+                  <label className="text-xs font-semibold text-gray-700">New Password</label>
                   <input
                     type="password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="Enter new password (min. 4 characters)"
                     required
-                    className="w-full bg-[#1b202c] border border-white/15 rounded-xl px-4 py-2.5 text-xs text-white"
+                    className="w-full bg-[#f8f9fc] border border-gray-200 rounded-xl px-4 py-2.5 text-xs text-gray-900 focus:bg-white focus:ring-1 focus:ring-brand-blue"
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 rounded-xl text-xs transition-colors shadow-md cursor-pointer"
+                  className="w-full bg-brand-blue hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl text-xs transition-colors shadow-sm cursor-pointer"
                 >
                   Update Admin Credentials
                 </button>
               </form>
 
-              <div className="pt-4 border-t border-white/10 flex items-center justify-between">
-                <span className="text-xs text-gray-400">Current Session:</span>
+              <div className="pt-4 border-t border-gray-100 flex items-center justify-between">
+                <span className="text-xs text-gray-500">Current Session:</span>
                 <button
                   onClick={handleLogout}
-                  className="bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 px-4 py-2 rounded-xl text-xs font-bold flex items-center space-x-1.5 transition-colors"
+                  className="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-4 py-2 rounded-xl text-xs font-bold flex items-center space-x-1.5 transition-colors"
                 >
                   <LogOut className="w-3.5 h-3.5" />
-                  <span>Log Out & Lock System</span>
+                  <span>Lock &amp; Exit CMS</span>
                 </button>
               </div>
             </div>
           </div>
         )}
       </main>
+
+      {/* =========================================================================
+          INQUIRY FULL DETAILS & INTERNAL NOTES MODAL - CLEAN WHITE UI
+          ========================================================================= */}
+      {selectedInquiryModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-white border border-gray-200 text-gray-900 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-5 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            {/* Modal Header */}
+            <div className="flex items-start justify-between border-b border-gray-100 pb-4">
+              <div className="space-y-1">
+                <div className="flex items-center space-x-2">
+                  <span className="text-xs font-mono font-bold bg-gray-100 text-gray-700 px-2 py-0.5 rounded border border-gray-200">
+                    #{selectedInquiryModal.id}
+                  </span>
+                  <span className="text-xs text-gray-400">
+                    {new Date(selectedInquiryModal.createdAt).toLocaleString()}
+                  </span>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900">
+                  {selectedInquiryModal.productName ? `${selectedInquiryModal.productName} Inquiry` : 'Enterprise Inquiry'}
+                </h3>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setSelectedInquiryModal(null)}
+                className="p-1.5 rounded-xl text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Quick Status Bar */}
+            <div className="flex items-center justify-between bg-[#f8f9fc] p-3 rounded-2xl border border-gray-200">
+              <span className="text-xs font-semibold text-gray-700">Status Workflow:</span>
+              <div className="flex flex-wrap items-center gap-1.5">
+                {[
+                  { id: 'new', label: 'New' },
+                  { id: 'in_review', label: 'In Review' },
+                  { id: 'contacted', label: 'Contacted' },
+                  { id: 'completed', label: 'Completed' },
+                ].map((st) => (
+                  <button
+                    key={st.id}
+                    type="button"
+                    onClick={() => handleUpdateInquiryStatus(selectedInquiryModal.id, st.id as InquiryStatus)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                      selectedInquiryModal.status === st.id
+                        ? 'bg-brand-blue text-white shadow-sm'
+                        : 'bg-white text-gray-600 hover:text-gray-900 border border-gray-200'
+                    }`}
+                  >
+                    {st.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Customer Details */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-xs">
+              <div className="bg-[#f8f9fc] p-3.5 rounded-xl border border-gray-200/80 space-y-1">
+                <span className="text-[10px] uppercase font-bold text-gray-400">Customer Full Name</span>
+                <div className="font-bold text-gray-900 text-sm">{selectedInquiryModal.name}</div>
+              </div>
+
+              <div className="bg-[#f8f9fc] p-3.5 rounded-xl border border-gray-200/80 space-y-1">
+                <span className="text-[10px] uppercase font-bold text-gray-400">Company / Organization</span>
+                <div className="font-bold text-gray-900 text-sm">{selectedInquiryModal.company}</div>
+              </div>
+
+              <div className="bg-[#f8f9fc] p-3.5 rounded-xl border border-gray-200/80 space-y-1">
+                <span className="text-[10px] uppercase font-bold text-gray-400">Business Email</span>
+                <a href={`mailto:${selectedInquiryModal.email}`} className="font-mono text-brand-blue hover:underline block truncate font-medium">
+                  {selectedInquiryModal.email}
+                </a>
+              </div>
+
+              <div className="bg-[#f8f9fc] p-3.5 rounded-xl border border-gray-200/80 space-y-1">
+                <span className="text-[10px] uppercase font-bold text-gray-400">Direct Contact Phone</span>
+                <div className="font-mono text-gray-700">
+                  {selectedInquiryModal.phone || 'Not provided'}
+                </div>
+              </div>
+
+              <div className="bg-[#f8f9fc] p-3.5 rounded-xl border border-gray-200/80 space-y-1">
+                <span className="text-[10px] uppercase font-bold text-gray-400">Target Robot Model</span>
+                <div className="font-bold text-brand-blue">{selectedInquiryModal.productName || 'General Inquiry'}</div>
+              </div>
+
+              <div className="bg-[#f8f9fc] p-3.5 rounded-xl border border-gray-200/80 space-y-1">
+                <span className="text-[10px] uppercase font-bold text-gray-400">Deployment Tier</span>
+                <div className="font-mono text-purple-700">{selectedInquiryModal.deploymentTier || 'Standard Deployment'}</div>
+              </div>
+            </div>
+
+            {/* Customer Message */}
+            <div className="space-y-1.5">
+              <span className="text-xs font-bold text-gray-700">Customer Operational Scope &amp; Requirements</span>
+              <div className="bg-[#f8f9fc] p-4 rounded-xl border border-gray-200 text-xs text-gray-800 leading-relaxed font-light max-h-40 overflow-y-auto">
+                {selectedInquiryModal.message || 'No additional message provided.'}
+              </div>
+            </div>
+
+            {/* Admin Internal Working Notes */}
+            <div className="space-y-2 pt-2 border-t border-gray-100">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-amber-700 flex items-center space-x-1.5">
+                  <Edit3 className="w-3.5 h-3.5" />
+                  <span>Internal Admin Working Notes (Private)</span>
+                </span>
+                <button
+                  type="button"
+                  onClick={handleSaveModalNotes}
+                  className="bg-amber-600 hover:bg-amber-700 text-white font-bold px-3 py-1 rounded-lg text-xs transition-colors cursor-pointer shadow-sm"
+                >
+                  Save Internal Note
+                </button>
+              </div>
+              <textarea
+                rows={3}
+                value={modalAdminNotes}
+                onChange={(e) => setModalAdminNotes(e.target.value)}
+                placeholder="Write private notes on sales assignment, NDA status, quoted prices, or next action items..."
+                className="w-full bg-[#f8f9fc] border border-gray-200 rounded-xl p-3 text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:bg-white"
+              />
+            </div>
+
+            <div className="pt-2 flex flex-wrap items-center justify-between gap-3 border-t border-gray-100">
+              <a
+                href={`mailto:${selectedInquiryModal.email}?subject=RE: HUTARK Inquiry #${selectedInquiryModal.id} - ${selectedInquiryModal.productName || 'Robotics'}&body=Hello ${selectedInquiryModal.name},%0D%0A%0D%0AThank you for contacting HUTARK regarding ${selectedInquiryModal.productName || 'our robots'}.`}
+                className="bg-brand-blue hover:bg-blue-700 text-white font-bold px-5 py-2.5 rounded-xl text-xs flex items-center space-x-2 transition-all cursor-pointer shadow-sm"
+              >
+                <Mail className="w-4 h-4" />
+                <span>Compose Direct Email Reply</span>
+              </a>
+
+              <button
+                type="button"
+                onClick={() => handleDeleteInquiry(selectedInquiryModal.id)}
+                className="text-red-500 hover:text-red-700 hover:bg-red-50 text-xs font-semibold px-3 py-2 rounded-lg transition-colors cursor-pointer"
+              >
+                Delete Inquiry
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* MODAL IN-PAGE ROBOT EDITOR DRAWER */}
       {editingProduct && (

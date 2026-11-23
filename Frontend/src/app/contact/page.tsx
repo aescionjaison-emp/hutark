@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Mail, Phone, MapPin, Send, CheckCircle2, Building, Globe2 } from 'lucide-react';
 import { api } from '../../services/api';
+import { inquiryStore } from '../../services/inquiryStore';
 
 const GLOBAL_OFFICES = [
   {
@@ -51,6 +52,20 @@ export default function ContactPage() {
     e.preventDefault();
     setLoading(true);
     try {
+      // 1. Immediately record into local/admin inquiry store
+      await inquiryStore.saveInquiry({
+        type: 'contact_form',
+        name: form.name,
+        email: form.email,
+        phone: form.phone,
+        company: form.company,
+        productName: form.productInterest,
+        industry: form.industry,
+        message: form.message,
+        status: 'new',
+      });
+
+      // 2. Also send to backend API
       const res = await api.submitContact(form);
       setResponseMsg(res?.message || 'Thank you! Your inquiry has been received.');
       setSubmitted(true);

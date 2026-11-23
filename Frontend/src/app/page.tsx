@@ -371,7 +371,7 @@ export default function HomePage() {
                     {/* Thumbnail (.imgBox) */}
                     <div className="sm:w-[38%] relative h-48 sm:h-auto flex-shrink-0 overflow-hidden">
                       <Image
-                        src={item.img}
+                        src={item.img || "/uploads/images/20261029/33d570751012965d2455b2f1c9a6d43d.jpg"}
                         alt={item.title}
                         fill
                         className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e1b4b"/>
+      <stop offset="50%" stop-color="#312e81"/>
+      <stop offset="100%" stop-color="#0284c7"/>
+    </linearGradient>
+    <linearGradient id="acc" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ec4899"/>
+      <stop offset="100%" stop-color="#f43f5e"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="400" rx="40" fill="url(#bg)"/>
+  <circle cx="200" cy="155" r="75" fill="#4338ca" stroke="url(#acc)" stroke-width="4"/>
+  <path d="M90 340 C90 260, 140 235, 200 235 C260 235, 310 260, 310 340 Z" fill="#312e81" stroke="url(#acc)" stroke-width="3"/>
+  <circle cx="200" cy="155" r="45" fill="#1e1b4b" opacity="0.4"/>
+  <text x="200" y="172" font-family="Inter, system-ui, sans-serif" font-size="44" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="2">SP</text>
+  <rect x="130" y="320" width="140" height="26" rx="13" fill="url(#acc)"/>
+  <text x="200" y="337" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="700" fill="#ffffff" text-anchor="middle" letter-spacing="1.5">SAFETY &amp; HRI</text>
+</svg>

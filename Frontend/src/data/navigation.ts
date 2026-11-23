@@ -73,9 +73,9 @@ export const ABOUT_MENU = [
       { title: "Who We Are", href: "/about#Identity" },
       { title: "Mission & Vision", href: "/about#Purpose" },
       { title: "Our Values", href: "/about#Ethos" },
-      { title: "Milestones", href: "/about#Journey" },
-      { title: "Awards & Honors", href: "/about#Honors" },
-      { title: "Board & Leadership", href: "/about#Leadership" },
+      { title: "Milestones & Journey", href: "/about#Journey" },
+      { title: "Our Team & CEO", href: "/about#Team" },
+      { title: "Opening Roles (Careers)", href: "/about#Careers" },
     ]
   },
   {

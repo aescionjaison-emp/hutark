@@ -42,8 +42,8 @@ export default function Header() {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 h-20 flex items-center ${
         isLightHeader
-          ? 'bg-white text-gray-800 border-b border-gray-200 shadow-sm'
-          : 'bg-[rgba(138,151,161,0.36)] backdrop-blur-md text-white border-b border-white/10'
+          ? 'bg-white text-gray-900 border-b border-gray-200/80 shadow-sm'
+          : 'bg-black text-white border-b border-white/10'
       }`}
       onMouseLeave={() => setActiveMenu(null)}
     >
@@ -61,7 +61,7 @@ export default function Header() {
           </div>
           <span
             className={`font-black text-2xl tracking-[0.18em] transition-colors ${
-              isLightHeader ? 'text-gray-900 group-hover:text-brand-blue' : 'text-white'
+              isLightHeader ? 'text-gray-900 group-hover:text-brand-blue' : 'text-white group-hover:text-blue-400'
             }`}
           >
             HUTARK
@@ -77,30 +77,19 @@ export default function Header() {
           >
             <span
               className={`flex items-center space-x-1 transition-colors ${
-                isLightHeader ? 'hover:text-brand-blue' : 'hover:text-cyan-300'
-              } ${activeMenu === 'products' ? (isLightHeader ? 'text-brand-blue' : 'text-cyan-300') : ''}`}
+                isLightHeader ? 'text-gray-800 hover:text-brand-blue' : 'text-white hover:text-blue-400'
+              } ${activeMenu === 'products' ? (isLightHeader ? 'text-brand-blue' : 'text-blue-400') : ''}`}
             >
               <span>Technology</span>
               <ChevronDown className="w-3.5 h-3.5" />
             </span>
           </div>
 
-          {/* Products Link & Mega Menu Trigger */}
-          <Link
-            href="/products"
-            className={`flex items-center space-x-1 py-6 transition-colors ${
-              isLightHeader ? 'hover:text-brand-blue' : 'hover:text-cyan-300'
-            }`}
-            onMouseEnter={() => setActiveMenu('products')}
-          >
-            <span>Products</span>
-          </Link>
-
           {/* R & D Link */}
           <Link
             href="/rd"
             className={`transition-colors ${
-              isLightHeader ? 'hover:text-brand-blue' : 'hover:text-cyan-300'
+              isLightHeader ? 'text-gray-800 hover:text-brand-blue' : 'text-white hover:text-blue-400'
             }`}
             onMouseEnter={() => setActiveMenu(null)}
           >
@@ -114,8 +103,8 @@ export default function Header() {
           >
             <span
               className={`flex items-center space-x-1 transition-colors ${
-                isLightHeader ? 'hover:text-brand-blue' : 'hover:text-cyan-300'
-              } ${activeMenu === 'about' ? (isLightHeader ? 'text-brand-blue' : 'text-cyan-300') : ''}`}
+                isLightHeader ? 'text-gray-800 hover:text-brand-blue' : 'text-white hover:text-blue-400'
+              } ${activeMenu === 'about' ? (isLightHeader ? 'text-brand-blue' : 'text-blue-400') : ''}`}
             >
               <span>About Us</span>
               <ChevronDown className="w-3.5 h-3.5" />
@@ -126,7 +115,7 @@ export default function Header() {
           <Link
             href="/news"
             className={`transition-colors ${
-              isLightHeader ? 'hover:text-brand-blue' : 'hover:text-cyan-300'
+              isLightHeader ? 'text-gray-800 hover:text-brand-blue' : 'text-white hover:text-blue-400'
             }`}
             onMouseEnter={() => setActiveMenu(null)}
           >
@@ -137,7 +126,7 @@ export default function Header() {
           <Link
             href="/contact"
             className={`transition-colors ${
-              isLightHeader ? 'hover:text-brand-blue' : 'hover:text-cyan-300'
+              isLightHeader ? 'text-gray-800 hover:text-brand-blue' : 'text-white hover:text-blue-400'
             }`}
             onMouseEnter={() => setActiveMenu(null)}
           >
@@ -154,7 +143,7 @@ export default function Header() {
               className={`flex items-center space-x-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-full transition-colors ${
                 isLightHeader
                   ? 'text-gray-700 hover:bg-gray-100'
-                  : 'text-white/90 hover:bg-white/10'
+                  : 'text-white hover:bg-white/10'
               }`}
             >
               <Globe className="w-4 h-4" />
@@ -190,7 +179,7 @@ export default function Header() {
             className={`text-xs font-bold px-5 py-2.5 rounded-full transition-all shadow-sm ${
               isLightHeader
                 ? 'bg-brand-blue text-white hover:bg-blue-600 shadow-blue-500/20'
-                : 'bg-white text-gray-900 hover:bg-gray-100'
+                : 'bg-brand-blue text-white hover:bg-blue-600 shadow-blue-500/30'
             }`}
           >
             Inquire Now
@@ -312,7 +301,7 @@ export default function Header() {
                 }
                 className="w-full flex items-center justify-between py-3 text-base font-bold border-b border-gray-100"
               >
-                <span>Technology & Products</span>
+                <span>Technology</span>
                 <ChevronDown
                   className={`w-4 h-4 transition-transform ${
                     mobileActiveSubmenu === 'products' ? 'rotate-180' : ''

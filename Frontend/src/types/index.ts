@@ -35,6 +35,7 @@ export interface YouTubeVideoSlide {
   subtitle?: string;
   description: string;
   categoryTag?: string;
+  category?: string;
 }
 
 export interface CustomProductStyles {
@@ -84,6 +85,13 @@ export interface ProductData {
   youtubeVideos?: YouTubeVideoSlide[];
   buySectionImage?: string;
   buyButtonText?: string;
+  buySectionEnabled?: boolean;
+  buySectionBgZoom?: number;
+  buySectionBgPosY?: number;
+  buyButtonPosX?: number;
+  buyButtonPosY?: number;
+  buyButtonScale?: number;
+  buyButtonVisible?: boolean;
   customStyles?: CustomProductStyles;
   overview: string;
   specs: ProductSpec[];

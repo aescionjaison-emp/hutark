@@ -13,6 +13,7 @@ import {
   PackageCheck
 } from 'lucide-react';
 import { ProductData } from '../../types';
+import { inquiryStore } from '../../services/inquiryStore';
 
 interface ProductRobotPurchaseSectionProps {
   product: ProductData;
@@ -23,6 +24,11 @@ export default function ProductRobotPurchaseSection({
   product,
   onCustomPurchase,
 }: ProductRobotPurchaseSectionProps) {
+  // If admin toggled off the buy section for this robot, do not render
+  if (product.buySectionEnabled === false) {
+    return null;
+  }
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [deploymentType, setDeploymentType] = useState<'pilot' | 'fleet' | 'research'>('pilot');
@@ -34,6 +40,18 @@ export default function ProductRobotPurchaseSection({
     phone: '',
     notes: '',
   });
+
+  // Dynamic admin-customized parameters with robust defaults
+  const posX = typeof product.buyButtonPosX === 'number' ? product.buyButtonPosX : 40.0;
+  const posY = typeof product.buyButtonPosY === 'number' ? product.buyButtonPosY : 80.2;
+  const buttonScale = typeof product.buyButtonScale === 'number' ? product.buyButtonScale : 1.0;
+  const isButtonVisible = product.buyButtonVisible !== false;
+  const bgImage = product.buySectionImage || "/images/products/robot_buy_me_palm_rings_1920x1080.jpg";
+  const bgZoom = typeof product.buySectionBgZoom === 'number' ? product.buySectionBgZoom : 1.0;
+  const bgPosY = typeof product.buySectionBgPosY === 'number' ? product.buySectionBgPosY : 50;
+  const buttonText = product.buyButtonText && product.buyButtonText.trim() !== '' 
+    ? product.buyButtonText.trim() 
+    : 'BUY ME';
 
   // Handle ESC key to close modal
   useEffect(() => {
@@ -54,9 +72,32 @@ export default function ProductRobotPurchaseSection({
     }
   };
 
-  const handleSubmitInquiry = (e: React.FormEvent) => {
+  const handleSubmitInquiry = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormSubmitted(true);
+
+    try {
+      await inquiryStore.saveInquiry({
+        type: 'buy_me_order',
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        company: formData.company,
+        productName: product.name,
+        productId: product.id,
+        deploymentTier:
+          deploymentType === 'pilot'
+            ? 'Evaluation Unit (Fast Dispatch)'
+            : deploymentType === 'fleet'
+            ? 'Commercial Fleet (5-50 units)'
+            : 'R&D / Academic Grant',
+        message: formData.notes || `Direct enterprise order inquiry for ${product.name}`,
+        status: 'new',
+      });
+    } catch (err) {
+      console.error('Failed to save order to inquiry store:', err);
+    }
+
     setTimeout(() => {
       setTimeout(() => {
         setIsModalOpen(false);
@@ -73,10 +114,6 @@ export default function ProductRobotPurchaseSection({
       target.scrollIntoView({ behavior: 'smooth' });
     }
   };
-
-  const customButtonText = product.buyButtonText && product.buyButtonText.trim() !== '' && product.buyButtonText.trim().toUpperCase() !== 'BUY ME'
-    ? product.buyButtonText.trim()
-    : null;
 
   return (
     <>
@@ -100,19 +137,6 @@ export default function ProductRobotPurchaseSection({
         {/* Ambient floor shadow blend */}
         <div className="absolute bottom-0 inset-x-0 h-44 bg-gradient-to-t from-[#c5c6ca]/50 via-transparent to-transparent pointer-events-none" />
 
-        {/* Subtle Luxury Model Watermark */}
-        <div className="absolute top-8 left-8 sm:top-12 sm:left-12 z-10 pointer-events-none">
-          <div className="flex items-center space-x-3">
-            <div className="w-2.5 h-2.5 rounded-full bg-blue-600/60 animate-ping" />
-            <span className="text-[11px] font-mono uppercase tracking-[0.25em] text-gray-500 font-bold">
-              {product.name} • {product.series}
-            </span>
-          </div>
-          <p className="text-xs text-gray-400 font-light mt-0.5 tracking-wider hidden sm:block">
-            Next-Gen Autonomous Embodied Intelligence Showroom
-          </p>
-        </div>
-
         {/* =========================================================================
             TRUE 16:9 EDGE-TO-EDGE FULLSCREEN STAGE WRAPPER
             Uses CSS max(100vw, 100vh * 16/9) to fill 100% of the screen without borders,
@@ -125,101 +149,108 @@ export default function ProductRobotPurchaseSection({
             height: 'max(100vh, calc(100vw * (9 / 16)))',
           }}
         >
-          {/* Edge-to-Edge 1920x1080 Showroom Asset */}
-          <div className="relative w-full h-full">
+          {/* Edge-to-Edge 1920x1080 Showroom Asset with dynamic zoom and alignment */}
+          <div 
+            className="relative w-full h-full overflow-hidden"
+            style={{
+              transform: `scale(${bgZoom})`,
+              transformOrigin: `50% ${bgPosY}%`,
+              transition: 'transform 0.3s ease',
+            }}
+          >
             <Image
-              src={product.buySectionImage || "/images/products/robot_buy_me_1920x1080.jpg"}
+              src={bgImage}
               alt={`${product.name} - Buy Me`}
               fill
               priority
               sizes="100vw"
-              className="object-cover object-center pointer-events-none select-none"
+              style={{
+                objectFit: 'cover',
+                objectPosition: `50% ${bgPosY}%`,
+              }}
+              className="pointer-events-none select-none"
             />
 
             {/* =====================================================================
                 REAL "BUY ME" CAPSULE BUTTON NESTLED ON HAND
                 Positioned directly on the robot's open palm & glowing holographic rings
-                Center: X = 40.00%, Y = 80.20%
+                Center: X = posX %, Y = posY % (Default: 40.00%, 80.20%)
                 ===================================================================== */}
-            <div
-              className="absolute pointer-events-auto z-20"
-              style={{
-                left: '40.00%',
-                top: '80.20%',
-                width: '14.5%',
-                minWidth: '175px',
-                maxWidth: '280px',
-                transform: 'translate(-50%, -50%)',
-              }}
-            >
-              {/* Floating Animation Wrapper */}
-              <motion.div
-                animate={{
-                  y: isHovered ? -5 : [0, -2, 0],
-                  scale: isHovered ? 1.05 : 1,
+            {isButtonVisible && (
+              <div
+                className="absolute pointer-events-auto z-20"
+                style={{
+                  left: `${posX}%`,
+                  top: `${posY}%`,
+                  width: '14.5%',
+                  minWidth: '175px',
+                  maxWidth: '280px',
+                  transform: `translate(-50%, -50%) scale(${buttonScale})`,
+                  transformOrigin: 'center center',
+                  transition: 'left 0.2s ease, top 0.2s ease, transform 0.2s ease',
                 }}
-                transition={{
-                  y: isHovered 
-                    ? { duration: 0.2, ease: 'easeOut' }
-                    : { repeat: Infinity, duration: 4.0, ease: 'easeInOut' },
-                  scale: { duration: 0.2, ease: 'easeOut' }
-                }}
-                className="relative w-full flex items-center justify-center"
               >
-                {/* Holographic Warm-White Illuminated Ring / Halo beneath capsule */}
-                <div 
-                  className={`absolute -bottom-3 left-1/2 -translate-x-1/2 w-[88%] h-4 rounded-[100%] bg-gradient-to-r from-transparent via-[#fff1dc] to-transparent blur-[3px] pointer-events-none transition-all duration-300 ${
-                    isHovered ? 'opacity-100 scale-110' : 'opacity-85 animate-pulse'
-                  }`}
-                  style={{
-                    boxShadow: isHovered 
-                      ? '0 0 30px rgba(255, 230, 180, 0.95), 0 0 50px rgba(255, 255, 255, 0.8)' 
-                      : '0 0 18px rgba(255, 220, 175, 0.65)'
+                {/* Floating Animation Wrapper */}
+                <motion.div
+                  animate={{
+                    y: isHovered ? -5 : [0, -2, 0],
+                    scale: isHovered ? 1.05 : 1,
                   }}
-                />
-
-                {/* Real High-Gloss Champagne-Gold Rimmed Capsule Button */}
-                <button
-                  type="button"
-                  onClick={handleButtonClick}
-                  onMouseEnter={() => setIsHovered(true)}
-                  onMouseLeave={() => setIsHovered(false)}
-                  onFocus={() => setIsHovered(true)}
-                  onBlur={() => setIsHovered(false)}
-                  aria-label={`Buy ${product.name} Now`}
-                  className="group relative w-full aspect-[3.25/1] rounded-full border-2 border-[#dfc39a] hover:border-[#ffe8c5] text-white font-black tracking-[0.18em] uppercase flex items-center justify-center shadow-2xl transition-all duration-300 active:scale-95 cursor-pointer overflow-hidden focus:outline-none focus:ring-4 focus:ring-[#dfc39a]/50"
-                  style={{
-                    background: 'linear-gradient(180deg, #1b1d26 0%, #0d0e14 55%, #06070a 100%)',
-                    boxShadow: isHovered
-                      ? '0 16px 38px -6px rgba(0, 0, 0, 0.9), 0 0 40px rgba(255, 230, 180, 0.8), inset 0 1px 2px rgba(255, 255, 255, 0.5)'
-                      : '0 10px 28px -5px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 220, 175, 0.45), inset 0 1px 2px rgba(255, 255, 255, 0.35)',
+                  transition={{
+                    y: isHovered 
+                      ? { duration: 0.2, ease: 'easeOut' }
+                      : { repeat: Infinity, duration: 4.0, ease: 'easeInOut' },
+                    scale: { duration: 0.2, ease: 'easeOut' }
                   }}
+                  className="relative w-full flex items-center justify-center"
                 >
-                  {/* Top-half Glass Highlight Gradient Reflection */}
-                  <div className="absolute top-0 inset-x-0 h-1/2 bg-gradient-to-b from-white/30 via-white/10 to-transparent rounded-t-full pointer-events-none" />
+                  {/* Holographic Warm-White Illuminated Ring / Halo beneath capsule */}
+                  <div 
+                    className={`absolute -bottom-3 left-1/2 -translate-x-1/2 w-[88%] h-4 rounded-[100%] bg-gradient-to-r from-transparent via-[#fff1dc] to-transparent blur-[3px] pointer-events-none transition-all duration-300 ${
+                      isHovered ? 'opacity-100 scale-110' : 'opacity-85 animate-pulse'
+                    }`}
+                    style={{
+                      boxShadow: isHovered 
+                        ? '0 0 30px rgba(255, 230, 180, 0.95), 0 0 50px rgba(255, 255, 255, 0.8)' 
+                        : '0 0 18px rgba(255, 220, 175, 0.65)'
+                    }}
+                  />
 
-                  {/* Inner Metallic Border Glow */}
-                  <div className="absolute inset-[1px] rounded-full border border-white/15 pointer-events-none" />
+                  {/* Real High-Gloss Champagne-Gold Rimmed Capsule Button */}
+                  <button
+                    type="button"
+                    onClick={handleButtonClick}
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                    onFocus={() => setIsHovered(true)}
+                    onBlur={() => setIsHovered(false)}
+                    aria-label={`Buy ${product.name} Now`}
+                    className="group relative w-full aspect-[3.25/1] rounded-full border-2 border-[#dfc39a] hover:border-[#ffe8c5] text-white font-black tracking-[0.18em] uppercase flex items-center justify-center shadow-2xl transition-all duration-300 active:scale-95 cursor-pointer overflow-hidden focus:outline-none focus:ring-4 focus:ring-[#dfc39a]/50"
+                    style={{
+                      background: 'linear-gradient(180deg, #1b1d26 0%, #0d0e14 55%, #06070a 100%)',
+                      boxShadow: isHovered
+                        ? '0 16px 38px -6px rgba(0, 0, 0, 0.9), 0 0 40px rgba(255, 230, 180, 0.8), inset 0 1px 2px rgba(255, 255, 255, 0.5)'
+                        : '0 10px 28px -5px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 220, 175, 0.45), inset 0 1px 2px rgba(255, 255, 255, 0.35)',
+                    }}
+                  >
+                    {/* Top-half Glass Highlight Gradient Reflection */}
+                    <div className="absolute top-0 inset-x-0 h-1/2 bg-gradient-to-b from-white/30 via-white/10 to-transparent rounded-t-full pointer-events-none" />
 
-                  {/* Button Typography: White uppercase "BUY ME" or custom name */}
-                  <span className="relative z-10 text-xs sm:text-sm md:text-base font-extrabold text-white drop-shadow-md tracking-[0.18em] transition-transform duration-200 group-hover:scale-105 flex items-center justify-center space-x-1.5">
-                    <span>{customButtonText || 'BUY ME'}</span>
-                  </span>
+                    {/* Inner Metallic Border Glow */}
+                    <div className="absolute inset-[1px] rounded-full border border-white/15 pointer-events-none" />
 
-                  {/* Hover Sheen Sweep Animation */}
-                  <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/30 to-transparent pointer-events-none" />
-                </button>
-              </motion.div>
-            </div>
+                    {/* Button Typography: White uppercase "BUY ME" or custom name */}
+                    <span className="relative z-10 text-xs sm:text-sm md:text-base font-extrabold text-white drop-shadow-md tracking-[0.18em] transition-transform duration-200 group-hover:scale-105 flex items-center justify-center space-x-1.5 px-3">
+                      <span>{buttonText}</span>
+                    </span>
+
+                    {/* Hover Sheen Sweep Animation */}
+                    <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/30 to-transparent pointer-events-none" />
+                  </button>
+                </motion.div>
+              </div>
+            )}
           </div>
-        </div>
-
-        {/* Scroll Indicator Prompt */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center space-y-1.5 opacity-50 hover:opacity-100 transition-opacity pointer-events-none z-10">
-          <span className="text-[10px] uppercase font-mono tracking-widest text-gray-500">
-            Scroll for Specifications &amp; Commercial Details
-          </span>
-          <div className="w-1 h-3 rounded-full bg-gray-400 animate-bounce" />
         </div>
       </section>
 
@@ -429,15 +460,7 @@ export default function ProductRobotPurchaseSection({
                       />
                     </div>
 
-                    <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3">
-                      <button
-                        type="button"
-                        onClick={scrollToContact}
-                        className="text-xs text-gray-500 hover:text-brand-blue transition-colors underline cursor-pointer"
-                      >
-                        Or complete full form on page ↓
-                      </button>
-
+                    <div className="pt-2 flex items-center justify-end">
                       <button
                         type="submit"
                         className="w-full sm:w-auto bg-brand-blue hover:bg-blue-600 text-white font-bold px-8 py-3.5 rounded-xl text-xs flex items-center justify-center space-x-2 shadow-md hover:shadow-lg transition-all active:scale-95 cursor-pointer"
