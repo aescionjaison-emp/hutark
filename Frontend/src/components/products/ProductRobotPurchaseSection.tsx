@@ -4,21 +4,14 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Check, 
   X, 
-  ShieldCheck, 
-  Cpu, 
-  Sparkles, 
-  ArrowRight, 
-  Zap, 
   CheckCircle2, 
   Mail, 
   Phone, 
   Building2, 
   User, 
-  Lock,
-  ChevronRight,
-  PackageCheck
+  PackageCheck,
+  Sparkles
 } from 'lucide-react';
 import { ProductData } from '../../types';
 
@@ -66,7 +59,6 @@ export default function ProductRobotPurchaseSection({
     e.preventDefault();
     setFormSubmitted(true);
     setTimeout(() => {
-      // Close modal after showing success
       setTimeout(() => {
         setIsModalOpen(false);
         setFormSubmitted(false);
@@ -83,144 +75,151 @@ export default function ProductRobotPurchaseSection({
     }
   };
 
+  const customButtonText = product.buyButtonText && product.buyButtonText.trim() !== '' && product.buyButtonText.trim().toUpperCase() !== 'BUY ME'
+    ? product.buyButtonText.trim()
+    : null;
+
   return (
     <>
       {/* =========================================================================
           FULL-SCREEN CINEMATIC ROBOT BUY ME SECTION
-          Exact 100vw x 100vh / 100svh / 100dvh edge-to-edge showroom environment
+          True 100vw x 100vh edge-to-edge showroom environment with ZERO margins
           ========================================================================= */}
       <section
         id="robot-buy-section"
         aria-label={`Purchase ${product.name}`}
-        className="product-robot-section relative w-full min-h-screen min-h-[100vh] min-h-[100svh] overflow-hidden flex items-center justify-center m-0 p-0 select-none bg-gradient-to-br from-[#ffffff] via-[#e9e9eb] to-[#c9c9ce]"
+        className="product-robot-section relative w-full w-screen h-screen min-h-screen min-h-[100vh] min-h-[100svh] overflow-hidden m-0 p-0 select-none bg-[#e8e8ea]"
         style={{
           width: '100%',
           minHeight: '100vh',
+          background: 'linear-gradient(135deg, #ffffff 0%, #e9e9eb 55%, #c9c9ce 100%)',
         }}
       >
         {/* Soft cinematic studio illumination & radial ambient lighting */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[85vw] max-w-[1200px] h-[85vh] max-h-[900px] bg-gradient-to-tr from-white/80 via-white/30 to-transparent rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-[1400px] h-[90vh] max-h-[1000px] bg-gradient-to-tr from-white/90 via-white/40 to-transparent rounded-full blur-[130px] pointer-events-none" />
 
         {/* Ambient floor shadow blend */}
-        <div className="absolute bottom-0 inset-x-0 h-40 bg-gradient-to-t from-[#c5c6ca]/40 via-transparent to-transparent pointer-events-none" />
+        <div className="absolute bottom-0 inset-x-0 h-44 bg-gradient-to-t from-[#c5c6ca]/50 via-transparent to-transparent pointer-events-none" />
 
-        {/* Subtle Luxury Watermark / Model Identifier */}
+        {/* Subtle Luxury Model Watermark */}
         <div className="absolute top-8 left-8 sm:top-12 sm:left-12 z-10 pointer-events-none">
           <div className="flex items-center space-x-3">
-            <div className="w-2 h-2 rounded-full bg-gray-900/40 animate-ping" />
+            <div className="w-2.5 h-2.5 rounded-full bg-blue-600/60 animate-ping" />
             <span className="text-[11px] font-mono uppercase tracking-[0.25em] text-gray-500 font-bold">
               {product.name} • {product.series}
             </span>
           </div>
           <p className="text-xs text-gray-400 font-light mt-0.5 tracking-wider hidden sm:block">
-            Next-Gen Autonomous Embodied Intelligence
+            Next-Gen Autonomous Embodied Intelligence Showroom
           </p>
         </div>
 
         {/* =========================================================================
-            ROBOT STAGE CONTAINER
-            Preserves exact 4:3 aspect ratio matching the 1024x768 reference composition
-            Keeps the robot, open palm, and floating button locked in true alignment
+            TRUE 16:9 EDGE-TO-EDGE FULLSCREEN STAGE WRAPPER
+            Uses CSS max(100vw, 100vh * 16/9) to fill 100% of the screen without borders,
+            while keeping the 1920x1080 coordinate system locked with 0.00px deviation.
             ========================================================================= */}
-        <div className="relative w-full h-full min-h-[100vh] min-h-[100svh] min-h-[100dvh] flex items-center justify-center overflow-hidden">
-          <motion.div
-            initial={{ opacity: 0, y: 35, scale: 0.98 }}
-            whileInView={{ opacity: 1, y: 0, scale: 1 }}
-            viewport={{ once: true, amount: 0.25 }}
-            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-            className="relative h-[72vh] sm:h-[88vh] max-h-[96vh] max-h-[96svh] max-h-[96dvh] aspect-[4/3] flex items-center justify-center flex-shrink-0"
-          >
-            {/* Base Robotic Visual Asset (Cleaned capsule base image) */}
+        <div
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+          style={{
+            width: 'max(100vw, calc(100vh * (16 / 9)))',
+            height: 'max(100vh, calc(100vw * (9 / 16)))',
+          }}
+        >
+          {/* Edge-to-Edge 1920x1080 Showroom Asset */}
+          <div className="relative w-full h-full">
             <Image
-              src={product.buySectionImage || "/images/products/robot_buy_me_clean.jpg"}
+              src={product.buySectionImage || "/images/products/robot_buy_me_1920x1080.jpg"}
               alt={`${product.name} - Buy Me`}
               fill
               priority
-              sizes="(max-width: 768px) 100vw, (max-width: 1400px) 90vw, 1280px"
-              className="object-contain pointer-events-none select-none drop-shadow-2xl"
+              sizes="100vw"
+              className="object-cover object-center pointer-events-none select-none"
             />
 
             {/* =====================================================================
-                REAL INTERACTIVE FLOATING "BUY ME" BUTTON
-                Positioned precisely over the extended robotic palm:
-                Center: X = 37.26%, Y = 75.13%
+                REAL INTERACTIVE "BUY ME" BUTTON HOTSPOT
+                Positioned with mathematical precision directly on the 3D capsule:
+                Center: X = 39.84%, Y = 75.09%
+                Width = 14.7%, Height = 8.0%
                 ===================================================================== */}
             <div
-              className="absolute z-20"
+              className="absolute pointer-events-auto z-20"
               style={{
-                left: '37.26%',
-                top: '75.13%',
+                left: '39.84%',
+                top: '75.09%',
+                width: '14.7%',
+                height: '8.0%',
                 transform: 'translate(-50%, -50%)',
-                width: '19.63%',
-                minWidth: '150px',
-                maxWidth: '240px',
               }}
             >
-              {/* Floating Animation Wrapper */}
-              <motion.div
-                animate={{
-                  y: isHovered ? -8 : [0, -5, 0],
-                  scale: isHovered ? 1.08 : 1,
+              {/* Interactive Capsule Trigger */}
+              <button
+                type="button"
+                onClick={handleButtonClick}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+                onFocus={() => setIsHovered(true)}
+                onBlur={() => setIsHovered(false)}
+                aria-label={`Buy ${product.name} Now`}
+                className="group relative w-full h-full rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 active:scale-95 focus:outline-none"
+                style={{
+                  boxShadow: isHovered
+                    ? '0 0 35px rgba(255, 230, 180, 0.85), 0 0 70px rgba(255, 255, 255, 0.6), inset 0 0 15px rgba(255, 255, 255, 0.25)'
+                    : '0 0 18px rgba(255, 220, 170, 0.35)',
                 }}
-                transition={{
-                  y: isHovered 
-                    ? { duration: 0.25, ease: 'easeOut' }
-                    : { repeat: Infinity, duration: 3.4, ease: 'easeInOut' },
-                  scale: { duration: 0.25, ease: 'easeOut' }
-                }}
-                className="relative w-full flex items-center justify-center"
               >
-                {/* Holographic Warm-White Illuminated Ring / Halo beneath capsule */}
+                {/* When custom text is provided by admin: render solid capsule overlay */}
+                {customButtonText ? (
+                  <div className="absolute inset-0 rounded-full bg-[#0c0d12] border-2 border-[#dfc39a] flex items-center justify-center shadow-xl">
+                    <span className="text-white font-black text-xs sm:text-sm md:text-base tracking-[0.16em] uppercase">
+                      {customButtonText}
+                    </span>
+                  </div>
+                ) : (
+                  /* Standard Mode: Seamlessly enhances the 3D button in the reference image */
+                  <>
+                    {/* Golden Holographic Beveled Rim that lights up on hover */}
+                    <div 
+                      className={`absolute inset-0 rounded-full border-2 transition-all duration-300 pointer-events-none ${
+                        isHovered 
+                          ? 'border-[#ffe4bd] opacity-100 scale-[1.02]' 
+                          : 'border-transparent opacity-0'
+                      }`}
+                    />
+
+                    {/* Animated Golden Sheen Sweep on hover */}
+                    <div className="absolute inset-0 rounded-full overflow-hidden pointer-events-none">
+                      <div className="w-full h-full -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/35 to-transparent" />
+                    </div>
+
+                    {/* Subtle Pulsing Warm Halo beneath capsule */}
+                    <div 
+                      className={`absolute -bottom-2 left-1/2 -translate-x-1/2 w-[85%] h-3 rounded-[100%] bg-gradient-to-r from-transparent via-[#fff0da] to-transparent blur-[3px] pointer-events-none transition-all duration-300 ${
+                        isHovered ? 'opacity-100 scale-110' : 'opacity-60 animate-pulse'
+                      }`}
+                    />
+                  </>
+                )}
+
+                {/* Floating Interactive Badge Prompt on Hover */}
                 <div 
-                  className={`absolute -bottom-2 left-1/2 -translate-x-1/2 w-[88%] h-4 rounded-[100%] bg-gradient-to-r from-transparent via-[#fff1dc] to-transparent blur-[3px] pointer-events-none transition-opacity duration-300 ${
-                    isHovered ? 'opacity-100 scale-110' : 'opacity-85 animate-pulse'
+                  className={`absolute -top-12 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-black/90 text-white text-[11px] font-mono tracking-wider shadow-2xl border border-white/20 whitespace-nowrap pointer-events-none transition-all duration-200 flex items-center space-x-1.5 ${
+                    isHovered ? 'opacity-100 -translate-y-1' : 'opacity-0 translate-y-2'
                   }`}
-                  style={{
-                    boxShadow: isHovered 
-                      ? '0 0 25px rgba(255, 230, 200, 0.9), 0 0 45px rgba(255, 255, 255, 0.8)' 
-                      : '0 0 16px rgba(255, 220, 180, 0.6)'
-                  }}
-                />
-
-                {/* Real Clickable High-Gloss Capsule Button */}
-                <button
-                  type="button"
-                  onClick={handleButtonClick}
-                  onMouseEnter={() => setIsHovered(true)}
-                  onMouseLeave={() => setIsHovered(false)}
-                  onFocus={() => setIsHovered(true)}
-                  onBlur={() => setIsHovered(false)}
-                  aria-label={`Buy ${product.name} Now`}
-                  className="group relative w-full aspect-[3.25/1] bg-[#0c0d11] rounded-full border border-white/40 hover:border-white/90 text-white font-black tracking-[0.16em] uppercase flex items-center justify-center shadow-2xl transition-all duration-300 active:scale-95 cursor-pointer overflow-hidden focus:outline-none focus:ring-4 focus:ring-white/40"
-                  style={{
-                    boxShadow: isHovered
-                      ? '0 12px 35px -5px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255, 255, 255, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.6)'
-                      : '0 8px 25px -4px rgba(0, 0, 0, 0.7), inset 0 1px 2px rgba(255, 255, 255, 0.45)',
-                  }}
                 >
-                  {/* Top-half Glass Highlight Gradient Reflection */}
-                  <div className="absolute top-0 inset-x-0 h-1/2 bg-gradient-to-b from-white/30 via-white/10 to-transparent rounded-t-full pointer-events-none" />
-
-                  {/* Inner Metallic Border Glow */}
-                  <div className="absolute inset-[1px] rounded-full border border-white/20 pointer-events-none" />
-
-                  {/* Button Typography: White uppercase "BUY ME" */}
-                  <span className="relative z-10 text-xs sm:text-sm md:text-base font-extrabold text-white drop-shadow-md tracking-[0.18em] transition-transform duration-200 group-hover:scale-105 flex items-center justify-center space-x-1.5">
-                    <span>{product.buyButtonText || 'BUY ME'}</span>
-                  </span>
-
-                  {/* Hover Sheen Sweep Animation */}
-                  <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
-                </button>
-              </motion.div>
+                  <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-spin" style={{ animationDuration: '3s' }} />
+                  <span>Click to Configure &amp; Acquire {product.name}</span>
+                </div>
+              </button>
             </div>
-          </motion.div>
+          </div>
         </div>
 
         {/* Scroll Indicator Prompt */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center space-y-1.5 opacity-60 hover:opacity-100 transition-opacity pointer-events-none">
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center space-y-1.5 opacity-50 hover:opacity-100 transition-opacity pointer-events-none z-10">
           <span className="text-[10px] uppercase font-mono tracking-widest text-gray-500">
-            Scroll for Specifications & Contact
+            Scroll for Specifications &amp; Commercial Details
           </span>
           <div className="w-1 h-3 rounded-full bg-gray-400 animate-bounce" />
         </div>
