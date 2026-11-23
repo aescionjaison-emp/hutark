@@ -73,8 +73,8 @@ export default function AdminProductEditorDrawer({
     { label: 'D1 CAD Blueprint', url: '/uploads/images/products/d1_anatomy_diagram.jpg' },
     { label: 'G2 CAD Blueprint', url: '/uploads/images/20261029/62974a39fa9e903d8e47b2cd2befc16e.png' },
     { label: 'C5 CAD Blueprint', url: '/uploads/images/products/c5_anatomy_diagram.jpg' },
-    { label: 'Cinematic Buy Me Robot', url: '/images/products/robot_buy_me_clean.jpg' },
-    { label: 'Cinematic Buy Me Reference', url: '/images/products/robot_buy_me_cinematic.jpg' },
+    { label: 'Cinematic Buy Me Hologram (1080p)', url: '/images/products/robot_buy_me_1920x1080.jpg' },
+    { label: 'Cinematic Buy Me Hologram (Original)', url: '/images/products/robot_buy_me_cinematic.jpg' },
   ];
 
   // Font Family Presets

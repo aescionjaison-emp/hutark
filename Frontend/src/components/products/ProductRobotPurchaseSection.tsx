@@ -138,69 +138,78 @@ export default function ProductRobotPurchaseSection({
             />
 
             {/* =====================================================================
-                REAL INTERACTIVE "BUY ME" BUTTON HOTSPOT
-                Positioned with mathematical precision directly on the 3D capsule:
-                Center: X = 39.84%, Y = 75.09%
-                Width = 14.7%, Height = 8.0%
+                REAL FLOATING "BUY ME" CAPSULE BUTTON
+                Hovering directly above the concentric holographic rings on the palm
+                Center: X = 39.61%, Y = 74.50%
                 ===================================================================== */}
             <div
               className="absolute pointer-events-auto z-20"
               style={{
-                left: '39.84%',
-                top: '75.09%',
-                width: '14.7%',
-                height: '8.0%',
+                left: '39.61%',
+                top: '74.50%',
+                width: '14.5%',
+                minWidth: '175px',
+                maxWidth: '285px',
                 transform: 'translate(-50%, -50%)',
               }}
             >
-              {/* Interactive Capsule Trigger */}
-              <button
-                type="button"
-                onClick={handleButtonClick}
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
-                onFocus={() => setIsHovered(true)}
-                onBlur={() => setIsHovered(false)}
-                aria-label={`Buy ${product.name} Now`}
-                className="group relative w-full h-full rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 active:scale-95 focus:outline-none"
-                style={{
-                  boxShadow: isHovered
-                    ? '0 0 35px rgba(255, 230, 180, 0.85), 0 0 70px rgba(255, 255, 255, 0.6), inset 0 0 15px rgba(255, 255, 255, 0.25)'
-                    : '0 0 18px rgba(255, 220, 170, 0.35)',
+              {/* Floating Animation Wrapper */}
+              <motion.div
+                animate={{
+                  y: isHovered ? -8 : [0, -5, 0],
+                  scale: isHovered ? 1.06 : 1,
                 }}
+                transition={{
+                  y: isHovered 
+                    ? { duration: 0.25, ease: 'easeOut' }
+                    : { repeat: Infinity, duration: 3.2, ease: 'easeInOut' },
+                  scale: { duration: 0.25, ease: 'easeOut' }
+                }}
+                className="relative w-full flex items-center justify-center"
               >
-                {/* When custom text is provided by admin: render solid capsule overlay */}
-                {customButtonText ? (
-                  <div className="absolute inset-0 rounded-full bg-[#0c0d12] border-2 border-[#dfc39a] flex items-center justify-center shadow-xl">
-                    <span className="text-white font-black text-xs sm:text-sm md:text-base tracking-[0.16em] uppercase">
-                      {customButtonText}
-                    </span>
-                  </div>
-                ) : (
-                  /* Standard Mode: Seamlessly enhances the 3D button in the reference image */
-                  <>
-                    {/* Golden Holographic Beveled Rim that lights up on hover */}
-                    <div 
-                      className={`absolute inset-0 rounded-full border-2 transition-all duration-300 pointer-events-none ${
-                        isHovered 
-                          ? 'border-[#ffe4bd] opacity-100 scale-[1.02]' 
-                          : 'border-transparent opacity-0'
-                      }`}
-                    />
+                {/* Holographic Warm-White Illuminated Ring / Halo beneath capsule */}
+                <div 
+                  className={`absolute -bottom-3 left-1/2 -translate-x-1/2 w-[88%] h-4 rounded-[100%] bg-gradient-to-r from-transparent via-[#fff1dc] to-transparent blur-[3px] pointer-events-none transition-all duration-300 ${
+                    isHovered ? 'opacity-100 scale-110' : 'opacity-85 animate-pulse'
+                  }`}
+                  style={{
+                    boxShadow: isHovered 
+                      ? '0 0 30px rgba(255, 230, 180, 0.95), 0 0 50px rgba(255, 255, 255, 0.8)' 
+                      : '0 0 18px rgba(255, 220, 175, 0.65)'
+                  }}
+                />
 
-                    {/* Animated Golden Sheen Sweep on hover */}
-                    <div className="absolute inset-0 rounded-full overflow-hidden pointer-events-none">
-                      <div className="w-full h-full -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/35 to-transparent" />
-                    </div>
+                {/* Real High-Gloss Champagne-Gold Rimmed Capsule Button */}
+                <button
+                  type="button"
+                  onClick={handleButtonClick}
+                  onMouseEnter={() => setIsHovered(true)}
+                  onMouseLeave={() => setIsHovered(false)}
+                  onFocus={() => setIsHovered(true)}
+                  onBlur={() => setIsHovered(false)}
+                  aria-label={`Buy ${product.name} Now`}
+                  className="group relative w-full aspect-[3.25/1] rounded-full border-2 border-[#dfc39a] hover:border-[#ffe8c5] text-white font-black tracking-[0.18em] uppercase flex items-center justify-center shadow-2xl transition-all duration-300 active:scale-95 cursor-pointer overflow-hidden focus:outline-none focus:ring-4 focus:ring-[#dfc39a]/50"
+                  style={{
+                    background: 'linear-gradient(180deg, #1b1d26 0%, #0d0e14 55%, #06070a 100%)',
+                    boxShadow: isHovered
+                      ? '0 16px 38px -6px rgba(0, 0, 0, 0.9), 0 0 40px rgba(255, 230, 180, 0.8), inset 0 1px 2px rgba(255, 255, 255, 0.5)'
+                      : '0 10px 28px -5px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 220, 175, 0.45), inset 0 1px 2px rgba(255, 255, 255, 0.35)',
+                  }}
+                >
+                  {/* Top-half Glass Highlight Gradient Reflection */}
+                  <div className="absolute top-0 inset-x-0 h-1/2 bg-gradient-to-b from-white/30 via-white/10 to-transparent rounded-t-full pointer-events-none" />
 
-                    {/* Subtle Pulsing Warm Halo beneath capsule */}
-                    <div 
-                      className={`absolute -bottom-2 left-1/2 -translate-x-1/2 w-[85%] h-3 rounded-[100%] bg-gradient-to-r from-transparent via-[#fff0da] to-transparent blur-[3px] pointer-events-none transition-all duration-300 ${
-                        isHovered ? 'opacity-100 scale-110' : 'opacity-60 animate-pulse'
-                      }`}
-                    />
-                  </>
-                )}
+                  {/* Inner Metallic Border Glow */}
+                  <div className="absolute inset-[1px] rounded-full border border-white/15 pointer-events-none" />
+
+                  {/* Button Typography: White uppercase "BUY ME" or custom name */}
+                  <span className="relative z-10 text-xs sm:text-sm md:text-base font-extrabold text-white drop-shadow-md tracking-[0.18em] transition-transform duration-200 group-hover:scale-105 flex items-center justify-center space-x-1.5">
+                    <span>{customButtonText || 'BUY ME'}</span>
+                  </span>
+
+                  {/* Hover Sheen Sweep Animation */}
+                  <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/30 to-transparent pointer-events-none" />
+                </button>
 
                 {/* Floating Interactive Badge Prompt on Hover */}
                 <div 
@@ -211,7 +220,7 @@ export default function ProductRobotPurchaseSection({
                   <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-spin" style={{ animationDuration: '3s' }} />
                   <span>Click to Configure &amp; Acquire {product.name}</span>
                 </div>
-              </button>
+              </motion.div>
             </div>
           </div>
         </div>
