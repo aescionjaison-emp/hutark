@@ -208,9 +208,35 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
   return (
     <div className="bg-white text-[#333333] pt-20 min-h-screen">
       {/* =========================================================================
+          SECONDARY PRODUCT SUB-NAVIGATION & BREADCRUMBS
+          ========================================================================= */}
+      <div className="sticky top-20 z-40 bg-white/95 backdrop-blur-md border-b border-gray-200/80 shadow-xs">
+        <div className="site-container flex items-center justify-between py-3">
+          <div className="flex items-center space-x-2 text-xs">
+            <Link href="/" className="text-gray-500 hover:text-brand-blue transition-colors">Home</Link>
+            <span className="text-gray-300">/</span>
+            <Link href="/products" className="text-gray-500 hover:text-brand-blue transition-colors">Products</Link>
+            <span className="text-gray-300">/</span>
+            <span className="font-bold text-gray-900">{product.name}</span>
+          </div>
+
+          <div className="hidden md:flex items-center space-x-6 text-xs font-semibold text-gray-600">
+            <button onClick={() => scrollToSection('hero-section')} className="hover:text-[#0062c5] transition-colors cursor-pointer">Overview</button>
+            <button onClick={() => scrollToSection('intelligence-section')} className="hover:text-[#0062c5] transition-colors cursor-pointer">Embodied AI</button>
+            <button onClick={() => scrollToSection('dexterity-section')} className="hover:text-[#0062c5] transition-colors cursor-pointer">Dexterity</button>
+            <button onClick={() => scrollToSection('hardware-section')} className="hover:text-[#0062c5] transition-colors cursor-pointer">Hardware</button>
+            <button onClick={() => scrollToSection('scenarios-section')} className="hover:text-[#0062c5] transition-colors cursor-pointer">Scenarios</button>
+            <button onClick={() => scrollToSection('matching-section')} className="hover:text-[#0062c5] transition-colors cursor-pointer">Matching List</button>
+            <button onClick={() => scrollToSection('specifications-section')} className="hover:text-[#0062c5] transition-colors cursor-pointer">Specifications</button>
+            <button onClick={() => scrollToSection('contact-section')} className="bg-[#0062c5] hover:bg-blue-700 text-white px-4 py-1.5 rounded-full transition-all text-xs font-bold shadow-sm cursor-pointer">Inquire Now</button>
+          </div>
+        </div>
+      </div>
+
+      {/* =========================================================================
           1. HERO BANNER (MATCHING SCREENSHOT TOP: SKY, BLUE HILLS & ROBOT)
           ========================================================================= */}
-      <section className="relative w-full min-h-[85vh] lg:min-h-[92vh] flex items-center overflow-hidden bg-[#eef3f7] border-b border-gray-200">
+      <section id="hero-section" className="relative w-full min-h-[85vh] lg:min-h-[92vh] flex items-center overflow-hidden bg-[#eef3f7] border-b border-gray-200">
         {/* Sky / Landscape Banner Background */}
         <div className="absolute inset-0 z-0">
           <Image
@@ -286,7 +312,7 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
       {/* =========================================================================
           2. CINEMATIC DARK CHAMBER (MATCHING SCREENSHOT: FULL SCENARIO EMBODIED INTELLIGENCE)
           ========================================================================= */}
-      <section className="relative w-full min-h-[750px] lg:min-h-[850px] bg-[#050608] text-white flex items-center overflow-hidden">
+      <section id="intelligence-section" className="relative w-full min-h-[750px] lg:min-h-[850px] bg-[#050608] text-white flex items-center overflow-hidden">
         {/* Full-width atmospheric background */}
         <div className="absolute inset-0 z-0">
           <Image
@@ -329,7 +355,7 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
       {/* =========================================================================
           3. MACRO DEXTEROUS MANIPULATION (MATCHING SCREENSHOT: ROBOT HAND ON GLASS SCREEN)
           ========================================================================= */}
-      <section className="relative w-full min-h-[650px] lg:min-h-[780px] bg-[#090b10] text-white flex items-center overflow-hidden">
+      <section id="dexterity-section" className="relative w-full min-h-[650px] lg:min-h-[780px] bg-[#090b10] text-white flex items-center overflow-hidden">
         {/* High-res Macro Hand on Phone Glass */}
         <div className="absolute inset-0 z-0">
           <Image
@@ -370,7 +396,7 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
       {/* =========================================================================
           4. INTERACTIVE COGNITIVE DIALOGUE (MATCHING SCREENSHOT: FACE WITH CYAN BUBBLES)
           ========================================================================= */}
-      <section className="relative w-full min-h-[650px] lg:min-h-[750px] bg-[#0c0f16] text-white flex items-center overflow-hidden">
+      <section id="interaction-section" className="relative w-full min-h-[650px] lg:min-h-[750px] bg-[#0c0f16] text-white flex items-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <Image
             src={interactionImg}
@@ -430,7 +456,7 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
       {/* =========================================================================
           5. CORE HARDWARE & ENGINEERING CARDS (MATCHING SCREENSHOT: 2x3 WHITE GRID)
           ========================================================================= */}
-      <section className="py-24 bg-[#f8f9fa] border-b border-gray-200">
+      <section id="hardware-section" className="py-24 bg-[#f8f9fa] border-b border-gray-200">
         <div className="site-container">
           <div className="text-center space-y-3 mb-16">
             <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#0062c5]">
@@ -479,7 +505,7 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
       {/* =========================================================================
           6. INDUSTRIAL SCENARIOS & DEPLOYMENT (MATCHING SCREENSHOT: 2x2 DARK CARDS)
           ========================================================================= */}
-      <section className="py-24 bg-[#0a0c10] text-white">
+      <section id="scenarios-section" className="py-24 bg-[#0a0c10] text-white">
         <div className="site-container">
           <div className="text-center space-y-3 mb-16">
             <span className="text-xs font-bold uppercase tracking-[0.2em] text-cyan-400">
@@ -528,7 +554,7 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
       {/* =========================================================================
           7. "MATCHING LIST" / ROBOT ANATOMY (MATCHING SCREENSHOT SECTION)
           ========================================================================= */}
-      <section className="py-24 bg-white border-b border-gray-200">
+      <section id="matching-section" className="py-24 bg-white border-b border-gray-200">
         <div className="site-container">
           <div className="text-center space-y-4 mb-14">
             <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#0062c5]">

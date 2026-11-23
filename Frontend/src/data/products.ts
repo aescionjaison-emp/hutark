@@ -508,29 +508,182 @@ export const PRODUCTS: Record<string, ProductData> = {
   },
 
   // =========================================================================
-  // 5. HUTARK G2 — COMMERCIAL SERVICE & RETAIL SHOWROOM
+  // 5. HUTARK G2 — COMMERCIAL SERVICE & RETAIL SHOWROOM (REFERENCE EXACT MATCH)
   // =========================================================================
   "G2": {
     id: "G2",
     name: "HUTARK G2",
     series: "HUTARK G Series",
-    tagline: "Commercial Service & Retail Humanoid Robot",
-    heroSubtitle: "Interactive service assistant for retail showrooms, hospitality receptions, and public venues.",
+    tagline: "Industrial-Grade Interactive Wheeled Humanoid Robot",
+    heroSubtitle: "Equipped with dual 7-DoF force-control arms, 360° LiDAR perception, and dual hot-swappable batteries for 24/7 intelligent operations.",
     heroImg: "/uploads/images/20251031/afa47f3a6d43c28b95a1534ed8310ad7.png",
     heroBannerBg: "/uploads/images/20261103/015bf1f9da95cc783f5e1e7363b3882c.png",
-    overview: "Equipped with expressive facial displays, high-fidelity voice interaction, natural non-verbal gestures, and omnidirectional indoor navigation.",
+    overview: "HUTARK G2 is an industrial-grade embodied humanoid robot designed for smart factory logistics, precision assembly, commercial showroom presentation, and interactive retail assistance. Built with automotive-grade reliability, it combines agile omnidirectional mobility with sub-millimeter dual-arm dexterity.",
+    
+    // Cinematic Dark Chamber
+    cinematicHeading: "Full Scenario Embodied Intelligence",
+    cinematicSubheading: "PHYSICAL AI BREAKTHROUGH",
+    cinematicDesc: "Powered by end-to-end foundation physical AI policy networks, navigating dynamic industrial shop floors, unmapped warehouses, and human co-working spaces with continuous multi-sensor real-time coordination.",
     cinematicImg: "/uploads/images/20261029/492548ce8722aa332e87aa47ce1019e5.png",
-    manipulationImg: "/uploads/images/20261029/33d570751012965d2455b2f1c9a6d43d.jpg",
-    interactionImg: "/uploads/images/20261030/3b46c5afb682b2c6798d153344ad4cc3.jpg",
-    matchingListImg: "/uploads/images/20261029/62974a39fa9e903d8e47b2cd2befc16e.png",
-    specs: [
-      { label: "Height", value: "160 cm" },
-      { label: "Interaction", value: "Multimodal Voice + Visual Intent" },
-      { label: "Navigation", value: "3D LiDAR + RGB-D SLAM" }
+    cinematicMetrics: [
+      { value: "26 DoF", label: "Active Degrees of Freedom" },
+      { value: "5.0 kg", label: "Single Arm Rated Payload" },
+      { value: "1,652 Wh", label: "Dual Battery Capacity" }
     ],
-    features: [{ title: "Embodied Dialogue", description: "Powered by domain-tuned large multimodal language models." }],
-    applications: [{ title: "Retail Showrooms", desc: "Automotive dealerships, flagship stores, and customer guidance." }],
-    gallery: ["/uploads/images/20251031/afa47f3a6d43c28b95a1534ed8310ad7.png"]
+
+    // Macro Manipulation
+    manipulationHeading: "High Precision Dexterous Manipulation",
+    manipulationSubtitle: "SUB-MILLIMETER DEXTERITY",
+    manipulationDesc: "High-density optical-tactile fingertip sensors deliver dynamic micro-force feedback down to 0.01 N. Capable of handling delicate smartphone display glass, flexible cable harness insertion, and precision electronics fastener assembly.",
+    manipulationImg: "/uploads/images/20261029/33d570751012965d2455b2f1c9a6d43d.jpg",
+    manipulationFeatures: [
+      "Dual 7-DoF force-control arms with <0.5 N absolute accuracy",
+      "Sub-millimeter position & force impedance hybrid control (±0.03 mm)",
+      "Zero-damage handling of fragile glassware, wafers, and electronics"
+    ],
+
+    // Multimodal Interaction
+    interactionHeading: "Natural Multimodal Cognitive Dialogue",
+    interactionSubtitle: "HUMAN-ROBOT COLLABORATION",
+    interactionDesc: "Powered by the GO-3 physical foundation model, interpreting natural language spoken tasks, spatial pointing gestures, and visual environmental state changes zero-shot.",
+    interactionImg: "/uploads/images/20261030/3b46c5afb682b2c6798d153344ad4cc3.jpg",
+    interactionBubbles: [
+      { title: "Spatial Perception Intent:", text: "Workstation target acquired: Calibrating end-effector pose..." },
+      { title: "Collaborative Feedback:", text: "Assembly verified: Tolerances strictly within ±0.03 mm." }
+    ],
+
+    // Matching List
+    matchingListImg: "/uploads/images/20261029/62974a39fa9e903d8e47b2cd2befc16e.png",
+    matchingListChips: [
+      { label: "Head & Vision", value: "RGB-D + 3D LiDAR" },
+      { label: "Dual Arms", value: "7-DoF Force-Control" },
+      { label: "Dexterous Hands", value: "Tactile Fingertips" },
+      { label: "Telescopic Waist", value: "1225 – 1795 mm" },
+      { label: "Chassis Drive", value: "Omnidirectional 4-DoF" },
+      { label: "Energy Bay", value: "Dual 1652Wh Hot-Swap" }
+    ],
+
+    // 6 Hardware Modules (2x3 Card Grid)
+    hardwareModules: [
+      {
+        title: "Dual 7-DoF Force-Control Robotic Arms",
+        subtitle: "High-Precision Industrial Manipulation",
+        desc: "Equipped with spherical wrists, harmonic drive reducers, and high-frequency torque sensors delivering <0.5 N force control sensitivity and ±0.03 mm repeatability.",
+        img: "/uploads/images/20261029/55303dc4864d9d5c35f52263a4dd2e46.jpg"
+      },
+      {
+        title: "360° Panoramic Safety Perception Suite",
+        subtitle: "Dual 3D LiDAR & Multi-Angle Cameras",
+        desc: "Integrates 2x 3D LiDARs, 3x ultra-wide fisheye cameras, and head/wrist RGB-D depth vision sensors for 360-degree blind-spot-free spatial awareness.",
+        img: "/uploads/images/20261029/82066bacdbeb17a0674ca29cd13d5b12.jpg"
+      },
+      {
+        title: "Modular High-Torque Joint Actuators",
+        subtitle: "High Power-Density Planetary Drives",
+        desc: "Proprietary compact modular actuators with integrated dual absolute encoders and impact-absorbing compliance for industrial longevity.",
+        img: "/uploads/images/20261029/8abd115118551853b3212bf47db783a0.jpg"
+      },
+      {
+        title: "Active Telescopic Waist & Omnidirectional Chassis",
+        subtitle: "Variable Height 1,225 mm – 1,795 mm",
+        desc: "4-DoF chassis supporting Ackermann steering, crab-walking, and 360° in-place rotation with dynamic center-of-gravity stabilization.",
+        img: "/uploads/images/20261029/a45cd3ea1909796be5cca32223c71fac.jpg"
+      },
+      {
+        title: "Dual Hot-Swappable 48V Battery Architecture",
+        subtitle: "1,652 Wh Capacity • 24/7 Operation",
+        desc: "Supports quick manual hot-swap in under 60 seconds without shutting down the system, alongside autonomous magnetic return-to-dock contact charging.",
+        img: "/uploads/images/20261029/208c523904a5188395bf9b50f0c94334.jpg"
+      },
+      {
+        title: "Automotive-Grade Safety & SIL-2 Compliance",
+        subtitle: "Hardware-Level Redundant Safeguards",
+        desc: "Dual emergency stop buttons, 360° collision-sensing safety bumpers, and certified failsafe motor braking ensure certified operator co-working safety.",
+        img: "/uploads/images/20241230/1968be56db5f4f93c2d514a82df24944.png"
+      }
+    ],
+
+    // 4 Application Scenarios (2x2 Dark Grid)
+    applicationScenarios: [
+      {
+        title: "Smart Manufacturing & Electronic Assembly",
+        subtitle: "High-Precision Workstations",
+        desc: "Precision screw tightening, wiring harness insertion, PCB optical inspection, and component kitting.",
+        img: "/uploads/images/20261029/763c5b4b30767904e5cddda22e083597.png"
+      },
+      {
+        title: "Commercial Retail & Guided Presentation",
+        subtitle: "Flagship Showrooms & Receptions",
+        desc: "Automotive showroom vehicle explanation, corporate exhibition tours, VIP reception, and intelligent interaction.",
+        img: "/uploads/images/20260429/6cc43e41089201e697d1bb7de197b8e8.png"
+      },
+      {
+        title: "Warehouse Intralogistics & Bin Picking",
+        subtitle: "Automated Material Handling",
+        desc: "Autonomous tote handling, tote transport across work cells, and cross-bay inventory sorting.",
+        img: "/uploads/images/20251023/d59c5681d6db5d368849ac13334e98e9.png"
+      },
+      {
+        title: "VR Teleoperation & Embodied Data Collection",
+        subtitle: "Human-in-the-Loop Cockpit",
+        desc: "Ultra-low-latency bilateral force-feedback teleoperation for complex manual assembly and demonstration data recording.",
+        img: "/uploads/images/20261106/86677c2f141fe941919f878558713c2d.png"
+      }
+    ],
+
+    // Product Specifications Table
+    specRows: [
+      { category: "Basic Parameters", item: "Total Height", value: "1,225 mm – 1,795 mm (Telescopic Waist)" },
+      { category: "Basic Parameters", item: "Total System Weight", value: "185 kg (Including Dual Batteries)" },
+      { category: "Basic Parameters", item: "Active Degrees of Freedom (DoF)", value: "26 Active DoF (3 Neck, 14 Arms, 3 Waist, 2 Legs, 4 Chassis)" },
+      { category: "Basic Parameters", item: "Maximum Moving Speed", value: "1.5 m/s" },
+      { category: "Basic Parameters", item: "Protection Rating", value: "IP42 Full Machine Industrial Protection" },
+
+      { category: "Arm & Manipulation", item: "Degrees of Freedom Per Arm", value: "7-DoF Force-Control Arm" },
+      { category: "Arm & Manipulation", item: "Single Arm Rated Payload", value: "5.0 kg" },
+      { category: "Arm & Manipulation", item: "Force Control Accuracy", value: "< 0.5 N Absolute Precision" },
+      { category: "Arm & Manipulation", item: "Trajectory Repeatability", value: "±0.03 mm" },
+      { category: "Arm & Manipulation", item: "Dexterous Hands", value: "OmniHand Ultra Multi-Fingered Tactile Hands" },
+
+      { category: "Chassis & Mobility", item: "Mobility Mechanism", value: "4-DoF Omnidirectional Chassis" },
+      { category: "Chassis & Mobility", item: "Steering Modes", value: "Ackermann Steering, Crab-Walking, 360° In-Place Rotation" },
+      { category: "Chassis & Mobility", item: "Turning Radius", value: "0 mm (Zero-Radius Turn)" },
+      { category: "Chassis & Mobility", item: "Obstacle Clearance", value: "20 mm Step / 35 mm Gap" },
+
+      { category: "Battery & Energy", item: "Battery Chemistry", value: "Dual High-Energy Lithium-Ion Packs" },
+      { category: "Battery & Energy", item: "Total Battery Capacity", value: "1,652 Wh (Hot-Swappable)" },
+      { category: "Battery & Energy", item: "Continuous Runtime", value: "4.0 – 5.0 Hours" },
+      { category: "Battery & Energy", item: "Charging Options", value: "Direct Plug-In, Manual Hot-Swap (<60s), Auto-Docking" },
+
+      { category: "Perception & Compute", item: "Main Compute Platform", value: "Dual NVIDIA Jetson Edge AI Platform" },
+      { category: "Perception & Compute", item: "3D LiDAR Sensors", value: "2x 3D Solid-State LiDAR (360° Coverage)" },
+      { category: "Perception & Compute", item: "Vision Suite", value: "Head RGB-D + Wrist RGB-D + 3x Panoramic Fisheye Cameras" },
+      { category: "Perception & Compute", item: "Acoustic System", value: "6-Channel Circular Beamforming Microphone Array" }
+    ],
+
+    specs: [
+      { label: "Height Range", value: "1,225 mm – 1,795 mm (Telescopic)" },
+      { label: "Weight", value: "185 kg" },
+      { label: "Degrees of Freedom", value: "26 Active DoF" },
+      { label: "Single Arm Payload", value: "5.0 kg" },
+      { label: "Max Speed", value: "1.5 m/s" },
+      { label: "Battery Capacity", value: "1,652 Wh (Dual Hot-Swap)" },
+      { label: "Endurance", value: "4.0 Hours Continuous Operation" },
+      { label: "Protection", value: "IP42 Industrial Grade" }
+    ],
+    features: [
+      { title: "Dual 7-DoF Force-Control Arms", description: "Sub-millimeter precision with <0.5 N force sensitivity." },
+      { title: "Variable-Height Torso", description: "Telescopic waist expands operational range between 1.22m and 1.8m." },
+      { title: "360° Perception Envelopes", description: "Dual 3D LiDAR and triple fisheye vision eliminate blind zones." }
+    ],
+    applications: [
+      { title: "Smart Manufacturing", desc: "Precision assembly, electronics fastener insertion, and in-line quality inspection." },
+      { title: "Commercial Presentation", desc: "Automotive showroom explanations and VIP guided reception tours." }
+    ],
+    gallery: [
+      "/uploads/images/20261103/015bf1f9da95cc783f5e1e7363b3882c.png",
+      "/uploads/images/20261029/492548ce8722aa332e87aa47ce1019e5.png"
+    ]
   },
 
   // =========================================================================
@@ -606,18 +759,70 @@ export const PRODUCTS: Record<string, ProductData> = {
     gallery: ["/uploads/images/20251023/d59c5681d6db5d368849ac13334e98e9.png"]
   },
 
-  // Fallback mappings for other models in the series
+  // =========================================================================
+  // 7. HUTARK A3 — INDUSTRIAL WORKSTATION BIPEDAL HUMANOID
+  // =========================================================================
   "A3": {
     id: "A3",
     name: "HUTARK A3",
     series: "HUTARK A Series",
-    tagline: "Industrial-Grade Standard Bipedal Humanoid Robot",
-    heroSubtitle: "High-stability bipedal walking platform designed for assembly line workstations.",
+    tagline: "Industrial Standard Bipedal Humanoid Robot",
+    heroSubtitle: "High-stability bipedal walking platform designed for factory assembly line workstations.",
     heroImg: "/uploads/images/20260429/a657e46f829152dbed8c7cd370ef8054.png",
     heroBannerBg: "/uploads/images/products/a3_hero_banner.jpg",
     cinematicImg: "/uploads/images/products/a3_cinematic_dark.jpg",
     matchingListImg: "/uploads/images/products/a3_anatomy_diagram.jpg",
-    overview: "HUTARK A3 delivers consistent industrial productivity across diverse indoor operational floors, featuring robust joint compliance and modular tool changers.",
+    overview: "HUTARK A3 delivers consistent industrial productivity across diverse indoor operational floors, featuring robust joint compliance, bipedal balance, and modular tool changers for automated workstations.",
+    cinematicHeading: "Industrial Bipedal Workstation Autonomy",
+    cinematicSubheading: "CONTINUOUS SHIFT RELIABILITY",
+    cinematicDesc: "AHA3 compliant bipedal locomotion engineered for human-scale industrial manufacturing cells, enabling precise fastener insertion, parts kitting, and machine tending.",
+    cinematicMetrics: [
+      { value: "38 DoF", label: "Active Degrees of Freedom" },
+      { value: "4.0 kg", label: "Single Arm Rated Payload" },
+      { value: "4.0 Hours", label: "Continuous Shift Runtime" }
+    ],
+    manipulationHeading: "Dual-Arm Assembly & Part Handling",
+    manipulationSubtitle: "SUB-MILLIMETER WORKSTATION ACCURACY",
+    manipulationDesc: "Dual 7-DoF arms with impedance control deliver sub-millimeter trajectory repeatability for handling electronic connectors, sheet metal parts, and packaging.",
+    manipulationImg: "/uploads/images/20261029/33d570751012965d2455b2f1c9a6d43d.jpg",
+    manipulationFeatures: [
+      "Sub-millimeter ±0.04 mm trajectory repeatability",
+      "Dynamic gravity & inertia compensation during walking steps",
+      "Modular industrial tool changer supporting suction & clamp grippers"
+    ],
+    interactionHeading: "Shop Floor Workstation Coordination",
+    interactionSubtitle: "INDUSTRIAL MES / SCADA LINK",
+    interactionDesc: "Direct integration with manufacturing execution systems, receiving build orders and reporting quality inspection telemetry in real-time.",
+    interactionImg: "/uploads/images/20261030/3b46c5afb682b2c6798d153344ad4cc3.jpg",
+    interactionBubbles: [
+      { title: "MES Dispatch:", text: "Workstation #04: Assembly sequence initiated for Chassis Bracket B." },
+      { title: "Torque Verification:", text: "Fasteners torqued to 3.8 N·m. QA status: PASS." }
+    ],
+    matchingListChips: [
+      { label: "Vision Suite", value: "3D LiDAR + RGB-D" },
+      { label: "Bipedal Legs", value: "Bio-Actuators" },
+      { label: "Dual Arms", value: "7-DoF Active" },
+      { label: "Hands", value: "Industrial Grippers" },
+      { label: "Compute Core", value: "Dual Drive Thor" },
+      { label: "Power Pack", value: "48V 1200Wh Battery" }
+    ],
+    specRows: [
+      { category: "Basic Parameters", item: "Total Height", value: "168 cm" },
+      { category: "Basic Parameters", item: "Total Weight", value: "58 kg (Including Battery)" },
+      { category: "Basic Parameters", item: "Active Degrees of Freedom (DoF)", value: "38 Active DoF" },
+      { category: "Basic Parameters", item: "Walking Speed", value: "Up to 2.2 m/s" },
+      { category: "Basic Parameters", item: "Protection Rating", value: "IP54 Industrial Protection" },
+      { category: "Arm & Manipulation", item: "Degrees of Freedom Per Arm", value: "7-DoF" },
+      { category: "Arm & Manipulation", item: "Single Arm Rated Payload", value: "4.0 kg" },
+      { category: "Arm & Manipulation", item: "Dual Arm Combined Payload", value: "8.5 kg" },
+      { category: "Arm & Manipulation", item: "Trajectory Repeatability", value: "±0.04 mm" },
+      { category: "Chassis & Mobility", item: "Locomotion Type", value: "Dynamic Bipedal Walking" },
+      { category: "Chassis & Mobility", item: "Obstacle Clearance", value: "15 cm Step / 15° Slope" },
+      { category: "Battery & Energy", item: "Battery Capacity", value: "48V / 25Ah (1200 Wh)" },
+      { category: "Battery & Energy", item: "Continuous Runtime", value: "4.0 Hours" },
+      { category: "Battery & Energy", item: "Charging Time", value: "1.5 Hours Fast-Charge" },
+      { category: "Perception & Compute", item: "Perception Suite", value: "Solid-State LiDAR + Dual RGB-D Depth Cameras" }
+    ],
     specs: [
       { label: "Height", value: "168 cm" },
       { label: "Weight", value: "58 kg" },
@@ -631,39 +836,139 @@ export const PRODUCTS: Record<string, ProductData> = {
     gallery: ["/uploads/images/products/a3_hero_banner.jpg"]
   },
 
+  // =========================================================================
+  // 8. HUTARK A2 ULTRA — FULL-SIZE BIPEDAL HUMANOID
+  // =========================================================================
   "A2_Ultra": {
     id: "A2_Ultra",
     name: "HUTARK A2 Ultra",
     series: "HUTARK A Series",
-    tagline: "Agile Research Bipedal Humanoid Robot",
-    heroSubtitle: "Open-architecture dynamic humanoid for advanced university research and reinforcement learning.",
+    tagline: "Commercial Full-Size Bipedal Humanoid Robot",
+    heroSubtitle: "Proven endurance bipedal humanoid with 40+ degrees of freedom and AHA architecture.",
     heroImg: "/uploads/images/20250922/7528a0359f8f7e09788972bdb5c35c2a.png",
     heroBannerBg: "/uploads/images/products/a3_hero_banner.jpg",
     cinematicImg: "/uploads/images/products/a3_cinematic_dark.jpg",
     matchingListImg: "/uploads/images/products/a3_anatomy_diagram.jpg",
-    overview: "Built specifically for robotics academic centers and foundational AI researchers with full low-level motor torque control.",
-    specs: [
-      { label: "Height", value: "165 cm" },
-      { label: "Weight", value: "55 kg" },
-      { label: "Degrees of Freedom", value: "36 DoF" },
-      { label: "Control Frequency", value: "1000 Hz Low-Level EtherCAT" }
+    overview: "HUTARK A2 Ultra is a commercially deployed full-size bipedal humanoid robot. Engineered for complex commercial tasks, reception, showroom tours, and industrial pilot deployments with exceptional walking endurance.",
+    cinematicHeading: "Commercial Bipedal Walking Endurance",
+    cinematicSubheading: "FULL-SCALE EMBODIED INTELLIGENCE",
+    cinematicDesc: "Proven endurance architecture capable of walking continuous long distances, negotiating tight turns (60 cm radius), and performing natural human-like gestures.",
+    cinematicMetrics: [
+      { value: "40+ DoF", label: "Active Degrees of Freedom" },
+      { value: "60 cm", label: "Tight Turning Radius" },
+      { value: "169 cm", label: "Human-Scale Height" }
     ],
-    features: [{ title: "Academic SDK", description: "Direct ROS 2, Isaac Lab, and MuJoCo bridge with verified digital twins." }],
-    applications: [{ title: "Reinforcement Learning", desc: "Real-world policy validation and extreme terrain locomotion benchmark." }],
+    manipulationHeading: "Force-Compliant Manipulation Arms",
+    manipulationSubtitle: "DUAL 7-DOF ARMS",
+    manipulationDesc: "Equipped with dual 7-DoF arms and multi-fingered dexterous hands, capable of object handover, tool handling, and precision tactile interaction.",
+    manipulationImg: "/uploads/images/20261029/33d570751012965d2455b2f1c9a6d43d.jpg",
+    manipulationFeatures: [
+      "Multi-fingered dexterous hand compatibility",
+      "Dynamic bipedal balance with payload compensation",
+      "Natural conversational arm gestures during speech"
+    ],
+    interactionHeading: "Multimodal Voice & Expressive Gaze",
+    interactionSubtitle: "HUMAN-ROBOT INTERACTION",
+    interactionDesc: "Equipped with large language models and full-duplex speech recognition for natural conversations in retail, corporate receptions, and exhibitions.",
+    interactionImg: "/uploads/images/20261030/3b46c5afb682b2c6798d153344ad4cc3.jpg",
+    interactionBubbles: [
+      { title: "Reception Dialogue:", text: "Welcome to HUTARK Innovation Center. Please follow me to the showcase area." },
+      { title: "Gaze Alignment:", text: "Visitor located: Aligning head orientation and greeting posture." }
+    ],
+    matchingListChips: [
+      { label: "Vision Head", value: "RGB-D + LiDAR" },
+      { label: "Bipedal Legs", value: "AHA Joint Actuators" },
+      { label: "Dual Arms", value: "7-DoF Active" },
+      { label: "Hands", value: "OmniHand Multi-Finger" },
+      { label: "Compute Unit", value: "High-Performance Edge AI" },
+      { label: "Battery Pack", value: "700 Wh Quick-Swap" }
+    ],
+    specRows: [
+      { category: "Basic Parameters", item: "Total Height", value: "169 cm" },
+      { category: "Basic Parameters", item: "Total Weight", value: "69 kg (Including Battery)" },
+      { category: "Basic Parameters", item: "Active Degrees of Freedom (DoF)", value: "40+ Active DoF" },
+      { category: "Basic Parameters", item: "Turning Radius", value: "60 cm (Tight Turning Radius)" },
+      { category: "Basic Parameters", item: "Walking Speed", value: "Up to 2.0 m/s" },
+      { category: "Arm & Manipulation", item: "Degrees of Freedom Per Arm", value: "7-DoF" },
+      { category: "Arm & Manipulation", item: "Single Arm Payload", value: "5.0 kg" },
+      { category: "Arm & Manipulation", item: "Dexterous Hands", value: "OmniHand Multi-Fingered Tactile Hands" },
+      { category: "Chassis & Mobility", item: "Locomotion Type", value: "Bipedal Walking & Step Traversal" },
+      { category: "Battery & Energy", item: "Battery Capacity", value: "700 Wh (Supports Battery Swapping)" },
+      { category: "Battery & Energy", item: "Continuous Runtime", value: "2.0 – 3.0 Hours" },
+      { category: "Perception & Compute", item: "Perception Suite", value: "3D LiDAR + Multi-Angle RGB-D Cameras" }
+    ],
+    specs: [
+      { label: "Height", value: "169 cm" },
+      { label: "Weight", value: "69 kg" },
+      { label: "Degrees of Freedom", value: "40+ Active DoF" },
+      { label: "Turning Radius", value: "60 cm" },
+      { label: "Battery Capacity", value: "700 Wh" },
+      { label: "Endurance", value: "2.0 Hours per Charge" }
+    ],
+    features: [{ title: "AHA Compliant Actuation", description: "Bio-inspired joint architecture for smooth, human-like bipedal motion." }],
+    applications: [{ title: "Commercial Showrooms & Reception", desc: "VIP guidance, vehicle explanation, and exhibition presentation." }],
     gallery: ["/uploads/images/products/a3_hero_banner.jpg"]
   },
 
+  // =========================================================================
+  // 9. HUTARK A2 LITE — EDUCATIONAL BIPEDAL PLATFORM
+  // =========================================================================
   "A2_Pro": {
     id: "A2_Pro",
     name: "HUTARK A2 Lite",
     series: "HUTARK A Series",
     tagline: "Cost-Effective Educational Humanoid Platform",
-    heroSubtitle: "Accessible full-body bipedal development system for higher education laboratories.",
+    heroSubtitle: "Accessible full-body bipedal development system for higher education and university laboratories.",
     heroImg: "/uploads/images/20250924/07684c1e0bf74d8cec9aab593d3afa8a.png",
     heroBannerBg: "/uploads/images/products/a3_hero_banner.jpg",
     cinematicImg: "/uploads/images/products/a3_cinematic_dark.jpg",
     matchingListImg: "/uploads/images/products/a3_anatomy_diagram.jpg",
-    overview: "A lightweight, modular educational humanoid robot built for rapid algorithm deployment.",
+    overview: "A lightweight, modular educational humanoid robot built for rapid algorithm deployment, ROS 2 curriculum, and embodied AI research.",
+    cinematicHeading: "Accessible Educational Embodied Robotics",
+    cinematicSubheading: "OPEN PLATFORM FOR EDUCATORS",
+    cinematicDesc: "Designed with comprehensive open-source Python SDKs, verified simulation digital twins, and modular quick-service joints.",
+    cinematicMetrics: [
+      { value: "32 DoF", label: "Active Degrees of Freedom" },
+      { value: "48 kg", label: "Lightweight Structure" },
+      { value: "ROS 2", label: "Native Bridge" }
+    ],
+    manipulationHeading: "Modular Manipulator Limbs",
+    manipulationSubtitle: "RAPID ALGORITHM VALIDATION",
+    manipulationDesc: "5-DoF arms with modular tool plates allow students and researchers to implement custom kinematic algorithms and end-effectors.",
+    manipulationImg: "/uploads/images/20261029/33d570751012965d2455b2f1c9a6d43d.jpg",
+    manipulationFeatures: [
+      "Open API for joint torque, position, and velocity control",
+      "Compatible with parallel grippers and suction cups",
+      "Software limits and hardware collision protection"
+    ],
+    interactionHeading: "Interactive Voice & Educational UI",
+    interactionSubtitle: "TEACHING & DEMONSTRATION",
+    interactionDesc: "Includes visual programming nodes, interactive speech feedback, and browser-based teleoperation dashboards.",
+    interactionImg: "/uploads/images/20261030/3b46c5afb682b2c6798d153344ad4cc3.jpg",
+    interactionBubbles: [
+      { title: "SDK Connection:", text: "ROS 2 node active: Telemetry streaming at 200 Hz." },
+      { title: "Gait Controller:", text: "Sim-to-Real policy deployed: Balance verified on flat terrain." }
+    ],
+    matchingListChips: [
+      { label: "Vision Head", value: "RGB-D Camera" },
+      { label: "Bipedal Legs", value: "Modular Actuators" },
+      { label: "Arms", value: "5-DoF Active" },
+      { label: "Hands", value: "Adaptive Grippers" },
+      { label: "Compute Core", value: "NVIDIA Jetson Orin" },
+      { label: "Battery", value: "36V 500Wh Battery" }
+    ],
+    specRows: [
+      { category: "Basic Parameters", item: "Total Height", value: "155 cm" },
+      { category: "Basic Parameters", item: "Total Weight", value: "48 kg" },
+      { category: "Basic Parameters", item: "Active Degrees of Freedom", value: "32 DoF" },
+      { category: "Basic Parameters", item: "Maximum Speed", value: "1.5 m/s" },
+      { category: "Arm & Manipulation", item: "Degrees of Freedom Per Arm", value: "5-DoF" },
+      { category: "Arm & Manipulation", item: "Single Arm Payload", value: "2.5 kg" },
+      { category: "Chassis & Mobility", item: "Locomotion Type", value: "Bipedal Walking" },
+      { category: "Battery & Energy", item: "Battery Capacity", value: "36V / 14Ah (500 Wh)" },
+      { category: "Battery & Energy", item: "Operating Runtime", value: "2.0 Hours" },
+      { category: "Perception & Compute", item: "Compute Platform", value: "NVIDIA Jetson Orin + ROS 2 Native" }
+    ],
     specs: [
       { label: "Height", value: "155 cm" },
       { label: "Weight", value: "48 kg" },
@@ -674,38 +979,128 @@ export const PRODUCTS: Record<string, ProductData> = {
     gallery: ["/uploads/images/products/a3_hero_banner.jpg"]
   },
 
+  // =========================================================================
+  // 10. HUTARK X1 — LIGHTWEIGHT MODULAR HUMANOID
+  // =========================================================================
   "X1": {
     id: "X1",
     name: "HUTARK X1",
     series: "HUTARK X Series",
-    tagline: "Compact Wheeled Inspection & Manipulation Robot",
-    heroSubtitle: "Lightweight wheeled-biped platform for indoor security, inspection, and light tasks.",
+    tagline: "Full-Stack Open-Source Lightweight Humanoid Robot",
+    heroSubtitle: "Modular, lightweight humanoid robot with 34 active degrees of freedom.",
     heroImg: "/uploads/images/20250115/93ff145215289a6030b2e08d06815827.png",
     heroBannerBg: "/uploads/images/products/x2_hero_banner.jpg",
     cinematicImg: "/uploads/images/products/x2_cinematic_dark.jpg",
     matchingListImg: "/uploads/images/products/x2_anatomy_diagram.jpg",
-    overview: "Engineered for high maneuverability within compact commercial aisles and laboratory corridors.",
+    overview: "HUTARK X1 is a full-stack lightweight humanoid robot featuring a modular, high-efficiency structure designed for rapid embodied AI benchmarking and research.",
+    cinematicHeading: "Lightweight High-Agility Humanoid",
+    cinematicSubheading: "OPEN MODULAR PLATFORM",
+    cinematicDesc: "With a total weight of only 33 kg, X1 delivers extraordinary power-to-weight ratio, high agility, and safe co-working dynamics.",
+    cinematicMetrics: [
+      { value: "34 DoF", label: "Active Degrees of Freedom" },
+      { value: "33 kg", label: "Total Lightweight Mass" },
+      { value: "130 cm", label: "Compact Height" }
+    ],
+    manipulationHeading: "Dynamic Dexterous Manipulation",
+    manipulationSubtitle: "HIGH POWER DENSITY",
+    manipulationDesc: "Compact 7-DoF arms with integrated cable management allow agile manipulation, grasping, and precision motion.",
+    manipulationImg: "/uploads/images/20261029/33d570751012965d2455b2f1c9a6d43d.jpg",
+    manipulationFeatures: [
+      "Ultra-light carbon fiber composite arm shells",
+      "Direct torque sensing across all articulated joints",
+      "Seamless integration with omnidirectional gripper hands"
+    ],
+    interactionHeading: "Real-Time Telepresence & Perception",
+    interactionSubtitle: "LOW-LATENCY EMBODIED AI",
+    interactionDesc: "Ultra-compact head sensor array providing wide-angle stereo vision and instant spatial SLAM mapping.",
+    interactionImg: "/uploads/images/20261030/3b46c5afb682b2c6798d153344ad4cc3.jpg",
+    interactionBubbles: [
+      { title: "Telemetry Stream:", text: "Joint angles synchronized: Zero drift across 10,000 steps." },
+      { title: "Navigation Loop:", text: "Aisle route planned: Traversing commercial floor at 1.0 m/s." }
+    ],
+    matchingListChips: [
+      { label: "Stereo Head", value: "Dual RGB-D Depth" },
+      { label: "Bipedal Legs", value: "Direct-Drive Actuators" },
+      { label: "Dual Arms", value: "7-DoF Compact" },
+      { label: "Hands", value: "Modular Grippers" },
+      { label: "Core Compute", value: "NVIDIA Jetson Module" },
+      { label: "Battery", value: "48V 600Wh Li-Ion" }
+    ],
+    specRows: [
+      { category: "Basic Parameters", item: "Total Height", value: "130 cm" },
+      { category: "Basic Parameters", item: "Total Weight", value: "33 kg" },
+      { category: "Basic Parameters", item: "Active Degrees of Freedom", value: "34 DoF" },
+      { category: "Basic Parameters", item: "Maximum Walking Speed", value: "1.0 m/s" },
+      { category: "Battery & Energy", item: "Continuous Runtime", value: "~2.0 Hours" },
+      { category: "Perception & Compute", item: "Compute Platform", value: "NVIDIA Jetson Edge Module" }
+    ],
     specs: [
-      { label: "Weight", value: "38 kg" },
-      { label: "Max Speed", value: "4.0 m/s" },
-      { label: "Battery Life", value: "7 Hours" }
+      { label: "Height", value: "130 cm" },
+      { label: "Weight", value: "33 kg" },
+      { label: "Degrees of Freedom", value: "34 DoF" },
+      { label: "Max Speed", value: "1.0 m/s" },
+      { label: "Battery Life", value: "~2.0 Hours" }
     ],
     features: [{ title: "High-Torque Hub Motors", description: "Direct drive motors for virtually silent navigation." }],
     applications: [{ title: "Facility Patrolling", desc: "24/7 security patrol and environmental parameter recording." }],
     gallery: ["/uploads/images/products/x2_hero_banner.jpg"]
   },
 
+  // =========================================================================
+  // 11. HUTARK G1 MAX — HEAVY-DUTY COMMERCIAL SERVICE
+  // =========================================================================
   "G1_MAX": {
     id: "G1_MAX",
     name: "HUTARK G1 Max",
     series: "HUTARK G Series",
-    tagline: "Heavy-Duty Commercial Assistant",
-    heroSubtitle: "Enhanced payload and tray delivery capabilities for commercial hospitality.",
+    tagline: "Heavy-Duty Commercial Autonomous Assistant",
+    heroSubtitle: "Enhanced payload and tray delivery capabilities for commercial hospitality and healthcare.",
     heroImg: "/uploads/images/20240911/f3a327b21c97a466b04d58503326cfad.png",
     heroBannerBg: "/uploads/images/20261103/015bf1f9da95cc783f5e1e7363b3882c.png",
     cinematicImg: "/uploads/images/20261029/492548ce8722aa332e87aa47ce1019e5.png",
     matchingListImg: "/uploads/images/20261029/62974a39fa9e903d8e47b2cd2befc16e.png",
-    overview: "Optimized for continuous food and beverage, linen, and specimen transport across complex multistory campuses.",
+    overview: "Optimized for continuous food and beverage, linen, and medical specimen transport across complex multistory campuses with autonomous elevator integration.",
+    cinematicHeading: "Commercial Multi-Floor Transport Autonomy",
+    cinematicSubheading: "HEAVY-DUTY FLEET OPERATIONS",
+    cinematicDesc: "Features high-capacity dual compartments with motorized doors, smart tray leveling, and 30 kg cargo payload.",
+    cinematicMetrics: [
+      { value: "30 kg", label: "Payload Capacity" },
+      { value: "10 Hours", label: "Continuous Run" },
+      { value: "360°", label: "Safety LiDAR Envelopes" }
+    ],
+    manipulationHeading: "Automated Compartment Access",
+    manipulationSubtitle: "SECURE PIN & RFID DISPATCH",
+    manipulationDesc: "Contactless delivery compartments with automated UV sterilization between dispatch runs.",
+    manipulationImg: "/uploads/images/20261029/33d570751012965d2455b2f1c9a6d43d.jpg",
+    manipulationFeatures: [
+      "Motorized dual-door lockable chambers",
+      "Dynamic tray leveling on ramps and elevator transitions",
+      "Integrated UV-C surface sanitization"
+    ],
+    interactionHeading: "Voice & Touchscreen Guest Interaction",
+    interactionSubtitle: "HOSPITALITY CO-WORKING",
+    interactionDesc: "Large multi-touch interface paired with voice guidance in 12 languages for seamless guest interaction.",
+    interactionImg: "/uploads/images/20261030/3b46c5afb682b2c6798d153344ad4cc3.jpg",
+    interactionBubbles: [
+      { title: "Elevator Calling:", text: "Transit link established: Arriving at Floor 8 for delivery." },
+      { title: "Recipient Arrival:", text: "PIN 4892 verified: Unlocking Compartment A." }
+    ],
+    matchingListChips: [
+      { label: "Perception", value: "Dual 3D LiDAR" },
+      { label: "Cargo Bay", value: "30 kg Dual Chamber" },
+      { label: "Chassis", value: "Omnidirectional Base" },
+      { label: "Safety", value: "360° Proximity Bumper" },
+      { label: "Compute", value: "Fleet Dispatch Core" },
+      { label: "Power Bay", value: "2000 Wh Fast-Swap" }
+    ],
+    specRows: [
+      { category: "Basic Parameters", item: "Total Height", value: "145 cm" },
+      { category: "Basic Parameters", item: "Cargo Payload Capacity", value: "30 kg" },
+      { category: "Basic Parameters", item: "Chassis Speed", value: "1.2 m/s" },
+      { category: "Battery & Energy", item: "Operating Duration", value: "10 Hours Continuous" },
+      { category: "Battery & Energy", item: "Battery Capacity", value: "2000 Wh" },
+      { category: "Perception & Compute", item: "Perception Suite", value: "Dual 3D LiDAR + 3D ToF Sensors" }
+    ],
     specs: [
       { label: "Payload Capacity", value: "30 kg" },
       { label: "Continuous Run", value: "10 Hours" }
@@ -715,6 +1110,9 @@ export const PRODUCTS: Record<string, ProductData> = {
     gallery: ["/uploads/images/20240911/f3a327b21c97a466b04d58503326cfad.png"]
   },
 
+  // =========================================================================
+  // 12. HUTARK D1 PRO — AGILE QUADRUPED EXPLORER
+  // =========================================================================
   "D1_Pro": {
     id: "D1_Pro",
     name: "HUTARK D1 Pro/Edu",
@@ -726,6 +1124,48 @@ export const PRODUCTS: Record<string, ProductData> = {
     cinematicImg: "/uploads/images/products/d1_cinematic_dark.jpg",
     matchingListImg: "/uploads/images/products/d1_anatomy_diagram.jpg",
     overview: "HUTARK D1 Pro delivers extreme dynamic stability across stairways, mud, gravel, and pipe racks with optional robotic arm mount.",
+    cinematicHeading: "High-Dynamic Quadruped Locomotion",
+    cinematicSubheading: "EXTREME TERRAIN AGILITY",
+    cinematicDesc: "Proprietary direct-drive joint actuators enable back-flipping, high-speed running, and rapid recovery from falls.",
+    cinematicMetrics: [
+      { value: "12 DoF", label: "Direct-Drive Actuators" },
+      { value: "3.5 m/s", label: "Max Run Speed" },
+      { value: "35°", label: "Slope Gradeability" }
+    ],
+    manipulationHeading: "Spine-Mounted Tool Integration",
+    manipulationSubtitle: "MODULAR TOP FLANGE",
+    manipulationDesc: "Equipped with power and data ports for mounting PTZ inspection cameras, lidar domes, or lightweight manipulator arms.",
+    manipulationImg: "/uploads/images/20261029/33d570751012965d2455b2f1c9a6d43d.jpg",
+    manipulationFeatures: [
+      "Standard 24V/48V auxiliary power output",
+      "Dynamic gait stabilization with active top payloads",
+      "Quick-release rail system for sensor suites"
+    ],
+    interactionHeading: "Autonomous Terrain SLAM Navigation",
+    interactionSubtitle: "UNSTRUCTURED OUTDOOR MAPPING",
+    interactionDesc: "Real-time elevation mapping and footstep planning across rocky slopes, fallen branches, and concrete curbs.",
+    interactionImg: "/uploads/images/20261030/3b46c5afb682b2c6798d153344ad4cc3.jpg",
+    interactionBubbles: [
+      { title: "Footstep Planner:", text: "Gravel incline detected: Activating trot-run gait at 2.8 m/s." },
+      { title: "Thermal Scan:", text: "Transformer bank temperature: Nominal (36.5°C)." }
+    ],
+    matchingListChips: [
+      { label: "Leg Joints", value: "12 Direct-Drive" },
+      { label: "Foot Sensors", value: "3-Axis Force Array" },
+      { label: "Vision Suite", value: "RGB-D + Solid-State LiDAR" },
+      { label: "Enclosure", value: "IP67 Magnesium Alloy" },
+      { label: "Compute Core", value: "NVIDIA Jetson AGX" },
+      { label: "Battery Pack", value: "48V 800Wh Battery" }
+    ],
+    specRows: [
+      { category: "Basic Parameters", item: "Total Weight", value: "15 kg" },
+      { category: "Basic Parameters", item: "Maximum Speed", value: "Up to 3.5 m/s" },
+      { category: "Basic Parameters", item: "Max Payload", value: "5.0 kg" },
+      { category: "Basic Parameters", item: "Slope Climbing Angle", value: "Up to 35°" },
+      { category: "Chassis & Mobility", item: "Leg Actuation", value: "12-DoF Direct Drive Actuators" },
+      { category: "Battery & Energy", item: "Continuous Runtime", value: "3.0 Hours Continuous Motion" },
+      { category: "Perception & Compute", item: "Sensors", value: "3D LiDAR + Intel RealSense RGB-D" }
+    ],
     specs: [
       { label: "Weight", value: "15 kg" },
       { label: "Speed", value: "Up to 3.5 m/s" },
@@ -737,6 +1177,9 @@ export const PRODUCTS: Record<string, ProductData> = {
     gallery: ["/uploads/images/products/d1_hero_banner.jpg"]
   },
 
+  // =========================================================================
+  // 13. HUTARK D1 ULTRA — INDUSTRIAL IP67 QUADRUPED
+  // =========================================================================
   "D1Ultra": {
     id: "D1Ultra",
     name: "HUTARK D1 Ultra",
@@ -747,7 +1190,48 @@ export const PRODUCTS: Record<string, ProductData> = {
     heroBannerBg: "/uploads/images/products/d1_hero_banner.jpg",
     cinematicImg: "/uploads/images/products/d1_cinematic_dark.jpg",
     matchingListImg: "/uploads/images/products/d1_anatomy_diagram.jpg",
-    overview: "Designed for hazardous outdoor operations under extreme temperatures from -20°C to +55°C.",
+    overview: "Designed for hazardous outdoor operations under extreme temperatures from -20°C to +55°C across petrochemical yards, oil refineries, and offshore rigs.",
+    cinematicHeading: "Submersible IP67 Petrochemical Patrol",
+    cinematicSubheading: "RUGGED HAZARDOUS ENVIRONMENT ROBOTICS",
+    cinematicDesc: "Certified for water immersion up to 1 meter, severe dust storms, and explosive Zone 2 industrial gas environments.",
+    cinematicMetrics: [
+      { value: "IP67", label: "Submersible Ingress Rating" },
+      { value: "15 kg", label: "Payload Capacity" },
+      { value: "4.0 Hours", label: "Continuous Patrol" }
+    ],
+    manipulationHeading: "Multi-Spectral PTZ Sensor Turret",
+    manipulationSubtitle: "ACOUSTIC & RADIOMETRIC SENSING",
+    manipulationDesc: "Continuous acoustic gas leak detection and radiometric thermal profiling for identifying pipeline micro-leaks.",
+    manipulationImg: "/uploads/images/20261029/33d570751012965d2455b2f1c9a6d43d.jpg",
+    manipulationFeatures: [
+      "Radiometric thermal camera with ±1°C sensitivity",
+      "Ultrasonic acoustic sensor identifying pressurized gas leaks",
+      "30x optical zoom reading analog pressure dials"
+    ],
+    interactionHeading: "Autonomous Docking & Remote SCADA Uplink",
+    interactionSubtitle: "UNCREWED 24/7 OPERATION",
+    interactionDesc: "Returns automatically to ruggedized doghouse charging base for inductive charging and encrypted SCADA upload.",
+    interactionImg: "/uploads/images/20261030/3b46c5afb682b2c6798d153344ad4cc3.jpg",
+    interactionBubbles: [
+      { title: "Valve Inspection:", text: "Cracking unit line 4: Pressure dial reads 4.2 Bar. Leak status: ZERO." },
+      { title: "Charging Dock:", text: "Patrol loop complete: Docked at Base Shelter #1. Charging active." }
+    ],
+    matchingListChips: [
+      { label: "PTZ Turret", value: "Thermal + Acoustic" },
+      { label: "IP67 Shell", value: "Submersible Sealing" },
+      { label: "Leg Joints", value: "High-Torque Planetary" },
+      { label: "Foot Pads", value: "Oil-Resistant Rubber" },
+      { label: "Compute Core", value: "Dual Jetson Orin" },
+      { label: "Battery Bay", value: "48V 1400Wh Battery" }
+    ],
+    specRows: [
+      { category: "Basic Parameters", item: "Protection Rating", value: "IP67 Submersible (1 Meter Depth)" },
+      { category: "Basic Parameters", item: "Total Weight", value: "18.5 kg" },
+      { category: "Basic Parameters", item: "Max Payload", value: "15.0 kg" },
+      { category: "Basic Parameters", item: "Operating Temperature", value: "-20°C to +55°C" },
+      { category: "Battery & Energy", item: "Continuous Runtime", value: "4.0 Hours Patrol" },
+      { category: "Battery & Energy", item: "Charging Type", value: "Autonomous Inductive Charging Station" }
+    ],
     specs: [
       { label: "Protection Rating", value: "IP67" },
       { label: "Payload", value: "15 kg" },
@@ -758,6 +1242,9 @@ export const PRODUCTS: Record<string, ProductData> = {
     gallery: ["/uploads/images/products/d1_hero_banner.jpg"]
   },
 
+  // =========================================================================
+  // 14. HUTARK D1 MAXPRO — ACTIVE MOBILE MANIPULATION QUADRUPED
+  // =========================================================================
   "D1_MaxPro": {
     id: "D1_MaxPro",
     name: "HUTARK D1 MaxPro",
@@ -768,7 +1255,49 @@ export const PRODUCTS: Record<string, ProductData> = {
     heroBannerBg: "/uploads/images/products/d1_hero_banner.jpg",
     cinematicImg: "/uploads/images/products/d1_cinematic_dark.jpg",
     matchingListImg: "/uploads/images/products/d1_anatomy_diagram.jpg",
-    overview: "The complete mobile manipulation quadruped for active intervention in uncrewed remote industrial sites.",
+    overview: "The complete mobile manipulation quadruped for active intervention in uncrewed remote industrial sites, capable of turning physical valves and toggling electrical switches.",
+    cinematicHeading: "Mobile Manipulation Quadruped Platform",
+    cinematicSubheading: "PHYSICAL INTERVENTION ROBOTICS",
+    cinematicDesc: "Integrates a high-precision 6-DoF robotic arm on the spine of an industrial quadruped with unified balance control.",
+    cinematicMetrics: [
+      { value: "6-DoF Arm", label: "Integrated Robotic Arm" },
+      { value: "3.0 kg", label: "Arm End-Effector Payload" },
+      { value: "850 mm", label: "Maximum Working Reach" }
+    ],
+    manipulationHeading: "Physical Valve Turning & Switch Toggling",
+    manipulationSubtitle: "WHOLE-BODY STABILIZATION",
+    manipulationDesc: "Unified whole-body controller stabilizes quadruped feet while the arm applies up to 15 N·m torque to industrial valves.",
+    manipulationImg: "/uploads/images/20261029/33d570751012965d2455b2f1c9a6d43d.jpg",
+    manipulationFeatures: [
+      "Mounted 6-DoF arm with ±0.05 mm repeatability",
+      "Dynamic whole-body gravity and reaction force compensation",
+      "Interchangeable gripper for analog switches and lever valves"
+    ],
+    interactionHeading: "Autonomous Visual Grasp Alignment",
+    interactionSubtitle: "EYE-IN-HAND VISION",
+    interactionDesc: "Wrist-mounted depth camera identifies valve geometry and autonomously calculates grasp orientation.",
+    interactionImg: "/uploads/images/20261030/3b46c5afb682b2c6798d153344ad4cc3.jpg",
+    interactionBubbles: [
+      { title: "Valve Alignment:", text: "Main steam valve identified: Aligning 2-finger gripper to handle." },
+      { title: "Actuation Verified:", text: "Valve rotated 90° clockwise. Flow confirmed isolated." }
+    ],
+    matchingListChips: [
+      { label: "Spine Arm", value: "6-DoF Manipulator" },
+      { label: "Wrist Vision", value: "Eye-in-Hand Depth" },
+      { label: "Legs", value: "12 Direct-Drive Joints" },
+      { label: "Gripper", value: "Parallel Electric" },
+      { label: "Compute Core", value: "Dual Jetson Orin" },
+      { label: "Battery", value: "48V 1600Wh Battery" }
+    ],
+    specRows: [
+      { category: "Basic Parameters", item: "Arm Degrees of Freedom", value: "6-DoF Integrated Robotic Arm" },
+      { category: "Basic Parameters", item: "Arm Maximum Reach", value: "850 mm" },
+      { category: "Basic Parameters", item: "Arm Payload Capacity", value: "3.0 kg at Full Extension" },
+      { category: "Basic Parameters", item: "Total Weight", value: "22 kg (Including Arm & Battery)" },
+      { category: "Chassis & Mobility", item: "Quadruped Mobility", value: "12-DoF Direct Drive High-Torque Legs" },
+      { category: "Battery & Energy", item: "Operating Duration", value: "3.5 Hours Active Manipulation" },
+      { category: "Perception & Compute", item: "Perception Suite", value: "Spine 3D LiDAR + Wrist RGB-D Camera" }
+    ],
     specs: [{ label: "Arm Reach", value: "850 mm" }, { label: "Arm Payload", value: "3 kg" }],
     features: [{ title: "Active Mobile Manipulation", description: "Unified whole-body controller for walking while grasping." }],
     applications: [{ title: "Offshore Platforms", desc: "Emergency valve actuation and button press routines." }],

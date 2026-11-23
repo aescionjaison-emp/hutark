@@ -70,7 +70,7 @@ export default function Header() {
 
         {/* DESKTOP NAV */}
         <nav className="hidden lg:flex items-center space-x-8 text-sm font-medium">
-          {/* Products Mega Menu Trigger */}
+          {/* Technology Mega Menu Trigger (Matching AGIBOT reference) */}
           <div
             className="relative py-6 cursor-pointer"
             onMouseEnter={() => setActiveMenu('products')}
@@ -80,14 +80,25 @@ export default function Header() {
                 isLightHeader ? 'hover:text-brand-blue' : 'hover:text-cyan-300'
               } ${activeMenu === 'products' ? (isLightHeader ? 'text-brand-blue' : 'text-cyan-300') : ''}`}
             >
-              <span>Products</span>
+              <span>Technology</span>
               <ChevronDown className="w-3.5 h-3.5" />
             </span>
           </div>
 
+          {/* Products Link & Mega Menu Trigger */}
+          <Link
+            href="/products"
+            className={`flex items-center space-x-1 py-6 transition-colors ${
+              isLightHeader ? 'hover:text-brand-blue' : 'hover:text-cyan-300'
+            }`}
+            onMouseEnter={() => setActiveMenu('products')}
+          >
+            <span>Products</span>
+          </Link>
+
           {/* R & D Link */}
           <Link
-            href="/technology"
+            href="/rd"
             className={`transition-colors ${
               isLightHeader ? 'hover:text-brand-blue' : 'hover:text-cyan-300'
             }`}
@@ -301,7 +312,7 @@ export default function Header() {
                 }
                 className="w-full flex items-center justify-between py-3 text-base font-bold border-b border-gray-100"
               >
-                <span>Products</span>
+                <span>Technology & Products</span>
                 <ChevronDown
                   className={`w-4 h-4 transition-transform ${
                     mobileActiveSubmenu === 'products' ? 'rotate-180' : ''

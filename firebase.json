@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "hutark-1f8a5",
     "public": "Frontend/out",
     "ignore": [
       "firebase.json",
