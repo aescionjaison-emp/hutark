@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
 import { 
   Mail, 
   ArrowRight, 
@@ -21,15 +20,12 @@ import {
   Sliders, 
   Activity,
   Send,
-  Edit3,
   Video
 } from 'lucide-react';
 import { ProductData } from '../../types';
 import YouTubeVideoSlider from './YouTubeVideoSlider';
 import ProductRobotPurchaseSection from './ProductRobotPurchaseSection';
-import AdminProductEditorDrawer from './AdminProductEditorDrawer';
 import { getProductData } from '../../services/productStore';
-import { adminAuth } from '../../services/adminAuth';
 import { inquiryStore } from '../../services/inquiryStore';
 
 interface ProductDetailViewProps {
@@ -38,23 +34,12 @@ interface ProductDetailViewProps {
 }
 
 export default function ProductDetailView({ product, relatedProducts }: ProductDetailViewProps) {
-  const searchParams = useSearchParams();
   const [currentProduct, setCurrentProduct] = useState<ProductData>(product);
-  const [isAdminDrawerOpen, setIsAdminDrawerOpen] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
 
-  // Sync state with productStore and adminAuth
+  // Sync state with productStore
   useEffect(() => {
     const loaded = getProductData(product.id);
     setCurrentProduct(loaded);
-
-    // Subscribe to auth state
-    const unsubAuth = adminAuth.subscribe((auth) => {
-      setIsAdmin(auth);
-      if (auth && searchParams.get('admin') === 'true') {
-        setIsAdminDrawerOpen(true);
-      }
-    });
 
     const handleUpdate = (e: any) => {
       if (e.detail?.id === product.id || e.detail?.all) {
@@ -63,10 +48,9 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
     };
     window.addEventListener('hutark_product_updated', handleUpdate);
     return () => {
-      unsubAuth();
       window.removeEventListener('hutark_product_updated', handleUpdate);
     };
-  }, [product.id, searchParams]);
+  }, [product.id]);
 
   // Matching List Active Tab
   const [activeTab, setActiveTab] = useState<'all' | 'head' | 'arms' | 'chassis' | 'hands' | 'power'>('all');
@@ -749,33 +733,7 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
         </div>
       </section>
 
-      {/* =========================================================================
-          FLOATING ADMIN LIVE CUSTOMIZER TRIGGER (ONLY VISIBLE WHEN LOGGED IN AS ADMIN)
-          ========================================================================= */}
-      {isAdmin && (
-        <>
-          <div className="fixed bottom-6 right-6 z-40">
-            <button
-              onClick={() => setIsAdminDrawerOpen(true)}
-              className="flex items-center space-x-2.5 bg-[#0f121a] hover:bg-[#161c28] text-white px-5 py-3 rounded-full border border-cyan-500/50 shadow-2xl transition-all hover:scale-105 active:scale-95 group cursor-pointer"
-            >
-              <div className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse" />
-              <Edit3 className="w-4 h-4 text-cyan-400 group-hover:rotate-12 transition-transform" />
-              <span className="text-xs font-bold tracking-wide">Edit Page (Admin)</span>
-            </button>
-          </div>
-
-          {/* =========================================================================
-              ADMIN PRODUCT EDITOR DRAWER
-              ========================================================================= */}
-          <AdminProductEditorDrawer
-            product={currentProduct}
-            isOpen={isAdminDrawerOpen}
-            onClose={() => setIsAdminDrawerOpen(false)}
-            onProductUpdated={(updated) => setCurrentProduct(updated)}
-          />
-        </>
-      )}
+      {/* RELATED PRODUCTS */}
     </div>
   );
 }
