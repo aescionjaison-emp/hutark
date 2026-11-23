@@ -158,7 +158,30 @@ export const PRODUCTS: Record<string, ProductData> = {
     applications: [
       { title: "Precision Manufacturing", desc: "Automotive battery assembly, harness insertion, and in-line visual QA." }
     ],
-    gallery: ["/uploads/images/products/a3_hero_banner.jpg", "/uploads/images/products/a3_cinematic_dark.jpg"]
+    gallery: ["/uploads/images/products/a3_hero_banner.jpg", "/uploads/images/products/a3_cinematic_dark.jpg"],
+    youtubeVideos: [
+      {
+        id: "7zI3u19q_e0",
+        title: "HUTARK A3 Ultra Dynamic Bipedal Locomotion & High-Speed Run",
+        subtitle: "WHOLE-BODY BALANCE TRIAL",
+        description: "Field benchmark of the AHA3 actuation system achieving 3.8 m/s running, curb hopping, and real-time stabilization across rough outdoor terrain.",
+        categoryTag: "Locomotion Benchmark"
+      },
+      {
+        id: "M3_Jb_5zT9I",
+        title: "Dual 7-DoF Arm Fastener Insertion & Wire Routing",
+        subtitle: "SUB-MILLIMETER DEXTERITY",
+        description: "High-precision workstation demonstration featuring 12 kg dual-arm combined payload with sub-millimeter force compliance.",
+        categoryTag: "Dexterous Manipulation"
+      },
+      {
+        id: "fn3KWM1kuAw",
+        title: "Stair Climbing & Unmapped Obstacle Traversal",
+        subtitle: "PHYSICAL AI GENERALIZATION",
+        description: "End-to-end foundation model navigation ascending 22cm industrial stairs without prior geometric maps.",
+        categoryTag: "Field Trials"
+      }
+    ]
   },
 
   // =========================================================================
@@ -303,7 +326,23 @@ export const PRODUCTS: Record<string, ProductData> = {
     ],
     features: [{ title: "Adaptive Hybrid Wheels", description: "Combines active motorized wheels with dynamic hip and knee suspension." }],
     applications: [{ title: "Warehousing & Fulfilment", desc: "Rapid parcel sorting, tote picking, and automated replenishment." }],
-    gallery: ["/uploads/images/products/x2_hero_banner.jpg", "/uploads/images/products/x2_cinematic_dark.jpg"]
+    gallery: ["/uploads/images/products/x2_hero_banner.jpg", "/uploads/images/products/x2_cinematic_dark.jpg"],
+    youtubeVideos: [
+      {
+        id: "29ECwExc-_M",
+        title: "HUTARK X2 Wheeled-Biped 5.0 m/s Transit & 360° Pivot",
+        subtitle: "HYBRID MOBILITY DEMO",
+        description: "Active suspension hub motors executing zero-radius turns, ramp climbing, and high-speed warehouse navigation.",
+        categoryTag: "High-Speed Mobility"
+      },
+      {
+        id: "W1czBcn3Cac",
+        title: "Telescopic Torso Elevation & Pallet Bin Picking",
+        subtitle: "WAREHOUSE AUTOMATION",
+        description: "Variable height adjustment from 1.15m to 1.65m while picking items from high storage racks in motion.",
+        categoryTag: "Logistics Trial"
+      }
+    ]
   },
 
   // =========================================================================
@@ -446,7 +485,23 @@ export const PRODUCTS: Record<string, ProductData> = {
     ],
     features: [{ title: "Multi-Sensor Mast", description: "Integrates PTZ optical zoom and infrared sensors." }],
     applications: [{ title: "Mining & Rail Tunnels", desc: "Structure crack assessment and track inspection." }],
-    gallery: ["/uploads/images/products/d1_hero_banner.jpg", "/uploads/images/products/d1_cinematic_dark.jpg"]
+    gallery: ["/uploads/images/products/d1_hero_banner.jpg", "/uploads/images/products/d1_cinematic_dark.jpg"],
+    youtubeVideos: [
+      {
+        id: "fn3KWM1kuAw",
+        title: "HUTARK D1 Max IP67 All-Terrain Rough Slope Patrol",
+        subtitle: "EXTREME TERRAIN PATROL",
+        description: "Operating in torrential rain, mud, and climbing 35° steep rocky slopes in an uncrewed substation.",
+        categoryTag: "Rugged Robotics"
+      },
+      {
+        id: "29ECwExc-_M",
+        title: "Spine 6-DoF Arm Operating High-Pressure Industrial Valves",
+        subtitle: "ACTIVE INTERVENTION",
+        description: "Autonomous physical valve turning and electrical breaker toggle in a petrochemical plant environment.",
+        categoryTag: "Mobile Manipulation"
+      }
+    ]
   },
 
   // =========================================================================
@@ -504,7 +559,23 @@ export const PRODUCTS: Record<string, ProductData> = {
     specs: [{ label: "Payload", value: "20 kg" }, { label: "Speed", value: "1.2 m/s" }],
     features: [{ title: "Safety Bumpers & Sensors", description: "Redundant emergency hardware triggers." }],
     applications: [{ title: "Office Food Delivery", desc: "Contactless delivery across corporate headquarters." }],
-    gallery: ["/uploads/images/20241230/1968be56db5f4f93c2d514a82df24944.png"]
+    gallery: ["/uploads/images/20241230/1968be56db5f4f93c2d514a82df24944.png"],
+    youtubeVideos: [
+      {
+        id: "M3_Jb_5zT9I",
+        title: "HUTARK G1 Commercial Delivery & Dual-Arm Handling",
+        subtitle: "INDOOR SERVICE DEPLOYMENT",
+        description: "Autonomous tray delivery and corridor navigation with dynamic pedestrian obstacle bypass.",
+        categoryTag: "Commercial Service"
+      },
+      {
+        id: "7zI3u19q_e0",
+        title: "Omnidirectional Wheel Base Navigation & Elevator Calling",
+        subtitle: "CAMPUS INTRALOGISTICS",
+        description: "Multi-floor autonomous delivery with smart elevator IoT integration and voice guidance.",
+        categoryTag: "Facility Logistics"
+      }
+    ]
   },
 
   // =========================================================================
@@ -683,6 +754,29 @@ export const PRODUCTS: Record<string, ProductData> = {
     gallery: [
       "/uploads/images/20261103/015bf1f9da95cc783f5e1e7363b3882c.png",
       "/uploads/images/20261029/492548ce8722aa332e87aa47ce1019e5.png"
+    ],
+    youtubeVideos: [
+      {
+        id: "M3_Jb_5zT9I",
+        title: "HUTARK G2 Industrial Force-Control Dual Arms",
+        subtitle: "SUB-MILLIMETER ASSEMBLY",
+        description: "Executing precision screw torquing and flexible connector insertion with <0.5 N force sensitivity.",
+        categoryTag: "Industrial Assembly"
+      },
+      {
+        id: "7zI3u19q_e0",
+        title: "360° LiDAR Autonomous Showroom Navigation & Guidance",
+        subtitle: "COMMERCIAL PRESENTATION",
+        description: "Omnidirectional Ackermann and crab-walking mobility safely guiding VIP visitors through busy retail spaces.",
+        categoryTag: "Commercial Guidance"
+      },
+      {
+        id: "fn3KWM1kuAw",
+        title: "Dual Hot-Swap Battery Exchange & Auto-Docking",
+        subtitle: "24/7 CONTINUOUS RUNTIME",
+        description: "Under 60-second hot-swap battery exchange without powering down system computing cores.",
+        categoryTag: "Perpetual Operations"
+      }
     ]
   },
 
@@ -756,7 +850,23 @@ export const PRODUCTS: Record<string, ProductData> = {
     ],
     features: [{ title: "Autonomous Base Station", description: "Automated docking, clean water refill, and battery swap." }],
     applications: [{ title: "Transit Hubs & Airports", desc: "Spotless floor hygiene across expansive public concourses." }],
-    gallery: ["/uploads/images/20251023/d59c5681d6db5d368849ac13334e98e9.png"]
+    gallery: ["/uploads/images/20251023/d59c5681d6db5d368849ac13334e98e9.png"],
+    youtubeVideos: [
+      {
+        id: "W1czBcn3Cac",
+        title: "HUTARK C5 Commercial Floor Scrubbing at 2500 m²/h",
+        subtitle: "PERPETUAL SANITATION TRIAL",
+        description: "Autonomous disc scrubbing with 60 kg variable downforce and active water recycling in an airport terminal.",
+        categoryTag: "Facility Sanitation"
+      },
+      {
+        id: "fn3KWM1kuAw",
+        title: "Multi-Service Autonomous Utility Base Station Docking",
+        subtitle: "UNATTENDED WORKFLOW",
+        description: "Self-docking to recharge, refill 35L clean water tank, and purge 40L wastewater with zero human intervention.",
+        categoryTag: "Autonomous Docking"
+      }
+    ]
   },
 
   // =========================================================================
@@ -822,6 +932,22 @@ export const PRODUCTS: Record<string, ProductData> = {
       { category: "Battery & Energy", item: "Continuous Runtime", value: "4.0 Hours" },
       { category: "Battery & Energy", item: "Charging Time", value: "1.5 Hours Fast-Charge" },
       { category: "Perception & Compute", item: "Perception Suite", value: "Solid-State LiDAR + Dual RGB-D Depth Cameras" }
+    ],
+    youtubeVideos: [
+      {
+        id: "7zI3u19q_e0",
+        title: "HUTARK A3 Whole-Body Motion Control & Industrial Gait",
+        subtitle: "FACTORY LINE TRIAL",
+        description: "Autonomous factory workstation traversal, curb step-over, and synchronized dual-arm grasping tests.",
+        category: "Demonstration"
+      },
+      {
+        id: "M3_Jb_5zT9I",
+        title: "Precision Fastener Installation & Dexterous Assembly",
+        subtitle: "TACTILE GRIPPER DEMO",
+        description: "Executing sub-millimeter bolt insertion and electrical wire harness connector clicks in production testing.",
+        category: "Assembly"
+      }
     ],
     specs: [
       { label: "Height", value: "168 cm" },
@@ -897,6 +1023,22 @@ export const PRODUCTS: Record<string, ProductData> = {
       { category: "Battery & Energy", item: "Continuous Runtime", value: "2.0 – 3.0 Hours" },
       { category: "Perception & Compute", item: "Perception Suite", value: "3D LiDAR + Multi-Angle RGB-D Cameras" }
     ],
+    youtubeVideos: [
+      {
+        id: "7zI3u19q_e0",
+        title: "HUTARK A2 Ultra Natural Bipedal Walking & Showroom Guidance",
+        subtitle: "VIP RECEPTION RUNTIME",
+        description: "Autonomous guest greeting, 60 cm tight radius pivoting, and continuous multi-room guidance demonstration.",
+        category: "Commercial"
+      },
+      {
+        id: "M3_Jb_5zT9I",
+        title: "Multimodal Voice & Human Gesture Alignment",
+        subtitle: "EMBODIED CONVERSATION",
+        description: "Full-duplex natural language interaction with coordinated head gaze and expressive hand gestures.",
+        category: "Interaction"
+      }
+    ],
     specs: [
       { label: "Height", value: "169 cm" },
       { label: "Weight", value: "69 kg" },
@@ -969,6 +1111,22 @@ export const PRODUCTS: Record<string, ProductData> = {
       { category: "Battery & Energy", item: "Operating Runtime", value: "2.0 Hours" },
       { category: "Perception & Compute", item: "Compute Platform", value: "NVIDIA Jetson Orin + ROS 2 Native" }
     ],
+    youtubeVideos: [
+      {
+        id: "7zI3u19q_e0",
+        title: "HUTARK A2 Lite ROS 2 Sim-to-Real Gait Policy Deployment",
+        subtitle: "UNIVERSITY LAB EXPERIMENT",
+        description: "Reinforcement learning walking controller transfer from simulation digital twin to physical hardware in real-time.",
+        category: "Research"
+      },
+      {
+        id: "29ECwExc-_M",
+        title: "Open API Joint Control & Kinematic Teaching",
+        subtitle: "ACADEMIC CURRICULUM",
+        description: "Students demonstrating impedance control and trajectory recording using the open-source Python SDK.",
+        category: "Education"
+      }
+    ],
     specs: [
       { label: "Height", value: "155 cm" },
       { label: "Weight", value: "48 kg" },
@@ -1033,6 +1191,22 @@ export const PRODUCTS: Record<string, ProductData> = {
       { category: "Basic Parameters", item: "Maximum Walking Speed", value: "1.0 m/s" },
       { category: "Battery & Energy", item: "Continuous Runtime", value: "~2.0 Hours" },
       { category: "Perception & Compute", item: "Compute Platform", value: "NVIDIA Jetson Edge Module" }
+    ],
+    youtubeVideos: [
+      {
+        id: "29ECwExc-_M",
+        title: "HUTARK X1 Ultra-Lightweight 33kg Agile Locomotion",
+        subtitle: "HIGH-AGILITY TRIAL",
+        description: "Demonstrating fast acceleration, agile cornering, and instant recovery from lateral disturbance pushes.",
+        category: "Dynamics"
+      },
+      {
+        id: "7zI3u19q_e0",
+        title: "Low-Latency VR Teleoperation & Dexterous Manipulation",
+        subtitle: "IMMERSIVE CONTROL",
+        description: "Sub-10ms bilateral teleoperation using VR spatial controllers for hazardous remote handling.",
+        category: "Teleoperation"
+      }
     ],
     specs: [
       { label: "Height", value: "130 cm" },
@@ -1101,6 +1275,22 @@ export const PRODUCTS: Record<string, ProductData> = {
       { category: "Battery & Energy", item: "Battery Capacity", value: "2000 Wh" },
       { category: "Perception & Compute", item: "Perception Suite", value: "Dual 3D LiDAR + 3D ToF Sensors" }
     ],
+    youtubeVideos: [
+      {
+        id: "M3_Jb_5zT9I",
+        title: "HUTARK G1 Max Commercial Campus Autonomous Multi-Floor Transit",
+        subtitle: "HOSPITAL DISPATCH TRIAL",
+        description: "Autonomous elevator calling, automatic compartment opening, and 30 kg cargo delivery across hospital wings.",
+        category: "Healthcare"
+      },
+      {
+        id: "W1czBcn3Cac",
+        title: "Automated UV-C Chamber Sanitization Routine",
+        subtitle: "INFECTION CONTROL",
+        description: "Autonomous sterilization cycle between delivery dispatches ensuring complete microbial disinfection.",
+        category: "Sterilization"
+      }
+    ],
     specs: [
       { label: "Payload Capacity", value: "30 kg" },
       { label: "Continuous Run", value: "10 Hours" }
@@ -1165,6 +1355,22 @@ export const PRODUCTS: Record<string, ProductData> = {
       { category: "Chassis & Mobility", item: "Leg Actuation", value: "12-DoF Direct Drive Actuators" },
       { category: "Battery & Energy", item: "Continuous Runtime", value: "3.0 Hours Continuous Motion" },
       { category: "Perception & Compute", item: "Sensors", value: "3D LiDAR + Intel RealSense RGB-D" }
+    ],
+    youtubeVideos: [
+      {
+        id: "fn3KWM1kuAw",
+        title: "HUTARK D1 Pro High-Dynamic Quadruped Backflip & Terrain Parkour",
+        subtitle: "DYNAMIC ACTUATION BENCHMARK",
+        description: "Showcasing high power-density direct-drive actuators executing backflips, 3.5 m/s sprints, and stair runs.",
+        category: "Locomotion"
+      },
+      {
+        id: "29ECwExc-_M",
+        title: "Rough Gravel & Concrete Obstacle Traverse",
+        subtitle: "OUTDOOR MOBILITY",
+        description: "Trot-run gait across unstructured construction terrain with real-time elevation mapping and footstep planning.",
+        category: "Terrain"
+      }
     ],
     specs: [
       { label: "Weight", value: "15 kg" },
@@ -1232,6 +1438,22 @@ export const PRODUCTS: Record<string, ProductData> = {
       { category: "Battery & Energy", item: "Continuous Runtime", value: "4.0 Hours Patrol" },
       { category: "Battery & Energy", item: "Charging Type", value: "Autonomous Inductive Charging Station" }
     ],
+    youtubeVideos: [
+      {
+        id: "fn3KWM1kuAw",
+        title: "HUTARK D1 Ultra IP67 Water Immersion & Petrochemical Patrol",
+        subtitle: "SUBMERSIBLE PATROL",
+        description: "Operating in torrential rain, 1-meter water fording, and explosive gas Zone 2 inspection rounds.",
+        category: "Hazardous"
+      },
+      {
+        id: "M3_Jb_5zT9I",
+        title: "Acoustic Gas Leak Detection & Thermal Radiometric Scan",
+        subtitle: "PREDICTIVE MAINTENANCE",
+        description: "Scanning high-pressure gas pipelines with ultrasonic sensors and identifying minute valve thermal anomalies.",
+        category: "Inspection"
+      }
+    ],
     specs: [
       { label: "Protection Rating", value: "IP67" },
       { label: "Payload", value: "15 kg" },
@@ -1297,6 +1519,22 @@ export const PRODUCTS: Record<string, ProductData> = {
       { category: "Chassis & Mobility", item: "Quadruped Mobility", value: "12-DoF Direct Drive High-Torque Legs" },
       { category: "Battery & Energy", item: "Operating Duration", value: "3.5 Hours Active Manipulation" },
       { category: "Perception & Compute", item: "Perception Suite", value: "Spine 3D LiDAR + Wrist RGB-D Camera" }
+    ],
+    youtubeVideos: [
+      {
+        id: "fn3KWM1kuAw",
+        title: "HUTARK D1 MaxPro Active Valve Turning with Spine 6-DoF Arm",
+        subtitle: "PHYSICAL INTERVENTION",
+        description: "Quadruped stabilizing whole-body stance while mounted 6-DoF robotic arm applies 15 N·m torque to steam valves.",
+        category: "Manipulation"
+      },
+      {
+        id: "M3_Jb_5zT9I",
+        title: "Autonomous Electrical Breaker Switch Toggling",
+        subtitle: "REMOTE SUBSTATION DISPATCH",
+        description: "Eye-in-hand visual servoing detecting switch orientation and toggling remote substation breakers autonomously.",
+        category: "Substation"
+      }
     ],
     specs: [{ label: "Arm Reach", value: "850 mm" }, { label: "Arm Payload", value: "3 kg" }],
     features: [{ title: "Active Mobile Manipulation", description: "Unified whole-body controller for walking while grasping." }],

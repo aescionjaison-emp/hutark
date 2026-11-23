@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { submitContact, getContacts } from '../controllers/contact.controller';
-import { getProducts, getProductById } from '../controllers/product.controller';
+import { getProducts, getProductById, updateProduct } from '../controllers/product.controller';
 import { getNews, getNewsById } from '../controllers/news.controller';
 import { registerEvent } from '../controllers/event.controller';
 
@@ -18,6 +18,8 @@ router.get('/contact', getContacts);
 // Products
 router.get('/products', getProducts);
 router.get('/products/:id', getProductById);
+router.put('/products/:id', updateProduct);
+router.post('/products/:id', updateProduct);
 
 // News
 router.get('/news', getNews);

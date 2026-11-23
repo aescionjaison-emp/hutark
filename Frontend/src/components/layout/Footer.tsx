@@ -196,6 +196,10 @@ export default function Footer() {
             <Link href="/about" className="hover:text-gray-300 transition-colors">
               Coordinated Vulnerability Disclosure Policy
             </Link>
+            <span>|</span>
+            <Link href="/admin" className="text-blue-400 hover:text-blue-300 font-medium transition-colors flex items-center space-x-1">
+              <span>Admin CMS</span>
+            </Link>
           </div>
         </div>
       </div>

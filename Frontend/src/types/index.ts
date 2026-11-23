@@ -29,6 +29,22 @@ export interface SpecRowItem {
   value: string;
 }
 
+export interface YouTubeVideoSlide {
+  id: string; // youtube video id (e.g. "7zI3u19q_e0" or full URL)
+  title: string;
+  subtitle?: string;
+  description: string;
+  categoryTag?: string;
+}
+
+export interface CustomProductStyles {
+  fontFamily?: string;
+  primaryColor?: string; // e.g. "#0062c5"
+  backgroundColor?: string;
+  heroTextColor?: string;
+  headingSize?: 'normal' | 'large' | 'huge';
+}
+
 export interface MatchingComponentItem {
   label: string;
   value: string;
@@ -65,6 +81,8 @@ export interface ProductData {
   hardwareModules?: HardwareModule[];
   applicationScenarios?: ApplicationScenario[];
   specRows?: SpecRowItem[];
+  youtubeVideos?: YouTubeVideoSlide[];
+  customStyles?: CustomProductStyles;
   overview: string;
   specs: ProductSpec[];
   features: ProductFeature[];

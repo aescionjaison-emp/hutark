@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { 
   Mail, 
   ArrowRight, 
@@ -20,9 +21,14 @@ import {
   Sliders, 
   Activity,
   Send,
-  Sparkles
+  Sparkles,
+  Edit3,
+  Video
 } from 'lucide-react';
 import { ProductData } from '../../types';
+import YouTubeVideoSlider from './YouTubeVideoSlider';
+import AdminProductEditorDrawer from './AdminProductEditorDrawer';
+import { getProductData } from '../../services/productStore';
 
 interface ProductDetailViewProps {
   product: ProductData;
@@ -30,6 +36,28 @@ interface ProductDetailViewProps {
 }
 
 export default function ProductDetailView({ product, relatedProducts }: ProductDetailViewProps) {
+  const searchParams = useSearchParams();
+  const [currentProduct, setCurrentProduct] = useState<ProductData>(product);
+  const [isAdminDrawerOpen, setIsAdminDrawerOpen] = useState(false);
+
+  // Sync state with productStore to load any admin modifications
+  useEffect(() => {
+    const loaded = getProductData(product.id);
+    setCurrentProduct(loaded);
+
+    if (searchParams.get('admin') === 'true') {
+      setIsAdminDrawerOpen(true);
+    }
+
+    const handleUpdate = (e: any) => {
+      if (e.detail?.id === product.id || e.detail?.all) {
+        setCurrentProduct(getProductData(product.id));
+      }
+    };
+    window.addEventListener('hutark_product_updated', handleUpdate);
+    return () => window.removeEventListener('hutark_product_updated', handleUpdate);
+  }, [product.id, searchParams]);
+
   // Matching List Active Tab
   const [activeTab, setActiveTab] = useState<'all' | 'head' | 'arms' | 'chassis' | 'hands' | 'power'>('all');
 
@@ -60,44 +88,48 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
     }
   };
 
+  // Styling & Theme Overrides from Admin
+  const primaryColor = currentProduct.customStyles?.primaryColor || '#0062c5';
+  const customFont = currentProduct.customStyles?.fontFamily;
+
   // Dynamic Image Paths & Sections with High-Fidelity Defaults
-  const heroBannerBg = product.heroBannerBg || "/uploads/images/20261103/015bf1f9da95cc783f5e1e7363b3882c.png";
-  const cinematicImg = product.cinematicImg || "/uploads/images/20261029/492548ce8722aa332e87aa47ce1019e5.png";
-  const manipulationImg = product.manipulationImg || "/uploads/images/20261029/33d570751012965d2455b2f1c9a6d43d.jpg";
-  const interactionImg = product.interactionImg || "/uploads/images/20261030/3b46c5afb682b2c6798d153344ad4cc3.jpg";
-  const matchingDiagramImg = product.matchingListImg || "/uploads/images/20261029/62974a39fa9e903d8e47b2cd2befc16e.png";
+  const heroBannerBg = currentProduct.heroBannerBg || "/uploads/images/20261103/015bf1f9da95cc783f5e1e7363b3882c.png";
+  const cinematicImg = currentProduct.cinematicImg || "/uploads/images/20261029/492548ce8722aa332e87aa47ce1019e5.png";
+  const manipulationImg = currentProduct.manipulationImg || "/uploads/images/20261029/33d570751012965d2455b2f1c9a6d43d.jpg";
+  const interactionImg = currentProduct.interactionImg || "/uploads/images/20261030/3b46c5afb682b2c6798d153344ad4cc3.jpg";
+  const matchingDiagramImg = currentProduct.matchingListImg || "/uploads/images/20261029/62974a39fa9e903d8e47b2cd2befc16e.png";
 
   // Dynamic Cinematic Content
-  const cinematicHeading = product.cinematicHeading || "Full Scenario Embodied Intelligence";
-  const cinematicSubheading = product.cinematicSubheading || "PHYSICAL AI BREAKTHROUGH";
-  const cinematicDesc = product.cinematicDesc || "Equipped with end-to-end foundation physical AI policy networks, navigating dynamic industrial shop floors, unmapped warehouses, and human co-working spaces with continuous multi-sensor real-time coordination.";
-  const cinematicMetrics = product.cinematicMetrics || [
+  const cinematicHeading = currentProduct.cinematicHeading || "Full Scenario Embodied Intelligence";
+  const cinematicSubheading = currentProduct.cinematicSubheading || "PHYSICAL AI BREAKTHROUGH";
+  const cinematicDesc = currentProduct.cinematicDesc || "Equipped with end-to-end foundation physical AI policy networks, navigating dynamic industrial shop floors, unmapped warehouses, and human co-working spaces with continuous multi-sensor real-time coordination.";
+  const cinematicMetrics = currentProduct.cinematicMetrics || [
     { value: "1000 Hz", label: "Bus Sync Rate" },
     { value: "380 N·m", label: "Peak Joint Torque" },
     { value: "< 1 ms", label: "Control Latency" }
   ];
 
   // Dynamic Manipulation Content
-  const manipulationHeading = product.manipulationHeading || "High Precision Dexterous Manipulation";
-  const manipulationSubtitle = product.manipulationSubtitle || "SUB-MILLIMETER DEXTERITY";
-  const manipulationDesc = product.manipulationDesc || "High-density optical-tactile fingertip sensors deliver dynamic micro-force feedback down to 0.01 N. Capable of handling delicate smartphone display glass, flexible cable harness insertion, and precision electronics fastener assembly.";
-  const manipulationFeatures = product.manipulationFeatures || [
+  const manipulationHeading = currentProduct.manipulationHeading || "High Precision Dexterous Manipulation";
+  const manipulationSubtitle = currentProduct.manipulationSubtitle || "SUB-MILLIMETER DEXTERITY";
+  const manipulationDesc = currentProduct.manipulationDesc || "High-density optical-tactile fingertip sensors deliver dynamic micro-force feedback down to 0.01 N. Capable of handling delicate smartphone display glass, flexible cable harness insertion, and precision electronics fastener assembly.";
+  const manipulationFeatures = currentProduct.manipulationFeatures || [
     "Multi-axis dynamic optical-tactile feedback array",
     "Sub-millimeter position & force impedance hybrid control",
     "Zero-damage handling of fragile glassware and electronic components"
   ];
 
   // Dynamic Interaction Content
-  const interactionHeading = product.interactionHeading || "Natural Multimodal Cognitive Dialogue";
-  const interactionSubtitle = product.interactionSubtitle || "HUMAN-ROBOT COLLABORATION";
-  const interactionDesc = product.interactionDesc || "Powered by the GO-3 physical foundation model, interpreting natural language spoken tasks, spatial pointing gestures, and visual environmental state changes zero-shot.";
-  const interactionBubbles = product.interactionBubbles || [
+  const interactionHeading = currentProduct.interactionHeading || "Natural Multimodal Cognitive Dialogue";
+  const interactionSubtitle = currentProduct.interactionSubtitle || "HUMAN-ROBOT COLLABORATION";
+  const interactionDesc = currentProduct.interactionDesc || "Powered by the GO-3 physical foundation model, interpreting natural language spoken tasks, spatial pointing gestures, and visual environmental state changes zero-shot.";
+  const interactionBubbles = currentProduct.interactionBubbles || [
     { title: "Spatial Perception Intent:", text: "Workstation target acquired: Calibrating end-effector pose..." },
     { title: "Collaborative Feedback:", text: "Assembly verified: Tolerances strictly within ±0.03 mm." }
   ];
 
   // Dynamic Hardware Modules
-  const hardwareModules = product.hardwareModules || [
+  const hardwareModules = currentProduct.hardwareModules || [
     {
       title: "Dual-Arm High-Payload Coordination",
       subtitle: "7-DoF Active Degrees of Freedom Per Arm",
@@ -137,7 +169,7 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
   ];
 
   // Dynamic Application Scenarios
-  const applicationScenarios = product.applicationScenarios || [
+  const applicationScenarios = currentProduct.applicationScenarios || [
     {
       title: "Automotive & Electronics Assembly",
       subtitle: "High-Throughput Workstations",
@@ -165,7 +197,7 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
   ];
 
   // Dynamic Matching List Chips
-  const matchingListChips = product.matchingListChips || [
+  const matchingListChips = currentProduct.matchingListChips || [
     { label: "Head Vision", value: "RGB-D + LiDAR" },
     { label: "Dual Arms", value: "7-DoF Active" },
     { label: "Hands", value: "Tactile Fingertips" },
@@ -175,7 +207,7 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
   ];
 
   // Dynamic Specification Rows
-  const specRows = product.specRows || [
+  const specRows = currentProduct.specRows || [
     { category: "Basic Parameters", item: "Total Height", value: "165 – 172 cm (Configurable)" },
     { category: "Basic Parameters", item: "Total System Weight", value: "58 – 65 kg (Including Battery)" },
     { category: "Basic Parameters", item: "Active Degrees of Freedom (DoF)", value: "38 – 44 Active DoF" },
@@ -206,7 +238,7 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
   ];
 
   return (
-    <div className="bg-white text-[#333333] pt-20 min-h-screen">
+    <div className="bg-white text-[#333333] pt-20 min-h-screen" style={{ fontFamily: customFont }}>
       {/* =========================================================================
           SECONDARY PRODUCT SUB-NAVIGATION & BREADCRUMBS
           ========================================================================= */}
@@ -217,10 +249,10 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
             <span className="text-gray-300">/</span>
             <Link href="/products" className="text-gray-500 hover:text-brand-blue transition-colors">Products</Link>
             <span className="text-gray-300">/</span>
-            <span className="font-bold text-gray-900">{product.name}</span>
+            <span className="font-bold text-gray-900">{currentProduct.name}</span>
           </div>
 
-          <div className="hidden md:flex items-center space-x-6 text-xs font-semibold text-gray-600">
+          <div className="hidden md:flex items-center space-x-5 text-xs font-semibold text-gray-600">
             <button onClick={() => scrollToSection('hero-section')} className="hover:text-[#0062c5] transition-colors cursor-pointer">Overview</button>
             <button onClick={() => scrollToSection('intelligence-section')} className="hover:text-[#0062c5] transition-colors cursor-pointer">Embodied AI</button>
             <button onClick={() => scrollToSection('dexterity-section')} className="hover:text-[#0062c5] transition-colors cursor-pointer">Dexterity</button>
@@ -228,7 +260,17 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
             <button onClick={() => scrollToSection('scenarios-section')} className="hover:text-[#0062c5] transition-colors cursor-pointer">Scenarios</button>
             <button onClick={() => scrollToSection('matching-section')} className="hover:text-[#0062c5] transition-colors cursor-pointer">Matching List</button>
             <button onClick={() => scrollToSection('specifications-section')} className="hover:text-[#0062c5] transition-colors cursor-pointer">Specifications</button>
-            <button onClick={() => scrollToSection('contact-section')} className="bg-[#0062c5] hover:bg-blue-700 text-white px-4 py-1.5 rounded-full transition-all text-xs font-bold shadow-sm cursor-pointer">Inquire Now</button>
+            <button onClick={() => scrollToSection('videos-section')} className="hover:text-[#0062c5] transition-colors cursor-pointer flex items-center space-x-1">
+              <Video className="w-3.5 h-3.5 text-cyan-600" />
+              <span>Video Slides</span>
+            </button>
+            <button 
+              onClick={() => scrollToSection('contact-section')} 
+              style={{ backgroundColor: primaryColor }}
+              className="hover:opacity-90 text-white px-4 py-1.5 rounded-full transition-all text-xs font-bold shadow-sm cursor-pointer"
+            >
+              Inquire Now
+            </button>
           </div>
         </div>
       </div>
@@ -241,7 +283,7 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
         <div className="absolute inset-0 z-0">
           <Image
             src={heroBannerBg}
-            alt={product.name}
+            alt={currentProduct.name}
             fill
             priority
             className="object-cover object-left-bottom opacity-90"
@@ -255,11 +297,11 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             {/* Left Robot Showcase */}
             <div className="hidden lg:block lg:col-span-6 min-h-[400px]">
-              {product.heroImg && (
+              {currentProduct.heroImg && (
                 <div className="relative w-full h-[520px] transition-transform duration-700 hover:scale-[1.02]">
                   <Image
-                    src={product.heroImg}
-                    alt={product.name}
+                    src={currentProduct.heroImg}
+                    alt={currentProduct.name}
                     fill
                     className="object-contain drop-shadow-2xl"
                   />
@@ -269,28 +311,32 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
 
             {/* Right Hero Typography */}
             <div className="lg:col-span-6 space-y-6 text-left">
-              <div className="inline-flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-[#0062c5] bg-blue-50/90 px-3.5 py-1.5 rounded-full border border-blue-200 shadow-sm backdrop-blur-sm">
+              <div 
+                style={{ borderColor: primaryColor, color: primaryColor }}
+                className="inline-flex items-center space-x-2 text-xs font-bold uppercase tracking-wider bg-blue-50/90 px-3.5 py-1.5 rounded-full border shadow-sm backdrop-blur-sm"
+              >
                 <Sparkles className="w-3.5 h-3.5" />
-                <span>{product.series}</span>
+                <span>{currentProduct.series}</span>
               </div>
 
               <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-gray-950 tracking-tight leading-none uppercase">
-                {product.name}
+                {currentProduct.name}
               </h1>
 
               <p className="text-xl sm:text-2xl font-semibold text-gray-800 tracking-tight">
-                {product.tagline}
+                {currentProduct.tagline}
               </p>
 
               <p className="text-sm sm:text-base text-gray-600 font-light leading-relaxed max-w-xl">
-                {product.overview}
+                {currentProduct.overview}
               </p>
 
               {/* Action Buttons */}
               <div className="pt-4 flex flex-wrap gap-4 items-center">
                 <button
                   onClick={() => scrollToSection('contact-section')}
-                  className="bg-[#0062c5] hover:bg-blue-700 text-white font-bold px-8 py-3.5 rounded-full transition-all shadow-lg hover:shadow-xl text-sm flex items-center space-x-2.5 active:scale-95"
+                  style={{ backgroundColor: primaryColor }}
+                  className="hover:opacity-95 text-white font-bold px-8 py-3.5 rounded-full transition-all shadow-lg hover:shadow-xl text-sm flex items-center space-x-2.5 active:scale-95 cursor-pointer"
                 >
                   <Mail className="w-4 h-4" />
                   <span>Inquire Deployment</span>
@@ -298,7 +344,7 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
 
                 <button
                   onClick={() => scrollToSection('specifications-section')}
-                  className="bg-white/90 hover:bg-white text-gray-900 border border-gray-300 font-semibold px-8 py-3.5 rounded-full transition-all shadow-sm text-sm flex items-center space-x-2 hover:border-gray-400"
+                  className="bg-white/90 hover:bg-white text-gray-900 border border-gray-300 font-semibold px-8 py-3.5 rounded-full transition-all shadow-sm text-sm flex items-center space-x-2 hover:border-gray-400 cursor-pointer"
                 >
                   <Download className="w-4 h-4 text-gray-600" />
                   <span>Specifications</span>
@@ -665,6 +711,15 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
       </section>
 
       {/* =========================================================================
+          8.5 YOUTUBE VIDEO SECTION (SLIDES FORMAT MATCHING USER REQUIREMENT)
+          ========================================================================= */}
+      <YouTubeVideoSlider
+        productName={currentProduct.name}
+        videos={currentProduct.youtubeVideos}
+        primaryColor={primaryColor}
+      />
+
+      {/* =========================================================================
           9. IN-LINE CONTACT US SECTION (MATCHING SCREENSHOT BOTTOM DARK FORM)
           ========================================================================= */}
       <section id="contact-section" className="relative py-24 bg-[#111319] text-white overflow-hidden">
@@ -688,7 +743,7 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
               Contact Us
             </h2>
             <p className="text-sm sm:text-base text-gray-300 font-light max-w-xl mx-auto">
-              Request on-site pilot trials, enterprise pricing, or custom hardware modifications for {product.name}.
+              Request on-site pilot trials, enterprise pricing, or custom hardware modifications for {currentProduct.name}.
             </p>
           </div>
 
@@ -855,6 +910,30 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
           </div>
         </div>
       </section>
+
+      {/* =========================================================================
+          FLOATING ADMIN LIVE CUSTOMIZER TRIGGER
+          ========================================================================= */}
+      <div className="fixed bottom-6 right-6 z-40">
+        <button
+          onClick={() => setIsAdminDrawerOpen(true)}
+          className="flex items-center space-x-2.5 bg-[#0f121a] hover:bg-[#161c28] text-white px-5 py-3 rounded-full border border-cyan-500/50 shadow-2xl transition-all hover:scale-105 active:scale-95 group cursor-pointer"
+        >
+          <div className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse" />
+          <Edit3 className="w-4 h-4 text-cyan-400 group-hover:rotate-12 transition-transform" />
+          <span className="text-xs font-bold tracking-wide">Edit Page (Admin)</span>
+        </button>
+      </div>
+
+      {/* =========================================================================
+          ADMIN PRODUCT EDITOR DRAWER
+          ========================================================================= */}
+      <AdminProductEditorDrawer
+        product={currentProduct}
+        isOpen={isAdminDrawerOpen}
+        onClose={() => setIsAdminDrawerOpen(false)}
+        onProductUpdated={(updated) => setCurrentProduct(updated)}
+      />
     </div>
   );
 }
