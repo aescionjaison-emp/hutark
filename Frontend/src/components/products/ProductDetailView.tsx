@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import { ProductData } from '../../types';
 import YouTubeVideoSlider from './YouTubeVideoSlider';
+import ProductRobotPurchaseSection from './ProductRobotPurchaseSection';
 import AdminProductEditorDrawer from './AdminProductEditorDrawer';
 import { getProductData } from '../../services/productStore';
 import { adminAuth } from '../../services/adminAuth';
@@ -685,6 +686,13 @@ export default function ProductDetailView({ product, relatedProducts }: ProductD
         productName={currentProduct.name}
         videos={currentProduct.youtubeVideos}
         primaryColor={primaryColor}
+      />
+
+      {/* =========================================================================
+          8.8 FULL-SCREEN CINEMATIC ROBOT BUY ME SECTION (MATCHING EXACT REFERENCE IMAGE)
+          ========================================================================= */}
+      <ProductRobotPurchaseSection
+        product={currentProduct}
       />
 
       {/* =========================================================================

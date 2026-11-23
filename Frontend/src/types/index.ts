@@ -82,6 +82,8 @@ export interface ProductData {
   applicationScenarios?: ApplicationScenario[];
   specRows?: SpecRowItem[];
   youtubeVideos?: YouTubeVideoSlide[];
+  buySectionImage?: string;
+  buyButtonText?: string;
   customStyles?: CustomProductStyles;
   overview: string;
   specs: ProductSpec[];

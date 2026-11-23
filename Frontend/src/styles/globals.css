@@ -71,3 +71,35 @@ body {
   scrollbar-width: none;
 }
 
+/* =========================================================================
+   CINEMATIC FULL-SCREEN ROBOT BUY ME SECTION
+   Strict 100vw x 100vh / 100svh / 100dvh edge-to-edge showroom styling
+   ========================================================================= */
+.product-robot-section {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100svh;
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 0;
+  padding: 0;
+
+  background: linear-gradient(
+    135deg,
+    #ffffff 0%,
+    #e9e9eb 55%,
+    #c9c9ce 100%
+  );
+}
+
+@supports (height: 100dvh) {
+  .product-robot-section {
+    min-height: 100dvh;
+  }
+}
+

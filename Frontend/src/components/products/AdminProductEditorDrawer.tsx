@@ -73,6 +73,8 @@ export default function AdminProductEditorDrawer({
     { label: 'D1 CAD Blueprint', url: '/uploads/images/products/d1_anatomy_diagram.jpg' },
     { label: 'G2 CAD Blueprint', url: '/uploads/images/20261029/62974a39fa9e903d8e47b2cd2befc16e.png' },
     { label: 'C5 CAD Blueprint', url: '/uploads/images/products/c5_anatomy_diagram.jpg' },
+    { label: 'Cinematic Buy Me Robot', url: '/images/products/robot_buy_me_clean.jpg' },
+    { label: 'Cinematic Buy Me Reference', url: '/images/products/robot_buy_me_cinematic.jpg' },
   ];
 
   // Font Family Presets
@@ -479,6 +481,32 @@ export default function AdminProductEditorDrawer({
                   onChange={(url) => setFormData({ ...formData, matchingListImg: url })}
                   mediaType="image"
                 />
+
+                {/* 7. Full-Screen Cinematic BUY ME Robot Section */}
+                <div className="pt-4 border-t border-white/10 space-y-3">
+                  <span className="text-xs font-bold text-cyan-400 uppercase tracking-wider block">
+                    7. Full-Screen Cinematic Robot &quot;BUY ME&quot; Section
+                  </span>
+                  <MediaUploadZone
+                    label="Buy Me Robot Image (buySectionImage)"
+                    description="Cinematic full-screen robot with extended palm (defaults to official reference)"
+                    value={formData.buySectionImage || ''}
+                    onChange={(url) => setFormData({ ...formData, buySectionImage: url })}
+                    mediaType="image"
+                  />
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-300 mb-1">
+                      Floating Capsule Button Label (buyButtonText)
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.buyButtonText || ''}
+                      onChange={(e) => setFormData({ ...formData, buyButtonText: e.target.value })}
+                      placeholder="BUY ME (default)"
+                      className="w-full bg-[#1b202c] border border-white/15 rounded-xl px-4 py-2 text-xs text-cyan-300 font-bold focus:outline-none focus:border-cyan-400"
+                    />
+                  </div>
+                </div>
               </div>
 
               {/* QUICK PRESET SELECTOR CAROUSEL */}
