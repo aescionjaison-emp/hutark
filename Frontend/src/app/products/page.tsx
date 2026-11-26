@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { 
@@ -20,10 +20,18 @@ import {
   Sparkles,
   Table,
   LayoutGrid,
-  X
+  X,
+  Edit3
 } from 'lucide-react';
 import { PRODUCTS } from '../../data/products';
 import { ProductData } from '../../types';
+import { 
+  siteContentStore, 
+  DEFAULT_PRODUCTS_PAGE_CONTENT, 
+  ProductsPageContent,
+  DexterousHandItem
+} from '../../services/siteContentStore';
+import { adminAuth } from '../../services/adminAuth';
 
 // Series filter definitions
 const SERIES_FILTERS = [
@@ -36,51 +44,27 @@ const SERIES_FILTERS = [
   { id: 'hands', label: 'AGILINK Dexterous Hands', count: 4 }
 ];
 
-// Dexterous hands reference list
-const DEXTEROUS_HANDS = [
-  {
-    name: "OmniHand Ultra-T",
-    series: "AGILINK Tactile Matrix",
-    dof: "20 Active DoF",
-    payload: "15.0 kg Grip Force",
-    tactile: "0.01 N Sensitivity Optical-Tactile Arrays",
-    img: "/uploads/images/20261029/a8f6153c54f1851135bef57ff7a62e92.png",
-    desc: "Flagship humanoid dexterous hand featuring dense optical-tactile fingertip arrays, sub-millimeter trajectory repeatability, and adaptive impedance control for delicate semiconductor and wire harness handling.",
-    features: ["Sub-millimeter ±0.03 mm repeatability", "Dense multi-axis shear force sensors", "Integrated high-speed CAN-FD bus", "Compatible with A3 Ultra & X2 bipedal arms"]
-  },
-  {
-    name: "OmniHand Ultra",
-    series: "AGILINK High-Payload",
-    dof: "16 Active DoF",
-    payload: "12.0 kg Grip Force",
-    tactile: "Multi-Zone Dynamic Pressure Points",
-    img: "/uploads/images/20261029/ab417d4fd3a44c0f004c2bdf554ff9d1.png",
-    desc: "Industrial-grade five-finger manipulator designed for heavy automotive assembly, power tool manipulation, and continuous high-torque industrial manufacturing operations.",
-    features: ["All-metal titanium-reinforced tendons", "High impact overload absorption", "Zero-backlash planetary fingertip actuators", "Dual thermal and current overload protections"]
-  },
-  {
-    name: "OmniHand Standard",
-    series: "AGILINK Research & Edu",
-    dof: "12 Active DoF",
-    payload: "8.0 kg Grip Force",
-    tactile: "Resistive Tactile Sensor Tips",
-    img: "/uploads/images/20261029/a3ef97f9da1cc8fa12c180e795e0775e.png",
-    desc: "Versatile anthropomorphic hand optimized for AI reinforcement learning research, university embodied AI labs, and sim2real manipulation model transfer.",
-    features: ["Open ROS2 & Isaac Lab teleoperation drivers", "Fast interchangeable fingertip pads", "Embedded micro-controller for closed-loop grasp", "Low maintenance brushless coreless motors"]
-  },
-  {
-    name: "OmniHand Lite",
-    series: "AGILINK High-Speed",
-    dof: "6 Active DoF",
-    payload: "5.0 kg Grip Force",
-    tactile: "Tip Contact Confirmation Sensor",
-    img: "/uploads/images/20261029/88cbcbd68744e1f44ea1359d5eda61dc.png",
-    desc: "Lightweight, ultra-fast dexterous gripper configured for high-speed conveyor sorting, laboratory sample handling, and repetitive pick-and-place tasks.",
-    features: ["0.15s open/close cycle time", "Ultra-lightweight 420g carbon structure", "Direct wrist mounting for standard industrial arms", "Plug-and-play USB/Ethernet teleoperation interface"]
-  }
-];
-
 export default function ProductsPage() {
+  const [content, setContent] = useState<ProductsPageContent>(() => {
+    return siteContentStore.getSiteContent().productsPage || DEFAULT_PRODUCTS_PAGE_CONTENT;
+  });
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const unsubStore = siteContentStore.subscribe((sc) => {
+      if (sc.productsPage) {
+        setContent(sc.productsPage);
+      }
+    });
+    const unsubAuth = adminAuth.subscribe((auth) => {
+      setIsAdmin(auth);
+    });
+    return () => {
+      unsubStore();
+      unsubAuth();
+    };
+  }, []);
+
   const [activeTab, setActiveTab] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
@@ -121,42 +105,50 @@ export default function ProductsPage() {
         
         <div className="site-container relative z-10">
           <div className="max-w-4xl space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200/60 text-[#0062c5] text-xs font-bold tracking-wider uppercase">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>HUTARK Fleet Portfolio &amp; Full Specifications</span>
-            </div>
-            
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-gray-900 tracking-tight leading-[1.1]">
-              Autonomous Embodied Robots &amp; Dexterous Platforms
+              {content.heroTitle || 'Autonomous Embodied Robots & Dexterous Platforms'}
             </h1>
             
             <p className="text-base sm:text-lg text-gray-600 font-light leading-relaxed max-w-3xl">
-              From flagship dynamic bipedal humanoids and high-speed wheeled manipulators to agile quadruped robots and sub-millimeter tactile hands. Every model is engineered for commercial enterprise scale and continuous physical AI deployment.
+              {content.heroDesc || 'From flagship dynamic bipedal humanoids and high-speed wheeled manipulators to agile quadruped robots and sub-millimeter tactile hands. Every model is engineered for commercial enterprise scale and continuous physical AI deployment.'}
             </p>
           </div>
 
           {/* KPI Metrics Bar */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 pt-10 mt-10 border-t border-gray-100">
-            <div className="bg-[#f8f9fc] p-4 rounded-2xl border border-gray-200/80">
-              <span className="text-2xl font-black text-gray-900 block tracking-tight">14 Models</span>
-              <span className="text-xs text-gray-500 font-medium">Bipedal, Wheeled &amp; Quadruped</span>
-            </div>
-            <div className="bg-[#f8f9fc] p-4 rounded-2xl border border-gray-200/80">
-              <span className="text-2xl font-black text-[#0062c5] block tracking-tight">44 DoF</span>
-              <span className="text-xs text-gray-500 font-medium">Flagship Peak Articulation</span>
-            </div>
-            <div className="bg-[#f8f9fc] p-4 rounded-2xl border border-gray-200/80">
-              <span className="text-2xl font-black text-gray-900 block tracking-tight">380 N·m</span>
-              <span className="text-xs text-gray-500 font-medium">Powerflow Joint Torque</span>
-            </div>
-            <div className="bg-[#f8f9fc] p-4 rounded-2xl border border-gray-200/80">
-              <span className="text-2xl font-black text-gray-900 block tracking-tight">±0.03 mm</span>
-              <span className="text-xs text-gray-500 font-medium">Sub-Millimeter Repeatability</span>
-            </div>
-            <div className="bg-[#f8f9fc] p-4 rounded-2xl border border-gray-200/80 col-span-2 sm:col-span-1">
-              <span className="text-2xl font-black text-emerald-600 block tracking-tight">GO-3 AI</span>
-              <span className="text-xs text-gray-500 font-medium">Vision-Language-Action Core</span>
-            </div>
+            {content.kpiStats && content.kpiStats.length > 0 ? (
+              content.kpiStats.map((stat, idx) => (
+                <div key={idx} className="bg-[#f8f9fc] p-4 rounded-2xl border border-gray-200/80">
+                  <span className={`text-2xl font-black block tracking-tight ${idx === 1 ? 'text-[#0062c5]' : idx === 4 ? 'text-emerald-600' : 'text-gray-900'}`}>
+                    {stat.value}
+                  </span>
+                  <span className="text-xs text-gray-500 font-medium">{stat.label}</span>
+                </div>
+              ))
+            ) : (
+              <>
+                <div className="bg-[#f8f9fc] p-4 rounded-2xl border border-gray-200/80">
+                  <span className="text-2xl font-black text-gray-900 block tracking-tight">14 Models</span>
+                  <span className="text-xs text-gray-500 font-medium">Bipedal, Wheeled &amp; Quadruped</span>
+                </div>
+                <div className="bg-[#f8f9fc] p-4 rounded-2xl border border-gray-200/80">
+                  <span className="text-2xl font-black text-[#0062c5] block tracking-tight">44 DoF</span>
+                  <span className="text-xs text-gray-500 font-medium">Flagship Peak Articulation</span>
+                </div>
+                <div className="bg-[#f8f9fc] p-4 rounded-2xl border border-gray-200/80">
+                  <span className="text-2xl font-black text-gray-900 block tracking-tight">380 N·m</span>
+                  <span className="text-xs text-gray-500 font-medium">Powerflow Joint Torque</span>
+                </div>
+                <div className="bg-[#f8f9fc] p-4 rounded-2xl border border-gray-200/80">
+                  <span className="text-2xl font-black text-gray-900 block tracking-tight">±0.03 mm</span>
+                  <span className="text-xs text-gray-500 font-medium">Sub-Millimeter Repeatability</span>
+                </div>
+                <div className="bg-[#f8f9fc] p-4 rounded-2xl border border-gray-200/80 col-span-2 sm:col-span-1">
+                  <span className="text-2xl font-black text-emerald-600 block tracking-tight">GO-3 AI</span>
+                  <span className="text-xs text-gray-500 font-medium">Vision-Language-Action Core</span>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </section>
@@ -395,26 +387,26 @@ export default function ProductsPage() {
             <div className="max-w-3xl space-y-3">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-[#0062c5] text-xs font-bold tracking-wider uppercase">
                 <Cpu className="w-3.5 h-3.5" />
-                <span>End-Effector Manipulation Hardware</span>
+                <span>{content.handsSubheading || 'End-Effector Manipulation Hardware'}</span>
               </div>
               <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">
-                AGILINK Dexterous Hands Series
+                {content.handsHeading || 'AGILINK Dexterous Hands Series'}
               </h2>
               <p className="text-sm text-gray-600 font-light">
-                Sub-millimeter anthropomorphic 5-finger hands with multi-axis optical-tactile matrices, high-grip torque planetary drives, and zero-shot telepresence force feedback.
+                {content.handsDesc || 'Sub-millimeter anthropomorphic 5-finger hands with multi-axis optical-tactile matrices, high-grip torque planetary drives, and zero-shot telepresence force feedback.'}
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {DEXTEROUS_HANDS.map((hand, idx) => (
+              {(content.handsList && content.handsList.length > 0 ? content.handsList : []).map((hand, idx) => (
                 <div
-                  key={idx}
+                  key={hand.id || idx}
                   className="bg-[#f8f9fc] rounded-3xl p-6 border border-gray-200/90 flex flex-col justify-between hover:border-blue-300 hover:shadow-lg transition-all"
                 >
                   <div className="space-y-4">
                     <div className="relative h-48 w-full bg-white rounded-2xl p-4 border border-gray-100 flex items-center justify-center overflow-hidden">
                       <Image
-                        src={hand.img}
+                        src={hand.img || '/uploads/images/20261029/a8f6153c54f1851135bef57ff7a62e92.png'}
                         alt={hand.name}
                         fill
                         className="object-contain p-2 hover:scale-105 transition-transform"
@@ -447,7 +439,7 @@ export default function ProductsPage() {
                     </div>
 
                     <div className="space-y-1">
-                      {hand.features.map((feat, fIdx) => (
+                      {(hand.features || []).map((feat, fIdx) => (
                         <div key={fIdx} className="flex items-start space-x-1.5 text-[11px] text-gray-600">
                           <CheckCircle2 className="w-3 h-3 text-emerald-500 flex-shrink-0 mt-0.5" />
                           <span className="line-clamp-1">{feat}</span>
@@ -479,13 +471,13 @@ export default function ProductsPage() {
           <div className="site-container space-y-8">
             <div className="max-w-3xl space-y-2">
               <span className="text-xs font-bold text-[#0062c5] uppercase tracking-wider block">
-                Technical Architecture Comparison
+                {content.tableSubheading || 'Technical Architecture Comparison'}
               </span>
               <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">
-                Fleet Engineering Specifications Matrix
+                {content.tableHeading || 'Fleet Engineering Specifications Matrix'}
               </h2>
               <p className="text-xs sm:text-sm text-gray-600 font-light">
-                Side-by-side engineering specifications across all active HUTARK robot models for research, manufacturing, and commercial procurement.
+                {content.tableDesc || 'Side-by-side engineering specifications across all active HUTARK robot models for research, manufacturing, and commercial procurement.'}
               </p>
             </div>
 
@@ -571,33 +563,47 @@ export default function ProductsPage() {
           <div className="bg-gradient-to-r from-gray-900 via-[#10192e] to-gray-900 text-white rounded-3xl p-8 sm:p-12 shadow-xl flex flex-col lg:flex-row lg:items-center justify-between gap-8">
             <div className="space-y-3 max-w-2xl">
               <span className="text-xs font-bold text-cyan-400 uppercase tracking-widest block">
-                Enterprise &amp; Research Acquisition
+                {content.ctaBadge || 'Enterprise & Research Acquisition'}
               </span>
               <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight">
-                Procure Evaluation Kits or Deploy Volume Fleets
+                {content.ctaHeading || 'Procure Evaluation Kits or Deploy Volume Fleets'}
               </h2>
               <p className="text-xs sm:text-sm text-gray-300 font-light leading-relaxed">
-                Contact our solutions engineering team for developer SDKs, ROS2 / Isaac Sim models, academic research grants, and dedicated SLA volume manufacturing schedules.
+                {content.ctaDesc || 'Contact our solutions engineering team for developer SDKs, ROS2 / Isaac Sim models, academic research grants, and dedicated SLA volume manufacturing schedules.'}
               </p>
             </div>
 
             <div className="flex flex-wrap items-center gap-3">
               <Link
-                href="/contact"
+                href={content.ctaPrimaryBtnLink || '/contact'}
                 className="bg-[#0062c5] hover:bg-blue-600 text-white text-xs sm:text-sm font-bold px-6 py-3.5 rounded-full transition-all shadow-md shadow-blue-500/20"
               >
-                Inquire Enterprise Fleet
+                {content.ctaPrimaryBtnText || 'Inquire Enterprise Fleet'}
               </Link>
               <Link
-                href="/about"
+                href={content.ctaSecondaryBtnLink || '/about'}
                 className="bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs sm:text-sm font-semibold px-6 py-3.5 rounded-full transition-colors"
               >
-                Our R&amp;D Mission
+                {content.ctaSecondaryBtnText || 'Our R&D Mission'}
               </Link>
             </div>
           </div>
         </div>
       </section>
+
+      {/* Floating Admin Edit Button (Only visible when logged in as admin) */}
+      {isAdmin && (
+        <div className="fixed bottom-6 right-6 z-40">
+          <Link
+            href="/admin?tab=products_page"
+            className="flex items-center space-x-2.5 bg-[#0f121a] hover:bg-[#161c28] text-white px-5 py-3 rounded-full border border-cyan-500/50 shadow-2xl transition-all hover:scale-105 active:scale-95 group cursor-pointer"
+          >
+            <div className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse" />
+            <Edit3 className="w-4 h-4 text-cyan-400 group-hover:rotate-12 transition-transform" />
+            <span className="text-xs font-bold tracking-wide">Edit Page (Admin)</span>
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

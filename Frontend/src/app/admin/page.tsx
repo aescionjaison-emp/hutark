@@ -66,7 +66,8 @@ import {
   TechPillar,
   CoreValue,
   Milestone,
-  LeaderProfile
+  LeaderProfile,
+  DexterousHandItem
 } from '../../services/siteContentStore';
 import { 
   getProductData, 
@@ -79,7 +80,7 @@ import {
 import MediaUploadZone from '../../components/admin/MediaUploadZone';
 import AdminProductEditorDrawer from '../../components/products/AdminProductEditorDrawer';
 
-type AdminTab = 'products' | 'inquiries' | 'youtube' | 'home' | 'rd' | 'about' | 'global' | 'media' | 'security';
+type AdminTab = 'products' | 'products_page' | 'inquiries' | 'youtube' | 'home' | 'rd' | 'about' | 'global' | 'media' | 'security';
 
 export default function AdminDashboardPage() {
   // Auth state
@@ -142,6 +143,15 @@ export default function AdminDashboardPage() {
 
     // Load site content
     setSiteContent(siteContentStore.getSiteContent());
+
+    // Check URL tab query param
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const tabParam = urlParams.get('tab') as AdminTab;
+      if (tabParam && ['products', 'products_page', 'inquiries', 'youtube', 'home', 'rd', 'about', 'global', 'media', 'security'].includes(tabParam)) {
+        setActiveTab(tabParam);
+      }
+    }
 
     // Load inquiries
     setInquiries(inquiryStore.getInquiries());
@@ -568,6 +578,7 @@ export default function AdminDashboardPage() {
           <nav className="flex space-x-1.5 py-1.5 border-t border-gray-100 text-xs font-semibold">
             {[
               { id: 'products', label: 'Robot Matrix (14 Models)', icon: Cpu },
+              { id: 'products_page', label: 'Products Fleet Page', icon: Layers },
               { 
                 id: 'inquiries', 
                 label: 'Orders & Inquiries', 
@@ -619,6 +630,36 @@ export default function AdminDashboardPage() {
             ========================================================================= */}
         {activeTab === 'products' && (
           <div className="space-y-6">
+            {/* Quick banner linking to Products Fleet Page Editor */}
+            <div className="bg-blue-50/70 border border-blue-200/90 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-xl bg-brand-blue text-white flex items-center justify-center flex-shrink-0 shadow-xs">
+                  <Layers className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-xs font-bold text-gray-900">Products Fleet Showcase Page (/products)</h3>
+                  <p className="text-[11px] text-gray-500 font-light">Customize hero text, 5 KPI metrics, AGILINK dexterous hands, and procurement banner.</p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => setActiveTab('products_page')}
+                  className="bg-brand-blue hover:bg-blue-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition-all shadow-xs cursor-pointer flex items-center space-x-1.5"
+                >
+                  <Edit3 className="w-3.5 h-3.5" />
+                  <span>Edit Fleet Page</span>
+                </button>
+                <Link
+                  href="/products"
+                  target="_blank"
+                  className="bg-white hover:bg-gray-100 text-gray-700 border border-gray-200 text-xs font-semibold px-3 py-2 rounded-xl transition-colors flex items-center space-x-1"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  <span>View Public</span>
+                </Link>
+              </div>
+            </div>
+
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
                 <h2 className="text-xl font-bold text-gray-900">Robot Detail Pages Customizer</h2>
@@ -733,6 +774,708 @@ export default function AdminDashboardPage() {
                   </div>
                 );
               })}
+            </div>
+          </div>
+        )}
+
+        {/* =========================================================================
+            TAB: PRODUCTS FLEET PAGE SHOWCASE EDITOR (/products)
+            ========================================================================= */}
+        {activeTab === 'products_page' && (
+          <div className="space-y-6 max-w-5xl">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div>
+                <h2 className="text-xl font-bold text-gray-900 flex items-center space-x-2">
+                  <span className="p-2 bg-blue-50 text-brand-blue rounded-xl border border-blue-200">
+                    <Layers className="w-5 h-5" />
+                  </span>
+                  <span>Products Fleet Page Editor (/products)</span>
+                </h2>
+                <p className="text-xs text-gray-500 font-light mt-1">
+                  Manage the public All-Products fleet showcase page: Hero headline, 5 key performance metrics, AGILINK dexterous hands portfolio, and bottom enterprise procurement CTA.
+                </p>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Link
+                  href="/products"
+                  target="_blank"
+                  className="bg-white hover:bg-gray-100 text-gray-700 border border-gray-200 px-3 py-2 rounded-xl text-xs font-semibold flex items-center space-x-1.5 transition-colors"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  <span>Preview /products</span>
+                </Link>
+                <button
+                  onClick={handleSaveSiteContent}
+                  className="bg-brand-blue hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow-sm transition-all cursor-pointer"
+                >
+                  <Save className="w-3.5 h-3.5" />
+                  <span>Save Changes</span>
+                </button>
+              </div>
+            </div>
+
+            {/* 1. HERO SECTION */}
+            <div className="bg-white border border-gray-200/90 rounded-2xl p-6 sm:p-8 space-y-4 shadow-sm">
+              <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+                <h3 className="text-sm font-bold text-gray-900">1. Hero Headline &amp; Narrative</h3>
+                <span className="text-[11px] text-gray-400 font-medium">Top Showcase Area</span>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1.5">
+                    Hero Title
+                  </label>
+                  <input
+                    type="text"
+                    value={siteContent.productsPage?.heroTitle || ''}
+                    onChange={(e) =>
+                      setSiteContent({
+                        ...siteContent,
+                        productsPage: {
+                          ...siteContent.productsPage,
+                          heroTitle: e.target.value
+                        }
+                      })
+                    }
+                    placeholder="Autonomous Embodied Robots & Dexterous Platforms"
+                    className="w-full bg-[#f8f9fc] border border-gray-200 rounded-xl px-4 py-2.5 text-xs text-gray-900 font-bold focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1.5">
+                    Hero Subtitle / Description
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={siteContent.productsPage?.heroDesc || ''}
+                    onChange={(e) =>
+                      setSiteContent({
+                        ...siteContent,
+                        productsPage: {
+                          ...siteContent.productsPage,
+                          heroDesc: e.target.value
+                        }
+                      })
+                    }
+                    placeholder="From flagship dynamic bipedal humanoids..."
+                    className="w-full bg-[#f8f9fc] border border-gray-200 rounded-xl px-4 py-2.5 text-xs text-gray-700 font-light focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* 2. KPI METRICS BAR (5 METRICS) */}
+            <div className="bg-white border border-gray-200/90 rounded-2xl p-6 sm:p-8 space-y-4 shadow-sm">
+              <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+                <div>
+                  <h3 className="text-sm font-bold text-gray-900">2. Key Performance Metrics Bar (5 KPIs)</h3>
+                  <p className="text-[11px] text-gray-500 font-light mt-0.5">Displayed prominently right below the hero headline</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const current = siteContent.productsPage?.kpiStats || [];
+                    const updated = [...current, { value: 'New Stat', label: 'Metric Description' }];
+                    setSiteContent({
+                      ...siteContent,
+                      productsPage: {
+                        ...siteContent.productsPage,
+                        kpiStats: updated
+                      }
+                    });
+                  }}
+                  className="text-xs text-brand-blue hover:text-blue-700 font-bold flex items-center space-x-1 cursor-pointer"
+                >
+                  <span>+ Add Metric</span>
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+                {(siteContent.productsPage?.kpiStats || []).map((stat, sIdx) => (
+                  <div key={sIdx} className="bg-[#f8f9fc] border border-gray-200/80 rounded-2xl p-3.5 space-y-2 relative group">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const updated = (siteContent.productsPage?.kpiStats || []).filter((_, i) => i !== sIdx);
+                        setSiteContent({
+                          ...siteContent,
+                          productsPage: {
+                            ...siteContent.productsPage,
+                            kpiStats: updated
+                          }
+                        });
+                      }}
+                      className="absolute top-2 right-2 text-gray-400 hover:text-red-500 p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                      title="Remove Metric"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                    <div>
+                      <label className="text-[10px] font-semibold text-gray-400 block mb-1">Value (e.g. 14 Models)</label>
+                      <input
+                        type="text"
+                        value={stat.value}
+                        onChange={(e) => {
+                          const updated = [...(siteContent.productsPage?.kpiStats || [])];
+                          updated[sIdx] = { ...updated[sIdx], value: e.target.value };
+                          setSiteContent({
+                            ...siteContent,
+                            productsPage: {
+                              ...siteContent.productsPage,
+                              kpiStats: updated
+                            }
+                          });
+                        }}
+                        className="w-full bg-white border border-gray-200 rounded-xl px-2.5 py-1.5 text-xs text-gray-900 font-black font-mono"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-semibold text-gray-400 block mb-1">Label / Description</label>
+                      <input
+                        type="text"
+                        value={stat.label}
+                        onChange={(e) => {
+                          const updated = [...(siteContent.productsPage?.kpiStats || [])];
+                          updated[sIdx] = { ...updated[sIdx], label: e.target.value };
+                          setSiteContent({
+                            ...siteContent,
+                            productsPage: {
+                              ...siteContent.productsPage,
+                              kpiStats: updated
+                            }
+                          });
+                        }}
+                        className="w-full bg-white border border-gray-200 rounded-xl px-2.5 py-1.5 text-[11px] text-gray-600 font-medium"
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* 3. DEXTEROUS HANDS SHOWCASE */}
+            <div className="bg-white border border-gray-200/90 rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-100 pb-4">
+                <div>
+                  <h3 className="text-sm font-bold text-gray-900">3. AGILINK Dexterous Hands Hardware Showcase</h3>
+                  <p className="text-[11px] text-gray-500 font-light mt-0.5">Section header and individual dexterous end-effector units</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const current = siteContent.productsPage?.handsList || [];
+                    const newHand: DexterousHandItem = {
+                      id: `hand-${Date.now()}`,
+                      name: 'OmniHand New',
+                      series: 'AGILINK Series',
+                      dof: '16 Active DoF',
+                      payload: '10.0 kg Grip Force',
+                      tactile: 'Dynamic Tactile Arrays',
+                      img: '/uploads/images/20261029/a8f6153c54f1851135bef57ff7a62e92.png',
+                      desc: 'Advanced anthropomorphic robotic hand with dense sensor arrays.',
+                      features: ['High-torque actuators', 'Integrated CAN-FD interface']
+                    };
+                    setSiteContent({
+                      ...siteContent,
+                      productsPage: {
+                        ...siteContent.productsPage,
+                        handsList: [...current, newHand]
+                      }
+                    });
+                  }}
+                  className="bg-blue-50 text-brand-blue hover:bg-blue-100 border border-blue-200 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1 transition-colors cursor-pointer self-start"
+                >
+                  <span>+ Add Dexterous Hand</span>
+                </button>
+              </div>
+
+              {/* Section titles */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">Section Tag / Subheading</label>
+                  <input
+                    type="text"
+                    value={siteContent.productsPage?.handsSubheading || ''}
+                    onChange={(e) =>
+                      setSiteContent({
+                        ...siteContent,
+                        productsPage: {
+                          ...siteContent.productsPage,
+                          handsSubheading: e.target.value
+                        }
+                      })
+                    }
+                    className="w-full bg-[#f8f9fc] border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-900"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">Section Heading</label>
+                  <input
+                    type="text"
+                    value={siteContent.productsPage?.handsHeading || ''}
+                    onChange={(e) =>
+                      setSiteContent({
+                        ...siteContent,
+                        productsPage: {
+                          ...siteContent.productsPage,
+                          handsHeading: e.target.value
+                        }
+                      })
+                    }
+                    className="w-full bg-[#f8f9fc] border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-900 font-bold"
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">Section Description</label>
+                  <input
+                    type="text"
+                    value={siteContent.productsPage?.handsDesc || ''}
+                    onChange={(e) =>
+                      setSiteContent({
+                        ...siteContent,
+                        productsPage: {
+                          ...siteContent.productsPage,
+                          handsDesc: e.target.value
+                        }
+                      })
+                    }
+                    className="w-full bg-[#f8f9fc] border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-700 font-light"
+                  />
+                </div>
+              </div>
+
+              {/* Hands List Cards */}
+              <div className="space-y-4 pt-2">
+                {(siteContent.productsPage?.handsList || []).map((hand, hIdx) => (
+                  <div key={hand.id || hIdx} className="bg-[#f8f9fc] border border-gray-200/80 rounded-2xl p-5 space-y-4">
+                    <div className="flex items-center justify-between border-b border-gray-200 pb-3">
+                      <div className="flex items-center space-x-3">
+                        <span className="w-6 h-6 rounded-full bg-brand-blue text-white text-[11px] font-bold flex items-center justify-center">
+                          {hIdx + 1}
+                        </span>
+                        <span className="font-bold text-sm text-gray-900">{hand.name}</span>
+                        <span className="text-[10px] bg-white text-gray-600 px-2 py-0.5 rounded-full border border-gray-200">{hand.series}</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const updated = (siteContent.productsPage?.handsList || []).filter((_, i) => i !== hIdx);
+                          setSiteContent({
+                            ...siteContent,
+                            productsPage: {
+                              ...siteContent.productsPage,
+                              handsList: updated
+                            }
+                          });
+                        }}
+                        className="text-red-500 hover:text-red-700 text-xs font-semibold flex items-center space-x-1 cursor-pointer"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                        <span>Remove</span>
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <label className="text-[11px] font-semibold text-gray-600 block mb-1">Hand Name</label>
+                        <input
+                          type="text"
+                          value={hand.name}
+                          onChange={(e) => {
+                            const updated = [...(siteContent.productsPage?.handsList || [])];
+                            updated[hIdx] = { ...updated[hIdx], name: e.target.value };
+                            setSiteContent({
+                              ...siteContent,
+                              productsPage: { ...siteContent.productsPage, handsList: updated }
+                            });
+                          }}
+                          className="w-full bg-white border border-gray-200 rounded-xl px-3 py-1.5 text-xs font-bold text-gray-900"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-[11px] font-semibold text-gray-600 block mb-1">Series Tag</label>
+                        <input
+                          type="text"
+                          value={hand.series}
+                          onChange={(e) => {
+                            const updated = [...(siteContent.productsPage?.handsList || [])];
+                            updated[hIdx] = { ...updated[hIdx], series: e.target.value };
+                            setSiteContent({
+                              ...siteContent,
+                              productsPage: { ...siteContent.productsPage, handsList: updated }
+                            });
+                          }}
+                          className="w-full bg-white border border-gray-200 rounded-xl px-3 py-1.5 text-xs text-gray-700"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-[11px] font-semibold text-gray-600 block mb-1">Articulation (DoF)</label>
+                        <input
+                          type="text"
+                          value={hand.dof}
+                          onChange={(e) => {
+                            const updated = [...(siteContent.productsPage?.handsList || [])];
+                            updated[hIdx] = { ...updated[hIdx], dof: e.target.value };
+                            setSiteContent({
+                              ...siteContent,
+                              productsPage: { ...siteContent.productsPage, handsList: updated }
+                            });
+                          }}
+                          className="w-full bg-white border border-gray-200 rounded-xl px-3 py-1.5 text-xs text-gray-900 font-bold"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-[11px] font-semibold text-gray-600 block mb-1">Grip Force / Payload</label>
+                        <input
+                          type="text"
+                          value={hand.payload}
+                          onChange={(e) => {
+                            const updated = [...(siteContent.productsPage?.handsList || [])];
+                            updated[hIdx] = { ...updated[hIdx], payload: e.target.value };
+                            setSiteContent({
+                              ...siteContent,
+                              productsPage: { ...siteContent.productsPage, handsList: updated }
+                            });
+                          }}
+                          className="w-full bg-white border border-gray-200 rounded-xl px-3 py-1.5 text-xs text-gray-900"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-[11px] font-semibold text-gray-600 block mb-1">Tactile Sensor Spec</label>
+                        <input
+                          type="text"
+                          value={hand.tactile}
+                          onChange={(e) => {
+                            const updated = [...(siteContent.productsPage?.handsList || [])];
+                            updated[hIdx] = { ...updated[hIdx], tactile: e.target.value };
+                            setSiteContent({
+                              ...siteContent,
+                              productsPage: { ...siteContent.productsPage, handsList: updated }
+                            });
+                          }}
+                          className="w-full bg-white border border-gray-200 rounded-xl px-3 py-1.5 text-xs text-brand-blue font-semibold"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-[11px] font-semibold text-gray-600 block mb-1">Photo Image URL</label>
+                        <input
+                          type="text"
+                          value={hand.img}
+                          onChange={(e) => {
+                            const updated = [...(siteContent.productsPage?.handsList || [])];
+                            updated[hIdx] = { ...updated[hIdx], img: e.target.value };
+                            setSiteContent({
+                              ...siteContent,
+                              productsPage: { ...siteContent.productsPage, handsList: updated }
+                            });
+                          }}
+                          className="w-full bg-white border border-gray-200 rounded-xl px-3 py-1.5 text-xs text-gray-700"
+                        />
+                      </div>
+
+                      <div className="md:col-span-3">
+                        <label className="text-[11px] font-semibold text-gray-600 block mb-1">Description</label>
+                        <textarea
+                          rows={2}
+                          value={hand.desc}
+                          onChange={(e) => {
+                            const updated = [...(siteContent.productsPage?.handsList || [])];
+                            updated[hIdx] = { ...updated[hIdx], desc: e.target.value };
+                            setSiteContent({
+                              ...siteContent,
+                              productsPage: { ...siteContent.productsPage, handsList: updated }
+                            });
+                          }}
+                          className="w-full bg-white border border-gray-200 rounded-xl px-3 py-1.5 text-xs text-gray-700 font-light"
+                        />
+                      </div>
+
+                      <div className="md:col-span-3">
+                        <div className="flex items-center justify-between mb-1">
+                          <label className="text-[11px] font-semibold text-gray-600">Bullet Features</label>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const updated = [...(siteContent.productsPage?.handsList || [])];
+                              const curFeat = updated[hIdx].features || [];
+                              updated[hIdx] = { ...updated[hIdx], features: [...curFeat, 'New Feature Spec'] };
+                              setSiteContent({
+                                ...siteContent,
+                                productsPage: { ...siteContent.productsPage, handsList: updated }
+                              });
+                            }}
+                            className="text-[10px] text-brand-blue hover:text-blue-700 font-bold cursor-pointer"
+                          >
+                            + Add Feature
+                          </button>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          {(hand.features || []).map((feat, fIdx) => (
+                            <div key={fIdx} className="flex items-center space-x-1.5 bg-white border border-gray-200 rounded-xl px-2.5 py-1">
+                              <input
+                                type="text"
+                                value={feat}
+                                onChange={(e) => {
+                                  const updated = [...(siteContent.productsPage?.handsList || [])];
+                                  const curFeat = [...(updated[hIdx].features || [])];
+                                  curFeat[fIdx] = e.target.value;
+                                  updated[hIdx] = { ...updated[hIdx], features: curFeat };
+                                  setSiteContent({
+                                    ...siteContent,
+                                    productsPage: { ...siteContent.productsPage, handsList: updated }
+                                  });
+                                }}
+                                className="flex-1 text-xs text-gray-700 outline-none"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const updated = [...(siteContent.productsPage?.handsList || [])];
+                                  const curFeat = (updated[hIdx].features || []).filter((_, i) => i !== fIdx);
+                                  updated[hIdx] = { ...updated[hIdx], features: curFeat };
+                                  setSiteContent({
+                                    ...siteContent,
+                                    productsPage: { ...siteContent.productsPage, handsList: updated }
+                                  });
+                                }}
+                                className="text-gray-400 hover:text-red-500 cursor-pointer"
+                              >
+                                <X className="w-3 h-3" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* 4. SPEC MATRIX TABLE HEADINGS */}
+            <div className="bg-white border border-gray-200/90 rounded-2xl p-6 sm:p-8 space-y-4 shadow-sm">
+              <div className="border-b border-gray-100 pb-3">
+                <h3 className="text-sm font-bold text-gray-900">4. Comparison Matrix Section Headings</h3>
+                <p className="text-[11px] text-gray-500 font-light mt-0.5">The table compares all 14 robot models dynamically; customize the header text below</p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">Tag / Subheading</label>
+                  <input
+                    type="text"
+                    value={siteContent.productsPage?.tableSubheading || ''}
+                    onChange={(e) =>
+                      setSiteContent({
+                        ...siteContent,
+                        productsPage: {
+                          ...siteContent.productsPage,
+                          tableSubheading: e.target.value
+                        }
+                      })
+                    }
+                    className="w-full bg-[#f8f9fc] border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-900"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">Table Heading</label>
+                  <input
+                    type="text"
+                    value={siteContent.productsPage?.tableHeading || ''}
+                    onChange={(e) =>
+                      setSiteContent({
+                        ...siteContent,
+                        productsPage: {
+                          ...siteContent.productsPage,
+                          tableHeading: e.target.value
+                        }
+                      })
+                    }
+                    className="w-full bg-[#f8f9fc] border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-900 font-bold"
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">Table Description</label>
+                  <input
+                    type="text"
+                    value={siteContent.productsPage?.tableDesc || ''}
+                    onChange={(e) =>
+                      setSiteContent({
+                        ...siteContent,
+                        productsPage: {
+                          ...siteContent.productsPage,
+                          tableDesc: e.target.value
+                        }
+                      })
+                    }
+                    className="w-full bg-[#f8f9fc] border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-700 font-light"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* 5. BOTTOM ENTERPRISE CTA BANNER */}
+            <div className="bg-white border border-gray-200/90 rounded-2xl p-6 sm:p-8 space-y-4 shadow-sm">
+              <div className="border-b border-gray-100 pb-3">
+                <h3 className="text-sm font-bold text-gray-900">5. Bottom Enterprise Procurement CTA Banner</h3>
+                <p className="text-[11px] text-gray-500 font-light mt-0.5">Customizable conversion banner at the bottom of the fleet page</p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">Badge Tag</label>
+                  <input
+                    type="text"
+                    value={siteContent.productsPage?.ctaBadge || ''}
+                    onChange={(e) =>
+                      setSiteContent({
+                        ...siteContent,
+                        productsPage: {
+                          ...siteContent.productsPage,
+                          ctaBadge: e.target.value
+                        }
+                      })
+                    }
+                    className="w-full bg-[#f8f9fc] border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-900"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">Banner Heading</label>
+                  <input
+                    type="text"
+                    value={siteContent.productsPage?.ctaHeading || ''}
+                    onChange={(e) =>
+                      setSiteContent({
+                        ...siteContent,
+                        productsPage: {
+                          ...siteContent.productsPage,
+                          ctaHeading: e.target.value
+                        }
+                      })
+                    }
+                    className="w-full bg-[#f8f9fc] border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-900 font-bold"
+                  />
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">Banner Description</label>
+                  <textarea
+                    rows={2}
+                    value={siteContent.productsPage?.ctaDesc || ''}
+                    onChange={(e) =>
+                      setSiteContent({
+                        ...siteContent,
+                        productsPage: {
+                          ...siteContent.productsPage,
+                          ctaDesc: e.target.value
+                        }
+                      })
+                    }
+                    className="w-full bg-[#f8f9fc] border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-700 font-light"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">Primary Button Text</label>
+                  <input
+                    type="text"
+                    value={siteContent.productsPage?.ctaPrimaryBtnText || ''}
+                    onChange={(e) =>
+                      setSiteContent({
+                        ...siteContent,
+                        productsPage: {
+                          ...siteContent.productsPage,
+                          ctaPrimaryBtnText: e.target.value
+                        }
+                      })
+                    }
+                    className="w-full bg-[#f8f9fc] border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-900 font-bold"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">Primary Button Link</label>
+                  <input
+                    type="text"
+                    value={siteContent.productsPage?.ctaPrimaryBtnLink || ''}
+                    onChange={(e) =>
+                      setSiteContent({
+                        ...siteContent,
+                        productsPage: {
+                          ...siteContent.productsPage,
+                          ctaPrimaryBtnLink: e.target.value
+                        }
+                      })
+                    }
+                    className="w-full bg-[#f8f9fc] border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-700"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">Secondary Button Text</label>
+                  <input
+                    type="text"
+                    value={siteContent.productsPage?.ctaSecondaryBtnText || ''}
+                    onChange={(e) =>
+                      setSiteContent({
+                        ...siteContent,
+                        productsPage: {
+                          ...siteContent.productsPage,
+                          ctaSecondaryBtnText: e.target.value
+                        }
+                      })
+                    }
+                    className="w-full bg-[#f8f9fc] border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-900"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">Secondary Button Link</label>
+                  <input
+                    type="text"
+                    value={siteContent.productsPage?.ctaSecondaryBtnLink || ''}
+                    onChange={(e) =>
+                      setSiteContent({
+                        ...siteContent,
+                        productsPage: {
+                          ...siteContent.productsPage,
+                          ctaSecondaryBtnLink: e.target.value
+                        }
+                      })
+                    }
+                    className="w-full bg-[#f8f9fc] border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-700"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom Save Button Bar */}
+            <div className="flex items-center justify-end space-x-3 pt-4">
+              <Link
+                href="/products"
+                target="_blank"
+                className="bg-white hover:bg-gray-100 text-gray-700 border border-gray-200 px-4 py-2.5 rounded-xl text-xs font-semibold transition-colors flex items-center space-x-1.5"
+              >
+                <ExternalLink className="w-4 h-4" />
+                <span>View Live Page</span>
+              </Link>
+              <button
+                onClick={handleSaveSiteContent}
+                className="bg-brand-blue hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow-md transition-all cursor-pointer"
+              >
+                <Save className="w-4 h-4" />
+                <span>Save All Fleet Page Changes</span>
+              </button>
             </div>
           </div>
         )}

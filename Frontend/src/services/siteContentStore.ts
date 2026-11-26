@@ -113,7 +113,116 @@ export interface FullSiteContent {
     leadership: LeaderProfile[];
     openRoles: OpenRole[];
   };
+  productsPage: ProductsPageContent;
 }
+
+export interface ProductsPageStat {
+  value: string;
+  label: string;
+}
+
+export interface DexterousHandItem {
+  id: string;
+  name: string;
+  series: string;
+  dof: string;
+  payload: string;
+  tactile: string;
+  img: string;
+  desc: string;
+  features: string[];
+}
+
+export interface ProductsPageContent {
+  heroTitle: string;
+  heroDesc: string;
+  kpiStats: ProductsPageStat[];
+  handsHeading: string;
+  handsSubheading: string;
+  handsDesc: string;
+  handsList: DexterousHandItem[];
+  tableHeading: string;
+  tableSubheading: string;
+  tableDesc: string;
+  ctaBadge: string;
+  ctaHeading: string;
+  ctaDesc: string;
+  ctaPrimaryBtnText: string;
+  ctaPrimaryBtnLink: string;
+  ctaSecondaryBtnText: string;
+  ctaSecondaryBtnLink: string;
+}
+
+export const DEFAULT_PRODUCTS_PAGE_CONTENT: ProductsPageContent = {
+  heroTitle: 'Autonomous Embodied Robots & Dexterous Platforms',
+  heroDesc: 'From flagship dynamic bipedal humanoids and high-speed wheeled manipulators to agile quadruped robots and sub-millimeter tactile hands. Every model is engineered for commercial enterprise scale and continuous physical AI deployment.',
+  kpiStats: [
+    { value: '14 Models', label: 'Bipedal, Wheeled & Quadruped' },
+    { value: '44 DoF', label: 'Flagship Peak Articulation' },
+    { value: '380 N·m', label: 'Powerflow Joint Torque' },
+    { value: '±0.03 mm', label: 'Sub-Millimeter Repeatability' },
+    { value: 'GO-3 AI', label: 'Vision-Language-Action Core' },
+  ],
+  handsHeading: 'AGILINK High-Precision Dexterous End-Effectors',
+  handsSubheading: 'Sub-Millimeter Tactile Manipulation',
+  handsDesc: 'Engineered for human-grade fine motor control, delicate assembly, and high-frequency tool manipulation across diverse humanoid robotic limbs.',
+  handsList: [
+    {
+      id: 'omnihand-ultra-t',
+      name: "OmniHand Ultra-T",
+      series: "AGILINK Tactile Matrix",
+      dof: "20 Active DoF",
+      payload: "15.0 kg Grip Force",
+      tactile: "0.01 N Sensitivity Optical-Tactile Arrays",
+      img: "/uploads/images/20261029/a8f6153c54f1851135bef57ff7a62e92.png",
+      desc: "Flagship humanoid dexterous hand featuring dense optical-tactile fingertip arrays, sub-millimeter trajectory repeatability, and adaptive impedance control for delicate semiconductor and wire harness handling.",
+      features: ["Sub-millimeter ±0.03 mm repeatability", "Dense multi-axis shear force sensors", "Integrated high-speed CAN-FD bus", "Compatible with A3 Ultra & X2 bipedal arms"]
+    },
+    {
+      id: 'omnihand-ultra',
+      name: "OmniHand Ultra",
+      series: "AGILINK High-Payload",
+      dof: "16 Active DoF",
+      payload: "12.0 kg Grip Force",
+      tactile: "Multi-Zone Dynamic Pressure Points",
+      img: "/uploads/images/20261029/ab417d4fd3a44c0f004c2bdf554ff9d1.png",
+      desc: "Industrial-grade five-finger manipulator designed for heavy automotive assembly, power tool manipulation, and continuous high-torque industrial manufacturing operations.",
+      features: ["All-metal titanium-reinforced tendons", "High impact overload absorption", "Zero-backlash planetary fingertip actuators", "Dual thermal and current overload protections"]
+    },
+    {
+      id: 'omnihand-standard',
+      name: "OmniHand Standard",
+      series: "AGILINK Research & Edu",
+      dof: "12 Active DoF",
+      payload: "8.0 kg Grip Force",
+      tactile: "Resistive Tactile Sensor Tips",
+      img: "/uploads/images/20261029/a3ef97f9da1cc8fa12c180e795e0775e.png",
+      desc: "Versatile anthropomorphic hand optimized for AI reinforcement learning research, university embodied AI labs, and sim2real manipulation model transfer.",
+      features: ["Open ROS2 & Isaac Lab teleoperation drivers", "Fast interchangeable fingertip pads", "Embedded micro-controller for closed-loop grasp", "Low maintenance brushless coreless motors"]
+    },
+    {
+      id: 'omnihand-lite',
+      name: "OmniHand Lite",
+      series: "AGILINK High-Speed",
+      dof: "6 Active DoF",
+      payload: "5.0 kg Grip Force",
+      tactile: "Tip Contact Confirmation Sensor",
+      img: "/uploads/images/20261029/88cbcbd68744e1f44ea1359d5eda61dc.png",
+      desc: "Lightweight, ultra-fast dexterous gripper configured for high-speed conveyor sorting, laboratory sample handling, and repetitive pick-and-place tasks.",
+      features: ["0.15s open/close cycle time", "Ultra-lightweight 420g carbon structure", "Direct wrist mounting for standard industrial arms", "Plug-and-play USB/Ethernet teleoperation interface"]
+    }
+  ],
+  tableHeading: 'Fleet Engineering Specifications Matrix',
+  tableSubheading: 'Technical Architecture Comparison',
+  tableDesc: 'Side-by-side engineering specifications across all active HUTARK robot models for research, manufacturing, and commercial procurement.',
+  ctaBadge: 'Enterprise & Research Acquisition',
+  ctaHeading: 'Procure Evaluation Kits or Deploy Volume Fleets',
+  ctaDesc: 'Contact our solutions engineering team for developer SDKs, ROS2 / Isaac Sim models, academic research grants, and dedicated SLA volume manufacturing schedules.',
+  ctaPrimaryBtnText: 'Inquire Enterprise Fleet',
+  ctaPrimaryBtnLink: '/contact',
+  ctaSecondaryBtnText: 'Our R&D Mission',
+  ctaSecondaryBtnLink: '/about'
+};
 
 export const DEFAULT_SITE_CONTENT: FullSiteContent = {
   global: {
@@ -427,7 +536,8 @@ export const DEFAULT_SITE_CONTENT: FullSiteContent = {
         ]
       }
     ]
-  }
+  },
+  productsPage: DEFAULT_PRODUCTS_PAGE_CONTENT
 };
 
 const SITE_STORAGE_KEY = 'hutark_site_content';
@@ -449,11 +559,21 @@ export const siteContentStore = {
           openRoles: parsedAbout.openRoles && parsedAbout.openRoles.length > 0 ? parsedAbout.openRoles : DEFAULT_SITE_CONTENT.about.openRoles,
           leadership: parsedAbout.leadership && parsedAbout.leadership.length > 0 ? parsedAbout.leadership : DEFAULT_SITE_CONTENT.about.leadership,
         };
+
+        const parsedProductsPage = parsed.productsPage || {};
+        const productsPageMerged: ProductsPageContent = {
+          ...DEFAULT_SITE_CONTENT.productsPage,
+          ...parsedProductsPage,
+          kpiStats: parsedProductsPage.kpiStats && parsedProductsPage.kpiStats.length > 0 ? parsedProductsPage.kpiStats : DEFAULT_SITE_CONTENT.productsPage.kpiStats,
+          handsList: parsedProductsPage.handsList && parsedProductsPage.handsList.length > 0 ? parsedProductsPage.handsList : DEFAULT_SITE_CONTENT.productsPage.handsList,
+        };
+
         return {
           global: { ...DEFAULT_SITE_CONTENT.global, ...(parsed.global || {}) },
           home: { ...DEFAULT_SITE_CONTENT.home, ...(parsed.home || {}) },
           rd: { ...DEFAULT_SITE_CONTENT.rd, ...(parsed.rd || {}) },
-          about: aboutMerged
+          about: aboutMerged,
+          productsPage: productsPageMerged
         };
       }
     } catch (e) {

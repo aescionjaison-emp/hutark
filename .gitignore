@@ -41,6 +41,7 @@ dev.db-journal
 Thumbs.db
 *.tmp
 *.bak
+*.tsbuildinfo
 
 # Reference artifacts
 ref_css
