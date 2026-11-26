@@ -4,8 +4,8 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Globe, ChevronDown, ChevronRight, Menu, X } from 'lucide-react';
-import { TECHNOLOGY_MENU, ABOUT_MENU } from '../../data/navigation';
+import { Globe, ChevronDown, ChevronRight, ArrowRight, Menu, X } from 'lucide-react';
+import { TECHNOLOGY_MENU, PRODUCTS_MENU, ABOUT_MENU } from '../../data/navigation';
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -70,25 +70,41 @@ export default function Header() {
 
         {/* DESKTOP NAV */}
         <nav className="hidden lg:flex items-center space-x-8 text-sm font-medium">
-          {/* Technology Mega Menu Trigger (Matching AGIBOT reference) */}
+          {/* Products Mega Menu Trigger */}
           <div
-            className="relative py-6 cursor-pointer"
+            className="relative py-6 cursor-pointer select-none"
+            onClick={() => setActiveMenu(activeMenu === 'products' ? null : 'products')}
             onMouseEnter={() => setActiveMenu('products')}
           >
             <span
               className={`flex items-center space-x-1 transition-colors ${
                 isLightHeader ? 'text-gray-800 hover:text-brand-blue' : 'text-white hover:text-blue-400'
-              } ${activeMenu === 'products' ? (isLightHeader ? 'text-brand-blue' : 'text-blue-400') : ''}`}
+              } ${activeMenu === 'products' ? (isLightHeader ? 'text-brand-blue font-semibold' : 'text-blue-400 font-semibold') : ''}`}
             >
-              <span>Technology</span>
-              <ChevronDown className="w-3.5 h-3.5" />
+              <span>Products</span>
+              <ChevronDown
+                className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                  activeMenu === 'products' ? 'rotate-180' : ''
+                }`}
+              />
             </span>
           </div>
+
+          {/* Technology Link */}
+          <Link
+            href="/technology"
+            className={`transition-colors py-6 ${
+              isLightHeader ? 'text-gray-800 hover:text-brand-blue' : 'text-white hover:text-blue-400'
+            }`}
+            onMouseEnter={() => setActiveMenu(null)}
+          >
+            Technology
+          </Link>
 
           {/* R & D Link */}
           <Link
             href="/rd"
-            className={`transition-colors ${
+            className={`transition-colors py-6 ${
               isLightHeader ? 'text-gray-800 hover:text-brand-blue' : 'text-white hover:text-blue-400'
             }`}
             onMouseEnter={() => setActiveMenu(null)}
@@ -98,23 +114,28 @@ export default function Header() {
 
           {/* About Dropdown Trigger */}
           <div
-            className="relative py-6 cursor-pointer"
+            className="relative py-6 cursor-pointer select-none"
+            onClick={() => setActiveMenu(activeMenu === 'about' ? null : 'about')}
             onMouseEnter={() => setActiveMenu('about')}
           >
             <span
               className={`flex items-center space-x-1 transition-colors ${
                 isLightHeader ? 'text-gray-800 hover:text-brand-blue' : 'text-white hover:text-blue-400'
-              } ${activeMenu === 'about' ? (isLightHeader ? 'text-brand-blue' : 'text-blue-400') : ''}`}
+              } ${activeMenu === 'about' ? (isLightHeader ? 'text-brand-blue font-semibold' : 'text-blue-400 font-semibold') : ''}`}
             >
               <span>About Us</span>
-              <ChevronDown className="w-3.5 h-3.5" />
+              <ChevronDown
+                className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                  activeMenu === 'about' ? 'rotate-180' : ''
+                }`}
+              />
             </span>
           </div>
 
           {/* News Link */}
           <Link
             href="/news"
-            className={`transition-colors ${
+            className={`transition-colors py-6 ${
               isLightHeader ? 'text-gray-800 hover:text-brand-blue' : 'text-white hover:text-blue-400'
             }`}
             onMouseEnter={() => setActiveMenu(null)}
@@ -125,7 +146,7 @@ export default function Header() {
           {/* Contact Link */}
           <Link
             href="/contact"
-            className={`transition-colors ${
+            className={`transition-colors py-6 ${
               isLightHeader ? 'text-gray-800 hover:text-brand-blue' : 'text-white hover:text-blue-400'
             }`}
             onMouseEnter={() => setActiveMenu(null)}
@@ -203,11 +224,26 @@ export default function Header() {
           ========================================================================= */}
       {activeMenu === 'products' && (
         <div
-          className="absolute top-20 left-0 right-0 bg-white border-b border-gray-200 shadow-2xl py-8 animate-fadeIn"
+          className="absolute top-20 left-0 right-0 bg-white border-b border-gray-200 shadow-2xl py-8 animate-fadeIn text-gray-900"
           onMouseEnter={() => setActiveMenu('products')}
           onMouseLeave={() => setActiveMenu(null)}
         >
           <div className="site-container">
+            <div className="flex items-center justify-between pb-4 mb-6 border-b border-gray-100">
+              <div>
+                <h3 className="text-base font-bold text-gray-900 tracking-tight">HUTARK Robotics Fleet</h3>
+                <p className="text-xs text-gray-500">Autonomous bipedal humanoids, wheeled-bipedal systems, quadruped robots, and physical AI platforms</p>
+              </div>
+              <Link
+                href="/products"
+                onClick={() => setActiveMenu(null)}
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-brand-blue hover:text-blue-700 bg-blue-50 px-4 py-2 rounded-full transition-all hover:bg-blue-100 shadow-sm"
+              >
+                <span>View Full Product Fleet</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-6 max-h-[75vh] overflow-y-auto no-scrollbar">
               {TECHNOLOGY_MENU.map((col, idx) => (
                 <div key={idx} className="space-y-4">
@@ -219,6 +255,7 @@ export default function Header() {
                       <li key={itemIdx}>
                         <Link
                           href={item.href}
+                          onClick={() => setActiveMenu(null)}
                           className="group block text-xs text-gray-600 hover:text-brand-blue transition-colors"
                         >
                           {item.img && (
@@ -301,7 +338,7 @@ export default function Header() {
                 }
                 className="w-full flex items-center justify-between py-3 text-base font-bold border-b border-gray-100"
               >
-                <span>Technology</span>
+                <span>Products</span>
                 <ChevronDown
                   className={`w-4 h-4 transition-transform ${
                     mobileActiveSubmenu === 'products' ? 'rotate-180' : ''
@@ -311,6 +348,14 @@ export default function Header() {
 
               {mobileActiveSubmenu === 'products' && (
                 <div className="pl-4 py-3 space-y-4 bg-gray-50 rounded-xl my-2">
+                  <Link
+                    href="/products"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center justify-between text-xs font-bold text-brand-blue py-1.5 border-b border-gray-200 mb-2"
+                  >
+                    <span>View All Products Fleet</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
                   {TECHNOLOGY_MENU.map((col, i) => (
                     <div key={i} className="space-y-1.5">
                       <h5 className="text-xs font-bold text-gray-900">{col.heading}</h5>
@@ -319,6 +364,7 @@ export default function Header() {
                           <li key={j}>
                             <Link
                               href={it.href}
+                              onClick={() => setMobileMenuOpen(false)}
                               className="text-xs text-gray-600 hover:text-brand-blue block py-1"
                             >
                               {it.title}
@@ -334,7 +380,16 @@ export default function Header() {
 
             <Link
               href="/technology"
-              className="block py-3 text-base font-bold border-b border-gray-100"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block py-3 text-base font-bold border-b border-gray-100 hover:text-brand-blue transition-colors"
+            >
+              Technology
+            </Link>
+
+            <Link
+              href="/rd"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block py-3 text-base font-bold border-b border-gray-100 hover:text-brand-blue transition-colors"
             >
               R & D
             </Link>

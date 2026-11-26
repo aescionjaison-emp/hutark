@@ -87,3 +87,5 @@ export const ABOUT_MENU = [
   }
 ];
 
+export const PRODUCTS_MENU: NavColumn[] = TECHNOLOGY_MENU;
+
