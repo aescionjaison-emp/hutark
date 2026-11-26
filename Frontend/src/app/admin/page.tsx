@@ -253,6 +253,25 @@ export default function AdminDashboardPage() {
     setTimeout(() => setSaveNotice(null), 3000);
   };
 
+  const handleAddVideoFromUpload = (url: string) => {
+    if (!url.trim()) return;
+    const newId = extractYouTubeId(url.trim()) || url.trim();
+    const prod = getProductData(selectedVideoRobotId);
+    const newSlide: YouTubeVideoSlide = {
+      id: newId,
+      title: `${prod.name} Operational Demonstration`,
+      categoryTag: 'Live Demonstration',
+      category: 'Live Demonstration',
+      description: 'Recorded real-world operational demonstration of dexterity and autonomous intelligence.'
+    };
+    const updated = [newSlide, ...activeVideoSlides];
+    setActiveVideoSlides(updated);
+    saveProductData({ ...prod, youtubeVideos: updated });
+    setCustomizedList((prev) => ({ ...prev, [selectedVideoRobotId]: true }));
+    setSaveNotice(`Added video slide to ${prod.name}!`);
+    setTimeout(() => setSaveNotice(null), 3000);
+  };
+
   const handleSaveAllVideoSlides = () => {
     const prod = getProductData(selectedVideoRobotId);
     saveProductData({ ...prod, youtubeVideos: activeVideoSlides });
@@ -1165,20 +1184,20 @@ export default function AdminDashboardPage() {
                         />
                       </div>
 
-                      <div>
-                        <label className="text-[11px] font-semibold text-gray-600 block mb-1">Photo Image URL</label>
-                        <input
-                          type="text"
+                      <div className="md:col-span-3">
+                        <MediaUploadZone
+                          label="Hand Unit Photograph (Drag & Drop, Select from Folder, or Browse)"
+                          description="High-resolution end-effector render or photograph"
                           value={hand.img}
-                          onChange={(e) => {
+                          onChange={(url) => {
                             const updated = [...(siteContent.productsPage?.handsList || [])];
-                            updated[hIdx] = { ...updated[hIdx], img: e.target.value };
+                            updated[hIdx] = { ...updated[hIdx], img: url };
                             setSiteContent({
                               ...siteContent,
                               productsPage: { ...siteContent.productsPage, handsList: updated }
                             });
                           }}
-                          className="w-full bg-white border border-gray-200 rounded-xl px-3 py-1.5 text-xs text-gray-700"
+                          mediaType="image"
                         />
                       </div>
 
@@ -1892,35 +1911,30 @@ export default function AdminDashboardPage() {
 
             {/* Add New Video Bar */}
             <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm space-y-4">
-              <h3 className="text-sm font-bold text-gray-900 flex items-center space-x-2">
-                <Plus className="w-4 h-4 text-brand-blue" />
-                <span>Add YouTube Video to {getProductData(selectedVideoRobotId).name}</span>
-              </h3>
-
-              <div className="flex flex-col sm:flex-row gap-3">
-                <input
-                  type="text"
-                  value={adminVideoUrlInput}
-                  onChange={(e) => setAdminVideoUrlInput(e.target.value)}
-                  placeholder="Paste YouTube link (e.g. https://www.youtube.com/watch?v=7zI3u19q_e0 or ID)..."
-                  className="flex-1 bg-[#f8f9fc] border border-gray-200 rounded-xl px-4 py-2.5 text-xs text-gray-900 font-mono focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:bg-white"
-                />
-                <button
-                  type="button"
-                  onClick={handleAddVideoUrl}
-                  className="bg-brand-blue hover:bg-blue-700 text-white font-bold px-5 py-2.5 rounded-xl text-xs flex items-center justify-center space-x-1.5 shadow-sm transition-all"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>Add Slide</span>
-                </button>
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-bold text-gray-900 flex items-center space-x-2">
+                  <Plus className="w-4 h-4 text-brand-blue" />
+                  <span>Add Video Demonstration to {getProductData(selectedVideoRobotId).name}</span>
+                </h3>
                 <button
                   type="button"
                   onClick={handleAddBlankSlide}
-                  className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-4 py-2.5 rounded-xl text-xs transition-colors border border-gray-200"
+                  className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-3 py-1.5 rounded-xl text-xs transition-colors border border-gray-200 flex items-center space-x-1 cursor-pointer"
                 >
-                  Add Template Slide
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Add Template Slide</span>
                 </button>
               </div>
+
+              <MediaUploadZone
+                label="Upload Video File or Paste Video URL"
+                description="Drag & drop MP4/WebM file, select from folder, browse files, or paste YouTube link"
+                placeholder="Drop video here, select from folder, browse files, or enter YouTube URL"
+                value=""
+                onChange={handleAddVideoFromUpload}
+                mediaType="video"
+                allowUrlToggle={true}
+              />
             </div>
 
             {/* Video Slides Grid */}
@@ -1933,7 +1947,7 @@ export default function AdminDashboardPage() {
                   <button
                     type="button"
                     onClick={handleSaveAllVideoSlides}
-                    className="bg-brand-blue hover:bg-blue-700 text-white font-bold px-4 py-1.5 rounded-xl text-xs flex items-center space-x-1 shadow-sm transition-all"
+                    className="bg-brand-blue hover:bg-blue-700 text-white font-bold px-4 py-1.5 rounded-xl text-xs flex items-center space-x-1 shadow-sm transition-all cursor-pointer"
                   >
                     <Save className="w-3.5 h-3.5" />
                     <span>Save All Video Slides</span>
@@ -1945,7 +1959,7 @@ export default function AdminDashboardPage() {
                 <div className="bg-white border border-gray-200 rounded-2xl p-10 text-center space-y-2 shadow-sm">
                   <Video className="w-10 h-10 text-gray-400 mx-auto" />
                   <p className="text-sm font-semibold text-gray-700">No custom video slides attached yet</p>
-                  <p className="text-xs text-gray-500 font-light">Paste a YouTube link above to add demonstration videos.</p>
+                  <p className="text-xs text-gray-500 font-light">Drag &amp; drop a video file, select from folder, or paste a YouTube link above.</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -1957,22 +1971,13 @@ export default function AdminDashboardPage() {
                         className="bg-white border border-gray-200/90 rounded-2xl p-5 shadow-sm space-y-4 flex flex-col justify-between hover:shadow-md transition-all"
                       >
                         <div className="space-y-3">
-                          {/* Video Preview Frame */}
-                          <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-black shadow-sm">
-                            {videoId ? (
-                              <iframe
-                                src={`https://www.youtube-nocookie.com/embed/${videoId}`}
-                                title={slide.title}
-                                className="w-full h-full border-0"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                allowFullScreen
-                              />
-                            ) : (
-                              <div className="w-full h-full flex items-center justify-center text-xs text-gray-500">
-                                Invalid Video ID
-                              </div>
-                            )}
-                          </div>
+                          {/* Video Asset Uploader / Viewer with Drag & Drop and Folder Select */}
+                          <MediaUploadZone
+                            label={`Slide #${idx + 1} Video Asset`}
+                            value={slide.id}
+                            onChange={(url) => handleUpdateSlideField(idx, 'id', extractYouTubeId(url) || url)}
+                            mediaType="video"
+                          />
 
                           <div className="space-y-1">
                             <label className="block text-[11px] font-semibold text-gray-700">Slide Title</label>

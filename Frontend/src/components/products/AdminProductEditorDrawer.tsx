@@ -165,6 +165,20 @@ export default function AdminProductEditorDrawer({
     setNewVideoUrl('');
   };
 
+  const handleAddVideoFromMedia = (mediaUrl: string) => {
+    if (!mediaUrl.trim()) return;
+    const parsedId = extractYouTubeId(mediaUrl.trim());
+    const currentVideos = [...(formData.youtubeVideos || [])];
+    currentVideos.unshift({
+      id: parsedId || mediaUrl.trim(),
+      title: `${formData.name} Video Demonstration`,
+      subtitle: 'FIELD PERFORMANCE TRIAL',
+      description: 'Autonomous demonstration of dynamic stability, obstacle negotiation, and precision manipulation capabilities.',
+      categoryTag: 'Demonstration',
+    });
+    setFormData({ ...formData, youtubeVideos: currentVideos });
+  };
+
   const handleAddVideo = () => {
     const currentVideos = [...(formData.youtubeVideos || [])];
     currentVideos.push({
@@ -1177,7 +1191,7 @@ export default function AdminProductEditorDrawer({
               ========================================================================= */}
           {activeTab === 'videos' && (
             <div className="space-y-6">
-              {/* PRIMARY PROMINENT URL COPY-PASTE METHOD BOX */}
+              {/* PRIMARY PROMINENT VIDEO DROP / SELECT FROM FOLDER / URL BOX */}
               <div className="bg-gradient-to-br from-red-950/50 via-[#181a24] to-[#12151e] border-2 border-red-500/50 p-6 rounded-2xl space-y-4 shadow-xl">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2.5 text-white font-bold text-sm">
@@ -1185,34 +1199,24 @@ export default function AdminProductEditorDrawer({
                       <Video className="w-4 h-4" />
                     </div>
                     <div>
-                      <h4 className="text-sm font-bold text-white tracking-tight">YouTube Video URL (Copy & Paste Method)</h4>
-                      <p className="text-[11px] text-gray-400 font-light">Paste any YouTube video link to add it immediately as a video slide</p>
+                      <h4 className="text-sm font-bold text-white tracking-tight">Add Product Video Demonstration</h4>
+                      <p className="text-[11px] text-gray-400 font-light">Drag & drop video file, select from folder, browse files, or paste YouTube link</p>
                     </div>
                   </div>
                   <span className="text-[10px] font-mono font-bold bg-red-950 text-red-400 border border-red-500/30 px-2.5 py-1 rounded-full uppercase">
-                    Auto-Embed
+                    Auto-Embed &amp; Upload
                   </span>
                 </div>
 
-                <div className="flex flex-col sm:flex-row gap-2.5 pt-1">
-                  <div className="relative flex-1">
-                    <input
-                      type="text"
-                      value={newVideoUrl}
-                      onChange={(e) => setNewVideoUrl(e.target.value)}
-                      placeholder="Paste YouTube video link (e.g. https://www.youtube.com/watch?v=7zI3u19q_e0 or youtu.be)..."
-                      className="w-full bg-black/70 border border-white/20 rounded-xl px-4 py-3 text-xs text-cyan-300 placeholder-gray-500 focus:outline-none focus:border-red-500 font-mono"
-                    />
-                  </div>
-                  <button
-                    type="button"
-                    onClick={handlePasteAndAddVideo}
-                    className="bg-red-600 hover:bg-red-500 text-white font-bold px-6 py-3 rounded-xl text-xs flex items-center justify-center space-x-2 transition-all shadow-lg hover:shadow-red-500/25 active:scale-95 cursor-pointer whitespace-nowrap"
-                  >
-                    <Plus className="w-4 h-4" />
-                    <span>Add Video Slide</span>
-                  </button>
-                </div>
+                <MediaUploadZone
+                  label="Upload Video File or Link"
+                  description="Supports local MP4, WebM, MOV, and YouTube links"
+                  placeholder="Drop video here, browse file, select from folder, or paste link"
+                  value=""
+                  onChange={handleAddVideoFromMedia}
+                  mediaType="video"
+                  allowUrlToggle={true}
+                />
               </div>
 
               {/* LIST OF VIDEO SLIDES */}
@@ -1237,7 +1241,7 @@ export default function AdminProductEditorDrawer({
                     : []
                   ).map((vid, idx) => {
                     const videoId = extractYouTubeId(vid.id);
-                    const isDirectVideo = vid.id?.endsWith('.mp4') || vid.id?.endsWith('.webm') || vid.id?.includes('/uploads/');
+                    const isDirectVideo = vid.id?.endsWith('.mp4') || vid.id?.endsWith('.webm') || vid.id?.includes('/uploads/') || vid.id?.startsWith('data:video');
 
                     return (
                       <div key={idx} className="bg-[#151922] p-5 rounded-2xl border border-white/10 space-y-4 shadow-md">
@@ -1256,47 +1260,14 @@ export default function AdminProductEditorDrawer({
                           </button>
                         </div>
 
-                        {/* YouTube URL Copy-Paste Input Field */}
-                        <div className="space-y-1.5">
-                          <label className="block text-xs font-semibold text-gray-300">
-                            YouTube Video URL or Video File Path (Copy & Paste)
-                          </label>
-                          <div className="flex items-center space-x-2">
-                            <input
-                              type="text"
-                              value={vid.id.startsWith('http') || vid.id.startsWith('/') ? vid.id : `https://www.youtube.com/watch?v=${vid.id}`}
-                              onChange={(e) => handleUpdateVideo(idx, 'id', extractYouTubeId(e.target.value) || e.target.value)}
-                              placeholder="Paste YouTube link: https://www.youtube.com/watch?v=..."
-                              className="flex-1 bg-black/60 border border-white/15 rounded-xl px-4 py-2.5 text-xs text-cyan-300 font-mono focus:border-red-500 focus:outline-none"
-                            />
-                            {!isDirectVideo && (
-                              <a
-                                href={vid.id.startsWith('http') ? vid.id : `https://www.youtube.com/watch?v=${videoId}`}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="p-2.5 bg-white/5 hover:bg-white/15 rounded-xl text-gray-300 hover:text-white transition-colors"
-                                title="Open on YouTube"
-                              >
-                                <ExternalLink className="w-4 h-4" />
-                              </a>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Live YouTube Embed Preview */}
-                        <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-black border border-white/10">
-                          {isDirectVideo ? (
-                            <video src={vid.id} controls className="w-full h-full object-contain" />
-                          ) : (
-                            <iframe
-                              src={`https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1`}
-                              title={vid.title}
-                              className="w-full h-full border-0"
-                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                              allowFullScreen
-                            />
-                          )}
-                        </div>
+                        {/* Video Media Upload Zone (Drag & Drop, Select from Folder, Browse, or YouTube) */}
+                        <MediaUploadZone
+                          label="Video Asset (Drag & Drop, Folder, or YouTube Link)"
+                          description="Drop MP4/WebM, select from local folder, browse files, or paste YouTube URL"
+                          value={vid.id.startsWith('http') || vid.id.startsWith('/') || vid.id.startsWith('data:') ? vid.id : `https://www.youtube.com/watch?v=${vid.id}`}
+                          onChange={(url) => handleUpdateVideo(idx, 'id', extractYouTubeId(url) || url)}
+                          mediaType="video"
+                        />
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           <div>
