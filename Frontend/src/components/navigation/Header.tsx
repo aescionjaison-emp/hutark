@@ -70,35 +70,35 @@ export default function Header() {
 
         {/* DESKTOP NAV */}
         <nav className="hidden lg:flex items-center space-x-8 text-sm font-medium">
-          {/* Products Mega Menu Trigger */}
+          {/* Technology Mega Menu Trigger (Hovering shows all products as previously) */}
           <div
             className="relative py-6 cursor-pointer select-none"
-            onClick={() => setActiveMenu(activeMenu === 'products' ? null : 'products')}
-            onMouseEnter={() => setActiveMenu('products')}
+            onClick={() => setActiveMenu(activeMenu === 'technology' ? null : 'technology')}
+            onMouseEnter={() => setActiveMenu('technology')}
           >
             <span
               className={`flex items-center space-x-1 transition-colors ${
                 isLightHeader ? 'text-gray-800 hover:text-brand-blue' : 'text-white hover:text-blue-400'
-              } ${activeMenu === 'products' ? (isLightHeader ? 'text-brand-blue font-semibold' : 'text-blue-400 font-semibold') : ''}`}
+              } ${activeMenu === 'technology' ? (isLightHeader ? 'text-brand-blue font-semibold' : 'text-blue-400 font-semibold') : ''}`}
             >
-              <span>Products</span>
+              <span>Technology</span>
               <ChevronDown
                 className={`w-3.5 h-3.5 transition-transform duration-200 ${
-                  activeMenu === 'products' ? 'rotate-180' : ''
+                  activeMenu === 'technology' ? 'rotate-180' : ''
                 }`}
               />
             </span>
           </div>
 
-          {/* Technology Link */}
+          {/* Products Direct Link (Clicking opens separate /products page) */}
           <Link
-            href="/technology"
+            href="/products"
             className={`transition-colors py-6 ${
               isLightHeader ? 'text-gray-800 hover:text-brand-blue' : 'text-white hover:text-blue-400'
             }`}
             onMouseEnter={() => setActiveMenu(null)}
           >
-            Technology
+            Products
           </Link>
 
           {/* R & D Link */}
@@ -220,12 +220,12 @@ export default function Header() {
       </div>
 
       {/* =========================================================================
-          PRODUCTS MEGA MENU (8 COLUMNS - WHITE BACKGROUND)
+          TECHNOLOGY MEGA MENU (SHOWS ALL PRODUCTS ON HOVER / CLICK AS PREVIOUSLY)
           ========================================================================= */}
-      {activeMenu === 'products' && (
+      {(activeMenu === 'technology' || activeMenu === 'products') && (
         <div
           className="absolute top-20 left-0 right-0 bg-white border-b border-gray-200 shadow-2xl py-8 animate-fadeIn text-gray-900"
-          onMouseEnter={() => setActiveMenu('products')}
+          onMouseEnter={() => setActiveMenu('technology')}
           onMouseLeave={() => setActiveMenu(null)}
         >
           <div className="site-container">
@@ -334,19 +334,19 @@ export default function Header() {
             <div>
               <button
                 onClick={() =>
-                  setMobileActiveSubmenu(mobileActiveSubmenu === 'products' ? null : 'products')
+                  setMobileActiveSubmenu(mobileActiveSubmenu === 'technology' ? null : 'technology')
                 }
                 className="w-full flex items-center justify-between py-3 text-base font-bold border-b border-gray-100"
               >
-                <span>Products</span>
+                <span>Technology</span>
                 <ChevronDown
                   className={`w-4 h-4 transition-transform ${
-                    mobileActiveSubmenu === 'products' ? 'rotate-180' : ''
+                    mobileActiveSubmenu === 'technology' ? 'rotate-180' : ''
                   }`}
                 />
               </button>
 
-              {mobileActiveSubmenu === 'products' && (
+              {mobileActiveSubmenu === 'technology' && (
                 <div className="pl-4 py-3 space-y-4 bg-gray-50 rounded-xl my-2">
                   <Link
                     href="/products"
@@ -379,11 +379,11 @@ export default function Header() {
             </div>
 
             <Link
-              href="/technology"
+              href="/products"
               onClick={() => setMobileMenuOpen(false)}
               className="block py-3 text-base font-bold border-b border-gray-100 hover:text-brand-blue transition-colors"
             >
-              Technology
+              Products
             </Link>
 
             <Link
