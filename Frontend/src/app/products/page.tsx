@@ -20,8 +20,7 @@ import {
   Sparkles,
   Table,
   LayoutGrid,
-  X,
-  Edit3
+  X
 } from 'lucide-react';
 import { PRODUCTS } from '../../data/products';
 import { ProductData } from '../../types';
@@ -31,7 +30,6 @@ import {
   ProductsPageContent,
   DexterousHandItem
 } from '../../services/siteContentStore';
-import { adminAuth } from '../../services/adminAuth';
 
 // Series filter definitions
 const SERIES_FILTERS = [
@@ -48,7 +46,6 @@ export default function ProductsPage() {
   const [content, setContent] = useState<ProductsPageContent>(() => {
     return siteContentStore.getSiteContent().productsPage || DEFAULT_PRODUCTS_PAGE_CONTENT;
   });
-  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const unsubStore = siteContentStore.subscribe((sc) => {
@@ -56,12 +53,8 @@ export default function ProductsPage() {
         setContent(sc.productsPage);
       }
     });
-    const unsubAuth = adminAuth.subscribe((auth) => {
-      setIsAdmin(auth);
-    });
     return () => {
       unsubStore();
-      unsubAuth();
     };
   }, []);
 
@@ -590,20 +583,6 @@ export default function ProductsPage() {
           </div>
         </div>
       </section>
-
-      {/* Floating Admin Edit Button (Only visible when logged in as admin) */}
-      {isAdmin && (
-        <div className="fixed bottom-6 right-6 z-40">
-          <Link
-            href="/admin?tab=products_page"
-            className="flex items-center space-x-2.5 bg-[#0f121a] hover:bg-[#161c28] text-white px-5 py-3 rounded-full border border-cyan-500/50 shadow-2xl transition-all hover:scale-105 active:scale-95 group cursor-pointer"
-          >
-            <div className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse" />
-            <Edit3 className="w-4 h-4 text-cyan-400 group-hover:rotate-12 transition-transform" />
-            <span className="text-xs font-bold tracking-wide">Edit Page (Admin)</span>
-          </Link>
-        </div>
-      )}
     </div>
   );
 }
