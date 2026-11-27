@@ -70,36 +70,26 @@ export default function Header() {
 
         {/* DESKTOP NAV */}
         <nav className="hidden lg:flex items-center space-x-8 text-sm font-medium">
-          {/* Technology Mega Menu Trigger (Hovering shows all products as previously) */}
+          {/* Products Mega Menu Trigger & Direct Link */}
           <div
-            className="relative py-6 cursor-pointer select-none"
-            onClick={() => setActiveMenu(activeMenu === 'technology' ? null : 'technology')}
-            onMouseEnter={() => setActiveMenu('technology')}
+            className="relative py-6 select-none"
+            onMouseEnter={() => setActiveMenu('products')}
           >
-            <span
+            <Link
+              href="/products"
+              onClick={() => setActiveMenu(null)}
               className={`flex items-center space-x-1 transition-colors ${
                 isLightHeader ? 'text-gray-800 hover:text-brand-blue' : 'text-white hover:text-blue-400'
-              } ${activeMenu === 'technology' ? (isLightHeader ? 'text-brand-blue font-semibold' : 'text-blue-400 font-semibold') : ''}`}
+              } ${activeMenu === 'products' ? (isLightHeader ? 'text-brand-blue font-semibold' : 'text-blue-400 font-semibold') : ''}`}
             >
-              <span>Technology</span>
+              <span>Products</span>
               <ChevronDown
                 className={`w-3.5 h-3.5 transition-transform duration-200 ${
-                  activeMenu === 'technology' ? 'rotate-180' : ''
+                  activeMenu === 'products' ? 'rotate-180' : ''
                 }`}
               />
-            </span>
+            </Link>
           </div>
-
-          {/* Products Direct Link (Clicking opens separate /products page) */}
-          <Link
-            href="/products"
-            className={`transition-colors py-6 ${
-              isLightHeader ? 'text-gray-800 hover:text-brand-blue' : 'text-white hover:text-blue-400'
-            }`}
-            onMouseEnter={() => setActiveMenu(null)}
-          >
-            Products
-          </Link>
 
           {/* R & D Link */}
           <Link
@@ -220,12 +210,12 @@ export default function Header() {
       </div>
 
       {/* =========================================================================
-          TECHNOLOGY MEGA MENU (SHOWS ALL PRODUCTS ON HOVER / CLICK AS PREVIOUSLY)
+          PRODUCTS MEGA MENU (SHOWS ALL PRODUCTS ON HOVER / CLICK TO VISIT)
           ========================================================================= */}
-      {(activeMenu === 'technology' || activeMenu === 'products') && (
+      {activeMenu === 'products' && (
         <div
           className="absolute top-20 left-0 right-0 bg-white border-b border-gray-200 shadow-2xl py-8 animate-fadeIn text-gray-900"
-          onMouseEnter={() => setActiveMenu('technology')}
+          onMouseEnter={() => setActiveMenu('products')}
           onMouseLeave={() => setActiveMenu(null)}
         >
           <div className="site-container">
@@ -331,29 +321,40 @@ export default function Header() {
       {mobileMenuOpen && (
         <div className="fixed inset-0 top-20 bg-white z-50 overflow-y-auto px-6 py-6 border-t border-gray-100 lg:hidden text-gray-800">
           <div className="space-y-6">
+            {/* Mobile Products Accordion */}
             <div>
-              <button
-                onClick={() =>
-                  setMobileActiveSubmenu(mobileActiveSubmenu === 'technology' ? null : 'technology')
-                }
-                className="w-full flex items-center justify-between py-3 text-base font-bold border-b border-gray-100"
-              >
-                <span>Technology</span>
-                <ChevronDown
-                  className={`w-4 h-4 transition-transform ${
-                    mobileActiveSubmenu === 'technology' ? 'rotate-180' : ''
-                  }`}
-                />
-              </button>
+              <div className="w-full flex items-center justify-between py-3 border-b border-gray-100">
+                <Link
+                  href="/products"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-base font-bold hover:text-brand-blue transition-colors flex-1"
+                >
+                  Products
+                </Link>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setMobileActiveSubmenu(mobileActiveSubmenu === 'products' ? null : 'products')
+                  }
+                  className="p-1 text-gray-500 hover:text-gray-900 cursor-pointer"
+                  aria-label="Toggle Products Submenu"
+                >
+                  <ChevronDown
+                    className={`w-4 h-4 transition-transform ${
+                      mobileActiveSubmenu === 'products' ? 'rotate-180' : ''
+                    }`}
+                  />
+                </button>
+              </div>
 
-              {mobileActiveSubmenu === 'technology' && (
+              {mobileActiveSubmenu === 'products' && (
                 <div className="pl-4 py-3 space-y-4 bg-gray-50 rounded-xl my-2">
                   <Link
                     href="/products"
                     onClick={() => setMobileMenuOpen(false)}
                     className="flex items-center justify-between text-xs font-bold text-brand-blue py-1.5 border-b border-gray-200 mb-2"
                   >
-                    <span>View All Products Fleet</span>
+                    <span>View All Products Fleet Page</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
                   {TECHNOLOGY_MENU.map((col, i) => (
@@ -377,14 +378,6 @@ export default function Header() {
                 </div>
               )}
             </div>
-
-            <Link
-              href="/products"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block py-3 text-base font-bold border-b border-gray-100 hover:text-brand-blue transition-colors"
-            >
-              Products
-            </Link>
 
             <Link
               href="/rd"
