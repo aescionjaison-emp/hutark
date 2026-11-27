@@ -27,7 +27,7 @@ import {
   EyeOff,
   Sparkles
 } from 'lucide-react';
-import { ProductData, YouTubeVideoSlide, SpecRowItem, HardwareModule, ApplicationScenario } from '../../types';
+import { ProductData, SpecRowItem, HardwareModule, ApplicationScenario } from '../../types';
 import { saveProductData, resetProductData } from '../../services/productStore';
 import MediaUploadZone from '../admin/MediaUploadZone';
 
@@ -51,7 +51,6 @@ export default function AdminProductEditorDrawer({
   const [activeTab, setActiveTab] = useState<TabKey>(initialTab);
   const [formData, setFormData] = useState<ProductData>(product);
   const [saveSuccess, setSaveSuccess] = useState(false);
-  const [newVideoUrl, setNewVideoUrl] = useState('');
 
   // Sync state whenever product or initialTab prop updates
   useEffect(() => {
@@ -138,70 +137,6 @@ export default function AdminProductEditorDrawer({
     setFormData({ ...formData, specRows: rows });
   };
 
-  // Video slide handlers
-  const extractYouTubeId = (urlOrId: string): string => {
-    if (!urlOrId) return '';
-    const trimmed = urlOrId.trim();
-    if (trimmed.length === 11 && !trimmed.includes('/') && !trimmed.includes('?') && !trimmed.includes('=')) {
-      return trimmed;
-    }
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-    const match = trimmed.match(regExp);
-    return match && match[2].length === 11 ? match[2] : trimmed;
-  };
-
-  const handlePasteAndAddVideo = () => {
-    if (!newVideoUrl.trim()) return;
-    const parsedId = extractYouTubeId(newVideoUrl.trim());
-    const currentVideos = [...(formData.youtubeVideos || [])];
-    currentVideos.unshift({
-      id: parsedId || newVideoUrl.trim(),
-      title: `${formData.name} Video Demonstration`,
-      subtitle: 'FIELD PERFORMANCE TRIAL',
-      description: 'Autonomous demonstration of dynamic stability, obstacle negotiation, and precision manipulation capabilities.',
-      categoryTag: 'Demonstration',
-    });
-    setFormData({ ...formData, youtubeVideos: currentVideos });
-    setNewVideoUrl('');
-  };
-
-  const handleAddVideoFromMedia = (mediaUrl: string) => {
-    if (!mediaUrl.trim()) return;
-    const parsedId = extractYouTubeId(mediaUrl.trim());
-    const currentVideos = [...(formData.youtubeVideos || [])];
-    currentVideos.unshift({
-      id: parsedId || mediaUrl.trim(),
-      title: `${formData.name} Video Demonstration`,
-      subtitle: 'FIELD PERFORMANCE TRIAL',
-      description: 'Autonomous demonstration of dynamic stability, obstacle negotiation, and precision manipulation capabilities.',
-      categoryTag: 'Demonstration',
-    });
-    setFormData({ ...formData, youtubeVideos: currentVideos });
-  };
-
-  const handleAddVideo = () => {
-    const currentVideos = [...(formData.youtubeVideos || [])];
-    currentVideos.push({
-      id: 'M3_Jb_5zT9I',
-      title: 'New Video Demonstration',
-      subtitle: 'FIELD TRIAL',
-      description: 'Demonstration description of performance parameters and operational capabilities.',
-      categoryTag: 'Demo Test',
-    });
-    setFormData({ ...formData, youtubeVideos: currentVideos });
-  };
-
-  const handleUpdateVideo = (index: number, field: keyof YouTubeVideoSlide, val: string) => {
-    const currentVideos = [...(formData.youtubeVideos || [])];
-    currentVideos[index] = { ...currentVideos[index], [field]: val };
-    setFormData({ ...formData, youtubeVideos: currentVideos });
-  };
-
-  const handleDeleteVideo = (index: number) => {
-    const currentVideos = [...(formData.youtubeVideos || [])].filter((_, i) => i !== index);
-    setFormData({ ...formData, youtubeVideos: currentVideos });
-  };
-
   return (
     <div className="fixed inset-0 z-50 overflow-hidden flex justify-end bg-black/60 backdrop-blur-sm transition-opacity animate-fadeIn">
       <div className="w-full max-w-3xl bg-[#0f1219] text-gray-100 h-full flex flex-col shadow-2xl border-l border-white/10 animate-slideLeft">
@@ -262,7 +197,7 @@ export default function AdminProductEditorDrawer({
             { id: 'styles', label: 'Font & Theme', icon: Palette },
             { id: 'buyme', label: 'Buy Me Section', icon: ShoppingBag, isHighlight: true },
             { id: 'images', label: 'Backgrounds', icon: ImageIcon },
-            { id: 'videos', label: 'YouTube Videos', icon: Video, isSpecial: true },
+            { id: 'videos', label: 'Looping Videos', icon: Video, isSpecial: true },
             { id: 'content', label: 'Core Copy', icon: FileText },
             { id: 'hardware', label: 'Hardware', icon: Cpu },
             { id: 'specs', label: 'Specs Table', icon: Table },
@@ -900,12 +835,35 @@ export default function AdminProductEditorDrawer({
               </div>
 
               {/* SECTION 3: CAPABILITY CAROUSEL LOOPING VIDEO SLIDES */}
+              {(() => {
+                const activeFeatureSlides = formData.featureSlides || [
+                  {
+                    title: formData.cinematicHeading || '24/7 Autonomous Operation · Your Reliable Around-the-Clock Partner',
+                    video: formData.cinematicVideo || '/static/index/en/video/index2/index2_One-v1.mp4',
+                    image: formData.cinematicImg || formData.heroImg,
+                    tags: ['360° All-Domain Perception', '700 TOPS Full-Performance Compute'],
+                  },
+                  {
+                    title: formData.manipulationHeading || 'Versatile Task Execution · A Capable Autonomous Partner',
+                    video: '/static/index/en/video/index2/index2_One-v2.mp4',
+                    image: formData.heroImg,
+                    tags: ['Perception-Control Fusion', 'Sub-Millimeter Dexterous Manipulation'],
+                  },
+                  {
+                    title: formData.interactionHeading || 'Comprehensive Safety · A Trusted, Gentle Companion',
+                    video: '/static/index/en/video/index2/index2_One-v3.mp4',
+                    image: formData.heroImg,
+                    tags: ['Four-Layer Safety Protection', 'Proprietary Carbon Fiber-Reinforced Composite'],
+                  },
+                ];
+
+                return (
               <div className="bg-[#151922] border border-amber-500/30 p-6 rounded-2xl space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
                     <h4 className="text-sm font-bold text-white flex items-center space-x-2">
                       <Video className="w-4 h-4 text-amber-400" />
-                      <span>Section 3 — Capability Carousel Looping Videos ({formData.featureSlides?.length || 0})</span>
+                      <span>Section 3 — Active Capability Looping Slides ({activeFeatureSlides.length})</span>
                     </h4>
                     <p className="text-[11px] text-gray-400 mt-1">
                       Each slide plays its video in a loop when centered in the peeking capability carousel.
@@ -915,20 +873,20 @@ export default function AdminProductEditorDrawer({
                     type="button"
                     onClick={() => {
                       const next = [
-                        ...(formData.featureSlides || []),
+                        ...activeFeatureSlides,
                         {
-                          title: `${formData.name} Autonomous Capability`,
-                          video: '',
+                          title: `${formData.name} Autonomous Capability ${activeFeatureSlides.length + 1}`,
+                          video: '/static/index/en/video/index2/index2_One-v1.mp4',
                           image: formData.cinematicImg || formData.heroImg,
                           tags: ['360° Perception', 'Continuous Loop Operation'],
                         },
                       ];
                       setFormData({ ...formData, featureSlides: next });
                     }}
-                    className="px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-xs font-bold flex items-center space-x-1.5 border border-amber-500/30 cursor-pointer"
+                    className="px-3.5 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-xs font-bold flex items-center space-x-1.5 border border-amber-500/30 cursor-pointer"
                   >
                     <Plus className="w-3.5 h-3.5" />
-                    <span>Add Video Slide</span>
+                    <span>Add Slide</span>
                   </button>
                 </div>
 
@@ -941,9 +899,9 @@ export default function AdminProductEditorDrawer({
                   onChange={(url) => {
                     if (!url) return;
                     const next = [
-                      ...(formData.featureSlides || []),
+                      ...activeFeatureSlides,
                       {
-                        title: `${formData.name} Capability ${(formData.featureSlides?.length || 0) + 1}`,
+                        title: `${formData.name} Capability ${activeFeatureSlides.length + 1}`,
                         video: url,
                         image: formData.cinematicImg || formData.heroImg,
                         tags: ['Autonomous Operation', 'Real-Time Control'],
@@ -957,14 +915,14 @@ export default function AdminProductEditorDrawer({
 
                 {/* Editable List of Capability Video Slides */}
                 <div className="space-y-4">
-                  {(formData.featureSlides || []).map((slide, sIdx) => (
+                  {activeFeatureSlides.map((slide, sIdx) => (
                     <div key={sIdx} className="bg-black/40 p-4 rounded-xl border border-white/10 space-y-3">
                       <div className="flex items-center justify-between text-xs font-bold border-b border-white/10 pb-2">
                         <span className="text-amber-300">CAPABILITY SLIDE {String(sIdx + 1).padStart(2, '0')}</span>
                         <button
                           type="button"
                           onClick={() => {
-                            const next = (formData.featureSlides || []).filter((_, i) => i !== sIdx);
+                            const next = activeFeatureSlides.filter((_, i) => i !== sIdx);
                             setFormData({ ...formData, featureSlides: next });
                           }}
                           className="text-gray-400 hover:text-red-400 flex items-center space-x-1 cursor-pointer"
@@ -980,7 +938,7 @@ export default function AdminProductEditorDrawer({
                           type="text"
                           value={slide.title}
                           onChange={(e) => {
-                            const next = [...(formData.featureSlides || [])];
+                            const next = [...activeFeatureSlides];
                             next[sIdx] = { ...slide, title: e.target.value };
                             setFormData({ ...formData, featureSlides: next });
                           }}
@@ -992,7 +950,7 @@ export default function AdminProductEditorDrawer({
                         label="Looping Video (Drag & Drop or Select File/Folder)"
                         value={slide.video || ''}
                         onChange={(url) => {
-                          const next = [...(formData.featureSlides || [])];
+                          const next = [...activeFeatureSlides];
                           next[sIdx] = { ...slide, video: url };
                           setFormData({ ...formData, featureSlides: next });
                         }}
@@ -1006,7 +964,7 @@ export default function AdminProductEditorDrawer({
                           type="text"
                           value={(slide.tags || []).join(', ')}
                           onChange={(e) => {
-                            const next = [...(formData.featureSlides || [])];
+                            const next = [...activeFeatureSlides];
                             next[sIdx] = {
                               ...slide,
                               tags: e.target.value.split(',').map((t) => t.trim()).filter(Boolean),
@@ -1020,6 +978,8 @@ export default function AdminProductEditorDrawer({
                   ))}
                 </div>
               </div>
+                );
+              })()}
             </div>
           )}
 

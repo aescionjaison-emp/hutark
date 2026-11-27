@@ -53,7 +53,7 @@ import {
   ArrowDown
 } from 'lucide-react';
 import { PRODUCTS } from '../../data/products';
-import { ProductData, YouTubeVideoSlide } from '../../types';
+import { ProductData } from '../../types';
 import { adminAuth } from '../../services/adminAuth';
 import { inquiryStore, InquiryItem, InquiryType, InquiryStatus } from '../../services/inquiryStore';
 import { 
@@ -80,7 +80,7 @@ import {
 import MediaUploadZone from '../../components/admin/MediaUploadZone';
 import AdminProductEditorDrawer from '../../components/products/AdminProductEditorDrawer';
 
-type AdminTab = 'products' | 'products_page' | 'inquiries' | 'youtube' | 'home' | 'rd' | 'about' | 'global' | 'media' | 'security';
+type AdminTab = 'products' | 'products_page' | 'inquiries' | 'videos' | 'home' | 'rd' | 'about' | 'global' | 'media' | 'security';
 
 export default function AdminDashboardPage() {
   // Auth state
@@ -104,17 +104,8 @@ export default function AdminDashboardPage() {
   const [editingProduct, setEditingProduct] = useState<ProductData | null>(null);
   const [drawerInitialTab, setDrawerInitialTab] = useState<'styles' | 'images' | 'content' | 'hardware' | 'specs' | 'videos'>('styles');
 
-  // YouTube Video Slides Manager State
+  // Product Looping Videos Manager State
   const [selectedVideoRobotId, setSelectedVideoRobotId] = useState<string>('G2');
-  const [adminVideoUrlInput, setAdminVideoUrlInput] = useState<string>('');
-  const [activeVideoSlides, setActiveVideoSlides] = useState<YouTubeVideoSlide[]>([]);
-
-  const extractYouTubeId = (url: string): string => {
-    if (!url) return '';
-    const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
-    if (match && match[1]) return match[1];
-    return url.trim();
-  };
 
   // Central Media Manager State
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
@@ -148,7 +139,7 @@ export default function AdminDashboardPage() {
     if (typeof window !== 'undefined') {
       const urlParams = new URLSearchParams(window.location.search);
       const tabParam = urlParams.get('tab') as AdminTab;
-      if (tabParam && ['products', 'products_page', 'inquiries', 'youtube', 'home', 'rd', 'about', 'global', 'media', 'security'].includes(tabParam)) {
+      if (tabParam && ['products', 'products_page', 'inquiries', 'videos', 'home', 'rd', 'about', 'global', 'media', 'security'].includes(tabParam)) {
         setActiveTab(tabParam);
       }
     }
@@ -224,93 +215,6 @@ export default function AdminDashboardPage() {
   };
 
   const unreadInquiriesCount = inquiries.filter((i) => i.status === 'new').length;
-
-  // Sync active video slides whenever selected robot changes
-  useEffect(() => {
-    const prod = getProductData(selectedVideoRobotId);
-    setActiveVideoSlides(prod.youtubeVideos || []);
-  }, [selectedVideoRobotId]);
-
-  // YouTube Video Slides Handlers
-  const handleAddVideoUrl = () => {
-    const raw = adminVideoUrlInput.trim();
-    if (!raw) return;
-    const newId = extractYouTubeId(raw);
-    const prod = getProductData(selectedVideoRobotId);
-    const newSlide: YouTubeVideoSlide = {
-      id: newId,
-      title: `${prod.name} Field Operational Demonstration`,
-      categoryTag: 'Live Robot Demonstration',
-      category: 'Live Robot Demonstration',
-      description: 'Recorded real-world operational testing of dexterity and autonomous intelligence.'
-    };
-    const updated = [...activeVideoSlides, newSlide];
-    setActiveVideoSlides(updated);
-    setAdminVideoUrlInput('');
-    saveProductData({ ...prod, youtubeVideos: updated });
-    setCustomizedList((prev) => ({ ...prev, [selectedVideoRobotId]: true }));
-    setSaveNotice(`Added video slide to ${prod.name}!`);
-    setTimeout(() => setSaveNotice(null), 3000);
-  };
-
-  const handleAddVideoFromUpload = (url: string) => {
-    if (!url.trim()) return;
-    const newId = extractYouTubeId(url.trim()) || url.trim();
-    const prod = getProductData(selectedVideoRobotId);
-    const newSlide: YouTubeVideoSlide = {
-      id: newId,
-      title: `${prod.name} Operational Demonstration`,
-      categoryTag: 'Live Demonstration',
-      category: 'Live Demonstration',
-      description: 'Recorded real-world operational demonstration of dexterity and autonomous intelligence.'
-    };
-    const updated = [newSlide, ...activeVideoSlides];
-    setActiveVideoSlides(updated);
-    saveProductData({ ...prod, youtubeVideos: updated });
-    setCustomizedList((prev) => ({ ...prev, [selectedVideoRobotId]: true }));
-    setSaveNotice(`Added video slide to ${prod.name}!`);
-    setTimeout(() => setSaveNotice(null), 3000);
-  };
-
-  const handleSaveAllVideoSlides = () => {
-    const prod = getProductData(selectedVideoRobotId);
-    saveProductData({ ...prod, youtubeVideos: activeVideoSlides });
-    setCustomizedList((prev) => ({ ...prev, [selectedVideoRobotId]: true }));
-    setSaveNotice(`Saved video slides for ${prod.name}!`);
-    setTimeout(() => setSaveNotice(null), 3000);
-  };
-
-  const handleDeleteVideoSlide = (idx: number) => {
-    const updated = activeVideoSlides.filter((_, i) => i !== idx);
-    setActiveVideoSlides(updated);
-    const prod = getProductData(selectedVideoRobotId);
-    saveProductData({ ...prod, youtubeVideos: updated });
-    setCustomizedList((prev) => ({ ...prev, [selectedVideoRobotId]: true }));
-    setSaveNotice(`Removed video slide from ${prod.name}`);
-    setTimeout(() => setSaveNotice(null), 3000);
-  };
-
-  const handleUpdateSlideField = (idx: number, field: keyof YouTubeVideoSlide, val: string) => {
-    const updated = [...activeVideoSlides];
-    updated[idx] = { ...updated[idx], [field]: val };
-    setActiveVideoSlides(updated);
-  };
-
-  const handleAddBlankSlide = () => {
-    const prod = getProductData(selectedVideoRobotId);
-    const newSlide: YouTubeVideoSlide = {
-      id: '7zI3u19q_e0',
-      title: `${prod.name} High Performance Demonstration`,
-      category: 'Field Testing',
-      description: 'Autonomous demonstration testing agility and dexterity.'
-    };
-    const updated = [...activeVideoSlides, newSlide];
-    setActiveVideoSlides(updated);
-    saveProductData({ ...prod, youtubeVideos: updated });
-    setCustomizedList((prev) => ({ ...prev, [selectedVideoRobotId]: true }));
-    setSaveNotice(`Added new video slide to ${prod.name}`);
-    setTimeout(() => setSaveNotice(null), 3000);
-  };
 
   // Login handler
   const handleLogin = (e: React.FormEvent) => {
@@ -605,7 +509,7 @@ export default function AdminDashboardPage() {
                 badgeCount: unreadInquiriesCount,
                 highlight: true 
               },
-              { id: 'youtube', label: 'Product Looping Videos', icon: Video },
+              { id: 'videos', label: 'Product Looping Videos', icon: Video },
               { id: 'home', label: 'Home Page Editor', icon: Home },
               { id: 'rd', label: 'R & D / Tech Editor', icon: FlaskConical },
               { id: 'about', label: 'About Page Editor', icon: Building2 },
@@ -771,10 +675,10 @@ export default function AdminDashboardPage() {
 
                       <button
                         onClick={() => {
-                          setSelectedVideoRobotId(prod.id);
-                          setActiveTab('youtube');
+                          setDrawerInitialTab('videos');
+                          setEditingProduct(currentData);
                         }}
-                        className="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-3 py-2 rounded-xl text-xs font-bold flex items-center space-x-1 transition-colors cursor-pointer"
+                        className="bg-blue-50 hover:bg-blue-100 text-brand-blue border border-blue-200 px-3 py-2 rounded-xl text-xs font-bold flex items-center space-x-1 transition-colors cursor-pointer"
                         title="Edit Intro & Capability Looping Videos"
                       >
                         <Video className="w-3.5 h-3.5" />
@@ -1882,7 +1786,7 @@ export default function AdminDashboardPage() {
         {/* =========================================================================
             TAB 3: PRODUCT LOOPING VIDEOS MANAGER (SECTION 2 & SECTION 3)
             ========================================================================= */}
-        {activeTab === 'youtube' && (() => {
+        {activeTab === 'videos' && (() => {
           const targetProd = getProductData(selectedVideoRobotId);
           const currentSlides = targetProd.featureSlides || [
             {
@@ -2072,6 +1976,26 @@ export default function AdminDashboardPage() {
                   <span className="text-xs font-bold text-gray-600 uppercase tracking-wider">
                     Active Capability Looping Slides ({currentSlides.length})
                   </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const next = [
+                        ...currentSlides,
+                        {
+                          title: `${targetProd.name} Autonomous Capability ${currentSlides.length + 1}`,
+                          video: '/static/index/en/video/index2/index2_One-v1.mp4',
+                          image: targetProd.cinematicImg || targetProd.heroImg,
+                          tags: ['360° All-Domain Perception', 'Continuous Loop Operation'],
+                        },
+                      ];
+                      updateTargetSlides(next);
+                      notifySaved(`Added Slide #${next.length} to ${targetProd.name}`);
+                    }}
+                    className="bg-brand-blue hover:bg-blue-700 text-white font-bold px-4 py-2 rounded-xl text-xs transition-all shadow-sm flex items-center space-x-1.5 cursor-pointer"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Add Slide</span>
+                  </button>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -2142,6 +2066,33 @@ export default function AdminDashboardPage() {
                       </div>
                     </div>
                   ))}
+
+                  {/* ADD NEW SLIDE CARD IN GRID */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const next = [
+                        ...currentSlides,
+                        {
+                          title: `${targetProd.name} Autonomous Capability ${currentSlides.length + 1}`,
+                          video: '/static/index/en/video/index2/index2_One-v1.mp4',
+                          image: targetProd.cinematicImg || targetProd.heroImg,
+                          tags: ['360° All-Domain Perception', 'Continuous Loop Operation'],
+                        },
+                      ];
+                      updateTargetSlides(next);
+                      notifySaved(`Added Slide #${next.length} to ${targetProd.name}`);
+                    }}
+                    className="min-h-[320px] bg-gray-50 hover:bg-blue-50/40 border-2 border-dashed border-gray-300 hover:border-brand-blue rounded-2xl p-6 flex flex-col items-center justify-center space-y-3 text-gray-500 hover:text-brand-blue transition-all cursor-pointer group"
+                  >
+                    <div className="w-12 h-12 rounded-full bg-white border border-gray-200 group-hover:border-brand-blue flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
+                      <Plus className="w-6 h-6" />
+                    </div>
+                    <span className="text-sm font-bold">Add New Looping Slide</span>
+                    <span className="text-xs text-gray-400 text-center max-w-[200px]">
+                      Click to add a slide, then drag &amp; drop or choose video from file manager
+                    </span>
+                  </button>
                 </div>
               </div>
             </div>
