@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Download, FileText, ExternalLink, Code2, ShieldAlert } from 'lucide-react';
+import { FileText, ChevronRight } from 'lucide-react';
 import { ProductData } from '../../types';
 
 interface ProductDocumentationProps {
@@ -9,86 +9,55 @@ interface ProductDocumentationProps {
 }
 
 export default function ProductDocumentation({ product }: ProductDocumentationProps) {
-  // Construct genuine documentation resources
   const docs = [
     {
-      title: `${product.name} Official Product Brochure`,
-      subtitle: "Commercial & Technical Overview",
-      format: "PDF",
-      size: "4.8 MB",
-      category: "Product Overview",
-      link: `/about`
+      title: `${product.name} Product User Manual`,
+      format: 'PDF · Deployment & Safety',
+      link: '/about',
     },
     {
-      title: `${product.name} Engineering Integration Datasheet`,
-      subtitle: "Mechanical, Electrical & Bus Pinout Specs",
-      format: "PDF",
-      size: "8.2 MB",
-      category: "Datasheet",
-      link: `/about`
+      title: `${product.name} Technical Datasheet`,
+      format: 'PDF · Mechanical & Electrical Specs',
+      link: '/about',
     },
     {
-      title: `${product.name} User Operation & Maintenance Manual`,
-      subtitle: "Deployment, Calibration & Safety Guidelines",
-      format: "PDF",
-      size: "12.5 MB",
-      category: "Manual",
-      link: `/about`
+      title: 'HUTARK Link-U OS & Secondary Development SDK',
+      format: 'Documentation · ROS 2 / C++ / Python',
+      link: '/about',
     },
-    {
-      title: "HUTARK Link-U Robot OS & Python/C++ SDK",
-      subtitle: "EtherCAT Bus Telemetry & ROS 2 Drivers",
-      format: "SDK DOCS",
-      size: "Online",
-      category: "Software",
-      link: `/about`
-    }
   ];
 
   return (
-    <section className="py-20 bg-[#f8f9fa] text-[#1a1a1a] border-b border-gray-200">
-      <div className="site-container max-w-6xl">
-        <div className="text-center max-w-3xl mx-auto space-y-3 mb-12">
-          <span className="text-xs font-bold uppercase tracking-[0.25em] text-[#8f7435]">
-            DOCUMENTATION & RESOURCES
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900">
-            Technical Downloads & Manuals
-          </h2>
-          <p className="text-sm text-gray-500 font-light leading-relaxed">
-            Access official engineering manuals, integration blueprints, electrical pinout guides, and SDK documentation for {product.name}.
-          </p>
-        </div>
+    <section className="py-16 bg-[#f7f7f7] text-[#333333] border-t border-[#eaeaea]">
+      <div className="max-w-[1200px] w-[90%] mx-auto">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
+          <div className="max-w-md">
+            <h3 className="text-[24px] sm:text-[28px] font-normal text-[#1a1a1a]">
+              Product Documentation
+            </h3>
+            <p className="text-sm text-[#666666] mt-2 leading-relaxed">
+              Official manuals, integration datasheets, and developer SDK references for {product.name}.
+            </p>
+          </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-          {docs.map((doc, idx) => (
-            <a
-              key={idx}
-              href={doc.link}
-              className="bg-white border border-gray-200 hover:border-gray-900 rounded-2xl p-6 transition-all duration-300 hover:shadow-md flex items-center justify-between group"
-            >
-              <div className="flex items-start space-x-4">
-                <div className="w-12 h-12 rounded-xl bg-gray-100 group-hover:bg-gray-900 text-gray-700 group-hover:text-white flex items-center justify-center transition-colors flex-shrink-0">
-                  <FileText className="w-6 h-6" />
-                </div>
+          <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {docs.map((doc, idx) => (
+              <a
+                key={idx}
+                href={doc.link}
+                className="bg-white border border-[#e5e5e5] hover:border-[#333333] p-5 transition-colors flex flex-col justify-between group"
+              >
                 <div>
-                  <span className="text-[11px] font-bold text-[#8f7435] uppercase tracking-wider block mb-1">
-                    {doc.category} · {doc.format} ({doc.size})
-                  </span>
-                  <h4 className="text-base font-bold text-gray-900 group-hover:text-black transition-colors leading-snug">
-                    {doc.title}
-                  </h4>
-                  <p className="text-xs text-gray-500 mt-1">
-                    {doc.subtitle}
-                  </p>
+                  <FileText className="w-5 h-5 text-[#999999] group-hover:text-[#1a1a1a] transition-colors mb-3" />
+                  <h4 className="text-sm font-medium text-[#1a1a1a] leading-snug">{doc.title}</h4>
+                  <p className="text-xs text-[#777777] mt-1">{doc.format}</p>
                 </div>
-              </div>
-
-              <div className="w-9 h-9 rounded-full bg-gray-50 group-hover:bg-gray-200 flex items-center justify-center text-gray-700 transition-colors flex-shrink-0 ml-4">
-                <Download className="w-4 h-4" />
-              </div>
-            </a>
-          ))}
+                <span className="inline-flex items-center text-xs text-[#333333] mt-4 group-hover:translate-x-0.5 transition-transform">
+                  View Resource <ChevronRight className="w-3.5 h-3.5 ml-1" />
+                </span>
+              </a>
+            ))}
+          </div>
         </div>
       </div>
     </section>

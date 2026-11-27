@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { Play, ArrowRight, X, ChevronRight, Download, Sliders, Shield, Cpu, Zap, Activity } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Play, ChevronRight, X } from 'lucide-react';
 import { ProductData } from '../../types';
 
 interface ProductCinematicHeroProps {
@@ -18,7 +19,6 @@ export default function ProductCinematicHero({
 }: ProductCinematicHeroProps) {
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
 
-  // Esc key listener for modal
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setIsVideoModalOpen(false);
@@ -29,13 +29,12 @@ export default function ProductCinematicHero({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isVideoModalOpen]);
 
-  // Video source: check product youtubeVideos or fallback
   const firstVideo = product.youtubeVideos?.[0];
   const videoId = firstVideo?.id || 'M3_Jb_5zT9I';
-  const cleanId = videoId.includes('v=') 
-    ? videoId.split('v=')[1]?.split('&')[0] 
-    : videoId.includes('youtu.be/') 
-    ? videoId.split('youtu.be/')[1]?.split('?')[0] 
+  const cleanId = videoId.includes('v=')
+    ? videoId.split('v=')[1]?.split('&')[0]
+    : videoId.includes('youtu.be/')
+    ? videoId.split('youtu.be/')[1]?.split('?')[0]
     : videoId;
   const videoEmbedUrl = `https://www.youtube-nocookie.com/embed/${cleanId}?autoplay=1&rel=0`;
 
@@ -47,175 +46,127 @@ export default function ProductCinematicHero({
     }
   };
 
-  // Determine key telemetry chips based on product specifications
-  const getHeroTelemetry = () => {
-    if (product.specs && product.specs.length > 0) {
-      return product.specs.slice(0, 4);
-    }
-    return [
-      { label: 'Degrees of Freedom', value: '44 DoF' },
-      { label: 'Peak Joint Torque', value: '380 N·m' },
-      { label: 'Dynamic Locomotion', value: '3.8 m/s' },
-      { label: 'AI Compute Core', value: '700 TOPS' },
-    ];
-  };
-
-  const telemetryList = getHeroTelemetry();
-
   return (
-    <section className="relative w-full min-h-[92vh] lg:min-h-screen flex items-center overflow-hidden bg-[#f0f2f5] text-[#1a1a1a] pt-24 pb-16 border-b border-gray-200">
-      {/* Ambient background studio lighting & subtle radial highlights */}
-      <div className="absolute inset-0 z-0 pointer-events-none">
-        <div className="absolute -top-40 right-1/4 w-[750px] h-[750px] bg-gradient-to-br from-white/90 via-blue-50/40 to-transparent rounded-full blur-3xl opacity-75" />
-        <div className="absolute bottom-0 left-10 w-[550px] h-[550px] bg-gradient-to-tr from-amber-50/30 via-gray-100/40 to-transparent rounded-full blur-3xl opacity-60" />
-        {/* Subtle engineering grid line */}
-        <div 
-          className="absolute inset-0 opacity-[0.03]"
+    <section
+      className="relative w-full min-h-[650px] md:h-[100svh] overflow-hidden bg-[#f0f0f0] text-[#1a1a1a] flex flex-col md:block pt-24 md:pt-0"
+      aria-label={`${product.name} Hero`}
+    >
+      {/* Reference-Matched Warm Studio Architectural Backdrop (#f0f0f0) */}
+      <div
+        className="absolute inset-0 z-0 pointer-events-none"
+        style={{
+          background:
+            'radial-gradient(ellipse 75% 80% at 28% 58%, #ffffff 0%, #f4f2ed 48%, #eae7df 100%)',
+        }}
+      />
+      {/* Subtle architectural floor horizon curve matching reference */}
+      <div
+        className="absolute inset-x-0 bottom-0 h-[34%] z-0 pointer-events-none opacity-65"
+        style={{
+          background:
+            'linear-gradient(180deg, rgba(240,238,233,0) 0%, rgba(226,220,208,0.55) 60%, rgba(235,233,228,0.9) 100%)',
+        }}
+      />
+
+      {/* Right-Aligned Editorial Typography Block (Reference: .A3Ultra_One-con) */}
+      <div className="relative md:absolute z-[2] w-full md:w-[46%] left-0 md:left-1/2 md:top-[43%] md:-translate-y-1/2 px-[8%] md:px-0 md:pr-12 text-left order-1">
+        <motion.h1
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          className="font-semibold leading-none tracking-tight text-[34px] sm:text-[46px] lg:text-[56px] xl:text-[64px]"
           style={{
-            backgroundImage: `linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px)`,
-            backgroundSize: '48px 48px'
+            background: 'linear-gradient(360deg, rgb(179, 154, 99) 0%, rgb(219, 206, 172) 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
           }}
-        />
+        >
+          {product.name}
+        </motion.h1>
+
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-2.5 leading-none"
+        >
+          <strong className="block font-normal text-[#1a1a1a] text-[22px] sm:text-[32px] lg:text-[42px] xl:text-[50px] leading-[1.08]">
+            {product.tagline || product.series || 'Full-Size Humanoid Robot'}
+          </strong>
+          <span className="block font-light text-black text-[15px] sm:text-[20px] lg:text-[26px] xl:text-[30px] mt-3 sm:mt-5 leading-[1.25]">
+            {product.heroSubtitle || 'Your 24/7 Productivity Partner'}
+          </span>
+        </motion.div>
+
+        {/* Minimal Action Links (Reference: .A3Ultra_One-actions) */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-6 sm:mt-12 flex flex-wrap items-center gap-6 sm:gap-14 lg:gap-20"
+        >
+          <button
+            type="button"
+            onClick={handleVideoTrigger}
+            className="inline-flex items-center text-[15px] sm:text-[18px] font-normal text-[#333333] hover:opacity-75 transition-opacity cursor-pointer"
+          >
+            <span>Click to Watch Video</span>
+            <span className="ml-2.5 w-5 h-5 sm:w-[22px] sm:h-[22px] rounded-full border border-[#333333] flex items-center justify-center">
+              <Play className="w-2.5 h-2.5 fill-[#333333] text-[#333333] ml-0.5" />
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={onSpecsClick}
+            className="inline-flex items-center text-[15px] sm:text-[18px] font-normal text-[#333333] hover:opacity-75 transition-opacity cursor-pointer"
+          >
+            <span>Product Specifications</span>
+            <ChevronRight className="w-4 h-4 sm:w-[18px] sm:h-[18px] text-black ml-1" />
+          </button>
+        </motion.div>
       </div>
 
-      <div className="site-container relative z-10 w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-          
-          {/* LEFT COLUMN: Editorial Typography & Actions (Reference: A3Ultra_One-con) */}
-          <div className="lg:col-span-7 xl:col-span-6 space-y-6 sm:space-y-8 text-left z-20">
-            {/* Series / Category Kicker */}
-            <div className="inline-flex items-center space-x-3">
-              <span className="text-[11px] sm:text-xs font-bold tracking-[0.28em] uppercase text-gray-500 bg-white/80 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-gray-200/80 shadow-xs">
-                {product.series || 'HUTARK EMBODIED ROBOTICS'}
-              </span>
-              <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-[11px] font-semibold text-emerald-700 tracking-wider uppercase">Production Active</span>
-            </div>
-
-            {/* Oversized Metallic Gradient Title */}
-            <div className="space-y-3">
-              <h1 className="text-4xl sm:text-6xl xl:text-7xl 2xl:text-[5.2rem] font-bold tracking-tight leading-[1.02] text-gray-950">
-                <span className="bg-gradient-to-b from-[#8f7435] via-[#bca874] to-[#786127] bg-clip-text text-transparent block">
-                  {product.name}
-                </span>
-              </h1>
-
-              {/* Subheading Hierarchy (Reference: strong + span) */}
-              <div className="space-y-1.5 pt-1">
-                <p className="text-xl sm:text-2xl font-normal text-gray-900 tracking-tight">
-                  {product.tagline || 'Full-Size General-Purpose Humanoid Robot'}
-                </p>
-                <p className="text-sm sm:text-base text-gray-500 font-light max-w-xl leading-relaxed">
-                  {product.heroSubtitle || product.overview || 'Your 24/7 Productivity Partner engineered for high-precision autonomous industrial deployment.'}
-                </p>
-              </div>
-            </div>
-
-            {/* Action Buttons (Reference: A3Ultra_One-actions) */}
-            <div className="pt-2 flex flex-wrap items-center gap-4 sm:gap-6">
-              {/* Watch Video Button */}
-              <button
-                onClick={handleVideoTrigger}
-                type="button"
-                className="group inline-flex items-center space-x-3 bg-gray-900 hover:bg-black text-white px-7 py-3.5 rounded-full font-semibold text-sm transition-all duration-300 shadow-md hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
-              >
-                <span>Click to Watch Video</span>
-                <div className="w-6 h-6 rounded-full bg-white/20 group-hover:bg-white text-white group-hover:text-black flex items-center justify-center transition-colors">
-                  <Play className="w-3 h-3 fill-current ml-0.5" />
-                </div>
-              </button>
-
-              {/* Specifications / User Manual Button */}
-              <button
-                onClick={onSpecsClick}
-                type="button"
-                className="inline-flex items-center space-x-2 text-gray-800 hover:text-black bg-white/80 hover:bg-white border border-gray-300/80 hover:border-gray-400 px-6 py-3.5 rounded-full text-sm font-semibold transition-all shadow-xs hover:shadow-md cursor-pointer"
-              >
-                <span>Product Specifications</span>
-                <ChevronRight className="w-4 h-4 text-gray-500" />
-              </button>
-            </div>
-
-            {/* Telemetry Metric Badges */}
-            <div className="pt-4 border-t border-gray-200/80 grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-xl">
-              {telemetryList.map((tel, idx) => (
-                <div key={idx} className="bg-white/60 backdrop-blur-xs p-3 rounded-xl border border-gray-200/60">
-                  <span className="block text-lg sm:text-xl font-bold tracking-tight text-gray-900">
-                    {tel.value}
-                  </span>
-                  <span className="block text-[11px] text-gray-500 font-medium tracking-wide truncate">
-                    {tel.label}
-                  </span>
-                </div>
-              ))}
-            </div>
+      {/* Left Robot Visual (Single Clean Product Cutout — Reference: left-half hero subject) */}
+      {(product.heroImg || product.heroBannerBg) && (
+        <div className="relative md:absolute md:inset-y-0 md:left-0 w-full md:w-[50%] z-[1] flex items-end md:items-center justify-center pointer-events-none mt-6 md:mt-0 md:pt-16 order-2">
+          <div className="relative w-[84%] md:w-[80%] h-[46vh] md:h-[78vh] max-h-[820px]">
+            <Image
+              src={product.heroImg || product.heroBannerBg || ''}
+              alt={product.name}
+              fill
+              priority
+              sizes="(max-width: 768px) 84vw, 48vw"
+              className="object-contain object-bottom md:object-center drop-shadow-[0_24px_38px_rgba(0,0,0,0.16)]"
+            />
           </div>
-
-          {/* RIGHT COLUMN: Full-Scale High-Resolution Robot Imagery */}
-          <div className="lg:col-span-5 xl:col-span-6 relative flex items-center justify-center min-h-[420px] sm:min-h-[520px] lg:min-h-[640px]">
-            {product.heroImg ? (
-              <div className="relative w-full h-[450px] sm:h-[580px] lg:h-[700px] transition-transform duration-700 ease-out hover:scale-[1.02]">
-                <Image
-                  src={product.heroImg}
-                  alt={product.name}
-                  fill
-                  priority
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  className="object-contain object-center drop-shadow-2xl"
-                />
-              </div>
-            ) : (
-              <div className="w-72 h-96 bg-gray-200 rounded-3xl flex items-center justify-center text-gray-400">
-                <span>Robot Imagery</span>
-              </div>
-            )}
-
-            {/* Ground shadow plane */}
-            <div className="absolute -bottom-6 w-3/4 h-8 bg-black/15 blur-xl rounded-full pointer-events-none" />
-          </div>
-
         </div>
-      </div>
+      )}
 
-      {/* =========================================================================
-          INTERACTIVE FULLSCREEN VIDEO MODAL (Reference: #hi-video-pop)
-          ========================================================================= */}
+      {/* Fullscreen Video Modal (Reference: #hi-video-pop) */}
       {isVideoModalOpen && (
-        <div 
-          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 sm:p-8 animate-fadeIn"
+        <div
+          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 sm:p-8"
           onClick={() => setIsVideoModalOpen(false)}
         >
-          <div 
-            className="relative w-full max-w-5xl bg-black rounded-3xl overflow-hidden border border-white/10 shadow-2xl aspect-video"
+          <div
+            className="relative w-full max-w-5xl bg-black aspect-video overflow-hidden shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Close Button */}
             <button
               onClick={() => setIsVideoModalOpen(false)}
-              className="absolute top-4 right-4 z-20 w-11 h-11 rounded-full bg-white/10 hover:bg-white/25 text-white flex items-center justify-center transition-all cursor-pointer group"
-              title="Close Video"
+              className="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-white/15 hover:bg-white/30 text-white flex items-center justify-center transition-colors cursor-pointer"
+              aria-label="Close Video"
             >
-              <X className="w-5 h-5 group-hover:rotate-90 transition-transform" />
+              <X className="w-5 h-5" />
             </button>
-
-            {/* Video Player */}
-            {videoEmbedUrl ? (
-              <iframe
-                src={videoEmbedUrl}
-                title={`${product.name} Video Showcase`}
-                className="w-full h-full border-0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            ) : (
-              <div className="w-full h-full flex flex-col items-center justify-center text-white p-8">
-                <Play className="w-16 h-16 text-cyan-400 mb-4 opacity-75" />
-                <h4 className="text-xl font-bold mb-2">{product.name} Official Product Showcase</h4>
-                <p className="text-sm text-gray-400 max-w-md text-center">
-                  Official high-definition footage demonstrating autonomous locomotion, dexterous manipulation, and real-time vision-language coordination.
-                </p>
-              </div>
-            )}
+            <iframe
+              src={videoEmbedUrl}
+              title={`${product.name} Showcase Video`}
+              className="w-full h-full border-0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
           </div>
         </div>
       )}

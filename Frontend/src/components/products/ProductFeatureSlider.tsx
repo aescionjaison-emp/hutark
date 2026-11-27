@@ -1,14 +1,11 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import Image from 'next/image';
-import { ChevronLeft, ChevronRight, Check } from 'lucide-react';
 import { ProductData } from '../../types';
 
 interface FeatureSlide {
   title: string;
-  category: string;
-  desc: string;
   image: string;
   tags: string[];
 }
@@ -18,107 +15,92 @@ interface ProductFeatureSliderProps {
 }
 
 export default function ProductFeatureSlider({ product }: ProductFeatureSliderProps) {
-  // Construct dynamic slides tailored to the current product
+  const sanitizeImg = (url: string | undefined, fallback: string) => {
+    if (!url) return fallback;
+    if (url.includes('33d570751012965d2455b2f1c9a6d43d') || url.includes('3b46c5afb682b2c6798d153344ad4cc3')) {
+      return fallback;
+    }
+    return url;
+  };
+
   const getProductSlides = (): FeatureSlide[] => {
-    const slides: FeatureSlide[] = [];
+    const fallbackA = product.cinematicImg || '/uploads/images/products/a3_cinematic_dark.jpg';
+    const fallbackB = product.hardwareModules?.[0]?.img || '/uploads/images/20261029/55303dc4864d9d5c35f52263a4dd2e46.jpg';
+    const fallbackC = product.applicationScenarios?.[0]?.img || '/uploads/images/20261029/763c5b4b30767904e5cddda22e083597.png';
 
-    // Slide 1: 24/7 Autonomous Locomotion & Perception
-    slides.push({
-      title: "24/7 Autonomous Operation · Your Reliable Around-the-Clock Partner",
-      category: "AUTONOMOUS EMBODIED INTELLIGENCE",
-      desc: product.cinematicDesc || "Continuous multi-shift autonomous operation featuring self-docking, real-time dynamic SLAM mapping, and zero-fall stabilization across rugged industrial shop floors.",
-      image: product.cinematicImg || "/uploads/images/20261029/492548ce8722aa332e87aa47ce1019e5.png",
-      tags: [
-        "360° All-Domain Sensory Fusion",
-        "700 TOPS Heterogeneous Compute",
-        "EtherCAT 1000 Hz Real-Time Bus",
-        "Autonomous Inductive Recharging"
-      ]
-    });
-
-    // Slide 2: Dexterous Manipulation
-    slides.push({
-      title: "Versatile Task Execution · Sub-Millimeter Dexterity",
-      category: "HIGH-PRECISION MANIPULATION",
-      desc: product.manipulationDesc || "Dual active arms with spherical wrists delivering sub-millimeter trajectory repeatability, optical-tactile micro-force feedback, and zero-damage component handling.",
-      image: product.manipulationImg || "/uploads/images/20261029/33d570751012965d2455b2f1c9a6d43d.jpg",
-      tags: product.manipulationFeatures && product.manipulationFeatures.length > 0
-        ? product.manipulationFeatures
-        : [
-            "Perception-Control Hybrid Loop",
-            "Multi-DoF Dexterous End-Effectors",
-            "Few-Shot Self-Supervised Learning",
-            "Force-Impedance Compliance"
-          ]
-    });
-
-    // Slide 3: Cognitive Multimodal Collaboration
-    slides.push({
-      title: "Cognitive Multimodal Interaction · Seamless Co-Working",
-      category: "NATURAL HUMAN-ROBOT DIALOGUE",
-      desc: product.interactionDesc || "Powered by embodied physical foundation models, interpreting operator spoken instructions, pointing gestures, and spatial environmental states zero-shot.",
-      image: product.interactionImg || "/uploads/images/20261030/3b46c5afb682b2c6798d153344ad4cc3.jpg",
-      tags: [
-        "Spatial Visual-Language-Action Core",
-        "6-Mic Circular Beamforming Array",
-        "Intuitive Dual LED Status Display",
-        "Multi-Operator Priority Arbitration"
-      ]
-    });
-
-    // Slide 4: Modular Actuation & Powerflow Hardware
-    if (product.hardwareModules && product.hardwareModules.length > 0) {
-      const mod = product.hardwareModules[0];
-      slides.push({
-        title: "Bio-Inspired Modular Actuation · Extreme Torque Density",
-        category: "POWERFLOW MECHATRONICS",
-        desc: mod.desc,
-        image: mod.img || "/uploads/images/20261029/8abd115118551853b3212bf47db783a0.jpg",
+    const slides: FeatureSlide[] = [
+      {
+        title: product.cinematicHeading || '24/7 Autonomous Operation · Your Reliable Around-the-Clock Partner',
+        image: fallbackA,
         tags: [
-          "380 N·m Peak Joint Torque",
-          "Dual Absolute Optical Encoders",
-          "Impact-Resistant Planetary Drives",
-          "Instant Thermal Dissipation"
-        ]
+          '360° All-Domain Perception',
+          '700 TOPS Full-Performance Compute',
+          'Three-Tier Heterogeneous Computing Architecture',
+          'Autonomous Charging + Long-Lasting Battery Life',
+        ],
+      },
+      {
+        title: product.manipulationHeading || 'Versatile Task Execution · A Capable Autonomous Partner',
+        image: sanitizeImg(product.manipulationImg, fallbackB),
+        tags:
+          product.manipulationFeatures && product.manipulationFeatures.length > 0
+            ? product.manipulationFeatures
+            : [
+                'Perception-Control Fusion',
+                'Sub-Millimeter Dexterous Manipulation',
+                'Few-Shot Self-Learning',
+                'Impedance Force Compliance',
+              ],
+      },
+      {
+        title: product.interactionHeading || 'Comprehensive Safety · A Trusted, Gentle Companion',
+        image: sanitizeImg(product.interactionImg, fallbackC),
+        tags: [
+          'Four-Layer Safety Protection',
+          'Thousands of Extreme-Condition Tests',
+          'Proprietary Carbon Fiber-Reinforced Composite',
+        ],
+      },
+    ];
+
+    if (product.hardwareModules && product.hardwareModules.length > 0) {
+      product.hardwareModules.slice(0, 3).forEach((mod) => {
+        slides.push({
+          title: mod.title,
+          image: mod.img,
+          tags: [mod.subtitle, `${product.name} Engineering Architecture`],
+        });
       });
     }
-
-    // Slide 5: Comprehensive Industrial Safety Architecture
-    slides.push({
-      title: "Comprehensive Safety · Certified Human Co-Working Companion",
-      category: "MULTI-LAYER SAFEGUARDS",
-      desc: "SIL-2 compliant multi-sensor safety envelope with hardware emergency braking, 360° ultrasonic proximity rings, and low-inertia compliant bio-composite limbs.",
-      image: "/uploads/images/20241230/1968be56db5f4f93c2d514a82df24944.png",
-      tags: [
-        "Four-Layer Redundant Protection",
-        "Thousands of Extreme Drop & Shock Tests",
-        "Carbon Fiber Reinforced Nylon Shell",
-        "Collision Detection Within 2 Milliseconds"
-      ]
-    });
 
     return slides;
   };
 
   const slides = getProductSlides();
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(false);
+  const [titlePhase, setTitlePhase] = useState<'idle' | 'leaving' | 'entering'>('idle');
   const [displayedTitle, setDisplayedTitle] = useState(slides[0]?.title || '');
+  const touchStartX = useRef<number | null>(null);
 
-  // Handle title transition matching AGIBOT: is-leaving -> update text -> is-entering
-  const goToSlide = (newIndex: number) => {
-    if (newIndex === currentIndex) return;
-    setIsAnimating(true);
+  const goToSlide = (nextIdx: number) => {
+    if (nextIdx === currentIndex || nextIdx < 0 || nextIdx >= slides.length) return;
+    setTitlePhase('leaving');
+    setCurrentIndex(nextIdx);
+
     setTimeout(() => {
-      setCurrentIndex(newIndex);
-      setDisplayedTitle(slides[newIndex]?.title || '');
-      setIsAnimating(false);
-    }, 280);
+      setDisplayedTitle(slides[nextIdx]?.title || '');
+      setTitlePhase('entering');
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setTitlePhase('idle');
+        });
+      });
+    }, 320);
   };
 
   const handlePrev = () => {
-    const nextIdx = (currentIndex - 1 + slides.length) % slides.length;
-    goToSlide(nextIdx);
+    const prevIdx = (currentIndex - 1 + slides.length) % slides.length;
+    goToSlide(prevIdx);
   };
 
   const handleNext = () => {
@@ -126,107 +108,151 @@ export default function ProductFeatureSlider({ product }: ProductFeatureSliderPr
     goToSlide(nextIdx);
   };
 
-  const currentSlide = slides[currentIndex];
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (diff > 50) handleNext();
+    else if (diff < -50) handlePrev();
+    touchStartX.current = null;
+  };
 
   return (
-    <section className="relative w-full bg-white text-[#1a1a1a] py-24 overflow-hidden border-b border-gray-200">
-      <div className="site-container">
-        
-        {/* Dynamic Section Title with Leave/Enter Slide Animation (Reference: A3Ultra_sec-tle) */}
-        <div className="text-center max-w-4xl mx-auto min-h-[90px] flex flex-col items-center justify-center mb-12 sm:mb-16">
-          <span className="text-xs font-bold uppercase tracking-[0.25em] text-[#8f7435] mb-2 block">
-            {currentSlide.category}
-          </span>
-          <h3 
-            className={`text-2xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900 transition-all duration-300 ease-out ${
-              isAnimating 
-                ? 'opacity-0 translate-y-3' 
-                : 'opacity-100 translate-y-0'
-            }`}
-          >
-            {displayedTitle}
-          </h3>
-        </div>
+    <section
+      className="relative w-full bg-white text-[#333333] overflow-hidden"
+      aria-label={`${product.name} Key Capabilities`}
+    >
+      {/* Centered Section Title (Reference: .A3Ultra_sec-tle) */}
+      <div className="px-[4%] pt-20 sm:pt-24 pb-8 sm:pb-10 text-center">
+        <h3
+          className={`inline-block min-h-[1.2em] text-[22px] sm:text-[30px] lg:text-[36px] font-normal text-[#333333] leading-[1.4] transition-all duration-400 ease-out ${
+            titlePhase === 'leaving'
+              ? 'opacity-0 translate-y-4'
+              : titlePhase === 'entering'
+              ? 'opacity-0 -translate-y-4'
+              : 'opacity-100 translate-y-0'
+          }`}
+        >
+          {displayedTitle}
+        </h3>
+      </div>
 
-        {/* Carousel Viewport (Reference: A3Ultra_swiperBox) */}
-        <div className="relative w-full max-w-6xl mx-auto">
-          {/* Main 16:9 Slide Container */}
-          <div className="relative aspect-video w-full rounded-2xl sm:rounded-3xl overflow-hidden bg-gray-900 shadow-2xl border border-gray-200/80 group">
-            {/* Background Image / Media */}
-            <Image
-              src={currentSlide.image}
-              alt={currentSlide.title}
-              fill
-              sizes="(max-width: 1200px) 100vw, 1200px"
-              className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
-            />
+      {/* Centered Peeking Swiper Viewport (Reference: .A3Ultra_swiperBox) */}
+      <div
+        className="relative w-full overflow-hidden pb-6"
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+      >
+        <div className="relative flex items-center justify-center">
+          <div className="relative w-[86%] sm:w-[74%] lg:w-[62.5%] max-w-[1200px] aspect-video">
+            {slides.map((slide, idx) => {
+              const offset = idx - currentIndex;
+              // Wrap around for seamless peeking feel
+              let normalizedOffset = offset;
+              if (offset > slides.length / 2) normalizedOffset -= slides.length;
+              if (offset < -slides.length / 2) normalizedOffset += slides.length;
 
-            {/* Bottom Gradient Overlay (Reference: slide-media::after) */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent pointer-events-none" />
+              const isActive = idx === currentIndex;
+              const isVisible = Math.abs(normalizedOffset) <= 1;
 
-            {/* Slide Tags Overlay (Reference: slide-overlay & slide-tags) */}
-            <div className="absolute inset-x-0 bottom-0 z-10 p-6 sm:p-10">
-              <p className="text-xs sm:text-sm text-gray-300 font-light max-w-2xl mb-5 leading-relaxed line-clamp-2 sm:line-clamp-none">
-                {currentSlide.desc}
-              </p>
-
-              <ul className="flex flex-wrap items-center gap-2.5 sm:gap-4">
-                {currentSlide.tags.map((tag, idx) => (
-                  <li 
-                    key={idx}
-                    className="inline-flex items-center space-x-2 bg-black/60 backdrop-blur-md text-white text-xs sm:text-sm font-medium px-4 py-2 rounded-full border border-white/20 shadow-md"
-                  >
-                    <span className="w-4 h-4 rounded-full bg-[#bca874] text-black flex items-center justify-center text-[10px] font-black flex-shrink-0">
-                      ✓
-                    </span>
-                    <span>{tag}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          {/* Navigation Controls (Reference: A3Ultra_swiper-prev & next) */}
-          <div className="flex items-center justify-between mt-8 px-2">
-            {/* Slide Indicators */}
-            <div className="flex items-center space-x-2">
-              {slides.map((_, idx) => (
-                <button
+              return (
+                <div
                   key={idx}
-                  onClick={() => goToSlide(idx)}
-                  className={`h-2 rounded-full transition-all cursor-pointer ${
-                    currentIndex === idx 
-                      ? 'w-8 bg-gray-900' 
-                      : 'w-2 bg-gray-300 hover:bg-gray-400'
+                  onClick={() => !isActive && goToSlide(idx)}
+                  className={`absolute inset-0 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                    isActive
+                      ? 'z-20 opacity-100 scale-100 cursor-default'
+                      : isVisible
+                      ? 'z-10 opacity-35 scale-[0.8] cursor-pointer hover:opacity-50'
+                      : 'z-0 opacity-0 scale-[0.7] pointer-events-none'
                   }`}
-                  aria-label={`Go to slide ${idx + 1}`}
-                />
-              ))}
-            </div>
+                  style={{
+                    transform: `translateX(${normalizedOffset * 102}%) scale(${isActive ? 1 : 0.8})`,
+                  }}
+                >
+                  {/* 16:9 Media Frame (Reference: .slide-media) */}
+                  <div className="relative w-full h-full rounded-[6px] overflow-hidden bg-[#e8e8e8]">
+                    <Image
+                      src={slide.image}
+                      alt={slide.title}
+                      fill
+                      sizes="(max-width: 768px) 86vw, 1200px"
+                      className="object-cover object-center"
+                    />
+                    {/* Reference Bottom Gradient Overlay */}
+                    <div
+                      className="hidden md:block absolute inset-0 pointer-events-none z-[1]"
+                      style={{
+                        background:
+                          'linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 50%, rgba(0, 0, 0, 0.92) 100%)',
+                      }}
+                    />
 
-            {/* Prev / Next Chevrons */}
-            <div className="flex items-center space-x-3">
-              <button
-                onClick={handlePrev}
-                type="button"
-                className="w-12 h-12 rounded-full bg-white border border-gray-300 hover:border-gray-900 text-gray-800 hover:text-black flex items-center justify-center transition-all shadow-sm hover:shadow-md active:scale-95 cursor-pointer"
-                aria-label="Previous Feature"
-              >
-                <ChevronLeft className="w-5 h-5" />
-              </button>
-              <button
-                onClick={handleNext}
-                type="button"
-                className="w-12 h-12 rounded-full bg-gray-900 hover:bg-black text-white flex items-center justify-center transition-all shadow-md hover:shadow-lg active:scale-95 cursor-pointer"
-                aria-label="Next Feature"
-              >
-                <ChevronRight className="w-5 h-5" />
-              </button>
-            </div>
+                    {/* Desktop Slide Tags Overlay */}
+                    <div className="hidden md:block absolute left-0 right-0 bottom-0 z-[2] p-6">
+                      <ul className="flex flex-wrap items-center justify-center gap-x-12 gap-y-3">
+                        {slide.tags.map((tag, tIdx) => (
+                          <li
+                            key={tIdx}
+                            className="inline-flex items-center text-white text-[15px] lg:text-[16px] leading-[1.3] font-normal"
+                          >
+                            <span className="w-5 h-5 rounded-full bg-[#bca874] text-black flex items-center justify-center text-[11px] font-bold mr-2.5 flex-shrink-0">
+                              ✓
+                            </span>
+                            <span>{tag}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
 
+          {/* Left / Right Minimal Chevron Arrows (Reference: .A3Ultra_swiper-prev / next) */}
+          <button
+            type="button"
+            onClick={handlePrev}
+            aria-label="Previous Feature"
+            className="absolute left-3 sm:left-[6%] lg:left-[13%] top-1/2 -translate-y-1/2 z-30 w-10 h-11 flex items-center justify-center text-[#999999] hover:text-[#333333] transition-colors cursor-pointer"
+          >
+            <svg className="w-7 h-7 rotate-180 fill-current" viewBox="0 0 1024 1024">
+              <path d="M384.284223 63.564711l383.739825 447.696462-383.739825 448.208115h-127.913275l383.739825-448.208115-383.739825-447.696462z" />
+            </svg>
+          </button>
+
+          <button
+            type="button"
+            onClick={handleNext}
+            aria-label="Next Feature"
+            className="absolute right-3 sm:right-[6%] lg:right-[13%] top-1/2 -translate-y-1/2 z-30 w-10 h-11 flex items-center justify-center text-[#333333] hover:text-black transition-colors cursor-pointer"
+          >
+            <svg className="w-7 h-7 fill-current" viewBox="0 0 1024 1024">
+              <path d="M384.284223 63.564711l383.739825 447.696462-383.739825 448.208115h-127.913275l383.739825-448.208115-383.739825-447.696462z" />
+            </svg>
+          </button>
         </div>
 
+        {/* Mobile Tags Below Media (Reference: mobile .slide-overlay relative) */}
+        <div className="md:hidden px-[7%] pt-5">
+          <ul className="flex flex-col gap-2.5">
+            {slides[currentIndex]?.tags.map((tag, tIdx) => (
+              <li
+                key={tIdx}
+                className="flex items-start text-[#333333] text-[14px] leading-[1.4]"
+              >
+                <span className="w-4 h-4 rounded-full bg-[#bca874] text-black flex items-center justify-center text-[10px] font-bold mr-2.5 mt-0.5 flex-shrink-0">
+                  ✓
+                </span>
+                <span>{tag}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </section>
   );
