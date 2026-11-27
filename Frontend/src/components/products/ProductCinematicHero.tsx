@@ -29,8 +29,18 @@ export default function ProductCinematicHero({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isVideoModalOpen]);
 
+  const customHeroVideo = product.heroVideo;
+  const isDirectVideo =
+    !!customHeroVideo &&
+    (customHeroVideo.endsWith('.mp4') ||
+      customHeroVideo.endsWith('.webm') ||
+      customHeroVideo.endsWith('.mov') ||
+      customHeroVideo.includes('/uploads/') ||
+      customHeroVideo.startsWith('/static/') ||
+      customHeroVideo.startsWith('data:video'));
+
   const firstVideo = product.youtubeVideos?.[0];
-  const videoId = firstVideo?.id || 'M3_Jb_5zT9I';
+  const videoId = customHeroVideo && !isDirectVideo ? customHeroVideo : firstVideo?.id || 'M3_Jb_5zT9I';
   const cleanId = videoId.includes('v=')
     ? videoId.split('v=')[1]?.split('&')[0]
     : videoId.includes('youtu.be/')
@@ -160,13 +170,23 @@ export default function ProductCinematicHero({
             >
               <X className="w-5 h-5" />
             </button>
-            <iframe
-              src={videoEmbedUrl}
-              title={`${product.name} Showcase Video`}
-              className="w-full h-full border-0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
+            {isDirectVideo && customHeroVideo ? (
+              <video
+                src={customHeroVideo}
+                controls
+                autoPlay
+                playsInline
+                className="w-full h-full object-contain bg-black"
+              />
+            ) : (
+              <iframe
+                src={videoEmbedUrl}
+                title={`${product.name} Showcase Video`}
+                className="w-full h-full border-0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            )}
           </div>
         </div>
       )}

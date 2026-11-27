@@ -1943,6 +1943,50 @@ export default function AdminDashboardPage() {
                 </div>
               </div>
 
+              {/* Quick Robot Switcher Pills */}
+              <div className="flex flex-wrap gap-2">
+                {productList.map((p) => (
+                  <button
+                    key={p.id}
+                    type="button"
+                    onClick={() => setSelectedVideoRobotId(p.id)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer border ${
+                      selectedVideoRobotId === p.id
+                        ? 'bg-brand-blue text-white border-brand-blue shadow-sm'
+                        : 'bg-white text-gray-600 border-gray-200 hover:border-gray-400'
+                    }`}
+                  >
+                    {p.name.replace('HUTARK ', '')}
+                  </button>
+                ))}
+              </div>
+
+              {/* SECTION 1: HERO WATCH VIDEO MODAL */}
+              <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm space-y-4">
+                <div>
+                  <h3 className="text-sm font-bold text-gray-900 flex items-center space-x-2">
+                    <Video className="w-4 h-4 text-brand-blue" />
+                    <span>Section 1 — Hero &quot;Click to Watch Video&quot; Modal ({targetProd.name})</span>
+                  </h3>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Opens when clicking &quot;Click to Watch Video&quot; in the {targetProd.name} hero. Supports MP4/WebM upload or video link.
+                  </p>
+                </div>
+
+                <MediaUploadZone
+                  label={`Hero Showcase Video for ${targetProd.name}`}
+                  description="Drag & drop video file, select from file manager, or select from folder"
+                  placeholder="Drop hero video here, browse file manager, or select from folder"
+                  value={targetProd.heroVideo || ''}
+                  onChange={(url) => {
+                    saveProductData({ ...targetProd, heroVideo: url });
+                    notifySaved(`Updated Section 1 hero video for ${targetProd.name}`);
+                  }}
+                  mediaType="video"
+                  allowUrlToggle={true}
+                />
+              </div>
+
               {/* SECTION 2: AMBIENT INTRO LOOPING VIDEO */}
               <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm space-y-4">
                 <div>

@@ -67,6 +67,7 @@ export interface ProductData {
   heroSubtitle: string;
   heroImg: string;
   heroBannerBg?: string;
+  heroVideo?: string;
   cinematicHeading?: string;
   cinematicSubheading?: string;
   cinematicDesc?: string;

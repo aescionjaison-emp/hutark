@@ -853,6 +853,28 @@ export default function AdminProductEditorDrawer({
               ========================================================================= */}
           {activeTab === 'videos' && (
             <div className="space-y-6">
+              {/* SECTION 1: HERO WATCH VIDEO MODAL */}
+              <div className="bg-[#151922] border border-blue-500/30 p-6 rounded-2xl space-y-4">
+                <div>
+                  <h4 className="text-sm font-bold text-white flex items-center space-x-2">
+                    <Video className="w-4 h-4 text-blue-400" />
+                    <span>Section 1 — Hero &quot;Click to Watch Video&quot; Modal ({formData.name})</span>
+                  </h4>
+                  <p className="text-[11px] text-gray-400 mt-1">
+                    Plays when visitors click &quot;Click to Watch Video&quot; in the hero section for {formData.name}.
+                  </p>
+                </div>
+                <MediaUploadZone
+                  label="Hero Modal Video (MP4 / WebM / MOV)"
+                  description="Drag & drop video, select from file manager/folder, or paste video URL"
+                  placeholder="Drop hero video here, browse file manager, or select from folder"
+                  value={formData.heroVideo || ''}
+                  onChange={(url) => setFormData({ ...formData, heroVideo: url })}
+                  mediaType="video"
+                  allowUrlToggle={true}
+                />
+              </div>
+
               {/* SECTION 2: AMBIENT INTRO LOOPING VIDEO */}
               <div className="bg-[#151922] border border-cyan-500/30 p-6 rounded-2xl space-y-4">
                 <div className="flex items-center justify-between">
