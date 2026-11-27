@@ -247,7 +247,7 @@ export default function ProductRobotPurchaseSection({
                     <div className="absolute bottom-[2px] inset-x-5 h-[1px] bg-gradient-to-r from-transparent via-white/75 to-transparent pointer-events-none" />
 
                     {/* Button Typography: Crisp White "BUY ME" with soft contrast shadow */}
-                    <span className="relative z-10 text-xs sm:text-sm md:text-base font-bold text-white drop-shadow-[0_1px_8px_rgba(0,0,0,0.5)] tracking-[0.2em] transition-transform duration-200 group-hover:scale-105 flex items-center justify-center space-x-1.5 px-3">
+                    <span className="relative z-10 text-sm sm:text-base md:text-lg lg:text-xl font-bold text-white drop-shadow-[0_1px_8px_rgba(0,0,0,0.5)] tracking-[0.18em] transition-transform duration-200 group-hover:scale-105 flex items-center justify-center space-x-1.5 px-3">
                       <span>{buttonText}</span>
                     </span>
 
