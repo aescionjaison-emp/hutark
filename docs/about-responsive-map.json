@@ -1,0 +1,6 @@
+{
+  "breakpoints": {
+    "1920x1080": { "bodyHeight": 5469, "missionGrid": "2-col", "valuesLayout": "5-panel horizontal accordion", "milestonesLayout": "split year + vertical dotted list" },
+    "390x844": { "bodyHeight": 4955, "missionGrid": "1-col stacked", "valuesLayout": "vertical stacked expandable panels", "milestonesLayout": "stacked year selector + vertical list" }
+  }
+}

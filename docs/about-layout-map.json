@@ -1,0 +1,11 @@
+{
+  "referenceUrl": "https://www.agibot.com/about",
+  "viewportMeasured": "1920x1080",
+  "sections": [
+    { "id": "about-banner", "role": "hero", "height": "1080px", "backgroundColor": "#060d18" },
+    { "id": "aboutTwo", "role": "who_we_are", "height": "832px", "padding": "200px 0px 300px", "contentWidth": "1400px" },
+    { "id": "aboutThree", "role": "mission_vision", "height": "754px", "padding": "100px 0px 210px", "contentWidth": "1400px" },
+    { "id": "aboutSeven", "role": "our_values", "height": "848px", "padding": "100px 0px", "contentWidth": "1400px" },
+    { "id": "aboutFour", "role": "milestones", "height": "1024px", "padding": "100px 0px 70px", "contentWidth": "1400px" }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "animations": [
+    {
+      "section": "Hero",
+      "trigger": "mount",
+      "initial": { "opacity": 0, "translateY": "20px" },
+      "final": { "opacity": 1, "translateY": "0px" },
+      "durationMs": 700,
+      "scrollCue": "bounce-subtle infinite"
+    },
+    {
+      "section": "Who We Are / Mission & Vision",
+      "trigger": "whileInView (amount: 0.2, once: false)",
+      "initial": { "opacity": 0, "translateY": "24px" },
+      "final": { "opacity": 1, "translateY": "0px" },
+      "durationMs": 650
+    },
+    {
+      "section": "Our Values (Accordion Panels)",
+      "trigger": "click / hover",
+      "activePanel": { "flex": "2.6", "background": "linear-gradient(180deg, rgba(16,42,84,0.85), rgba(16,68,140,0.92))" },
+      "inactivePanel": { "flex": "1", "background": "rgba(255,255,255,0.02)" },
+      "transition": "all 0.45s cubic-bezier(0.22, 1, 0.36, 1)"
+    },
+    {
+      "section": "Milestones Timeline",
+      "trigger": "yearSelect / prev-next click",
+      "yearWatermarkTransition": "opacity + translateY",
+      "eventsTransition": "staggered fade-in"
+    }
+  ]
+}

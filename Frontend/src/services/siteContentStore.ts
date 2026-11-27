@@ -38,12 +38,26 @@ export interface TechPillar {
 export interface CoreValue {
   title: string;
   desc: string;
+  statements?: string[];
+  visible?: boolean;
 }
 
 export interface Milestone {
   year: string;
+  month?: string;
   title: string;
   desc: string;
+  img?: string;
+  visible?: boolean;
+}
+
+export interface AwardItem {
+  title: string;
+  issuer: string;
+  year: string;
+  desc?: string;
+  img?: string;
+  visible?: boolean;
 }
 
 export interface LeaderProfile {
@@ -107,6 +121,27 @@ export interface FullSiteContent {
     badge: string;
     heroTitle: string;
     heroDesc: string;
+    heroImg?: string;
+    whoWeAreHeading?: string;
+    whoWeAreText?: string;
+    whoWeAreImg?: string;
+    missionTitle?: string;
+    missionStatement?: string;
+    visionTitle?: string;
+    visionStatement?: string;
+    valuesHeading?: string;
+    milestonesHeading?: string;
+    awardsHeading?: string;
+    awards?: AwardItem[];
+    sectionVisibility?: {
+      whoWeAre?: boolean;
+      missionVision?: boolean;
+      values?: boolean;
+      milestones?: boolean;
+      awards?: boolean;
+    };
+    seoTitle?: string;
+    seoDescription?: string;
     coreValues: CoreValue[];
     milestones: Milestone[];
     ceo: CeoProfile;
@@ -333,19 +368,82 @@ export const DEFAULT_SITE_CONTENT: FullSiteContent = {
   },
   about: {
     badge: "About HUTARK",
-    heroTitle: "Empowering the World with Embodied Intelligence",
+    heroTitle: "CREATE UNLIMITED PRODUCTIVITY VIA INTELLIGENT MACHINES",
     heroDesc: "HUTARK is a global pioneer dedicated to researching, manufacturing, and deploying general-purpose humanoid robots and embodied foundation models.",
+    heroImg: "/uploads/images/products/a3_cinematic_dark.jpg",
+    whoWeAreHeading: "Who We Are",
+    whoWeAreText: "HUTARK is a global pioneer in general-purpose AI robotics, with embodied intelligence as our core technological focus. Built on three foundational pillars—high-performance robotic platforms, physical AI algorithms, and an open developer ecosystem—we engineer an integrated hardware-software system designed for real-world industrial production, logistics, inspection, and commercial service.",
+    whoWeAreImg: "/uploads/images/products/a3_hero_banner.jpg",
+    missionTitle: "Our Mission",
+    missionStatement: "Scale safe, capable, and economically accessible general-purpose embodied intelligence to every enterprise worldwide.",
+    visionTitle: "Our Vision",
+    visionStatement: "To build a global physical AI robotics ecosystem that liberates human labor and amplifies industrial productivity.",
+    valuesHeading: "Our Values",
+    milestonesHeading: "Milestones",
+    awardsHeading: "Awards & Honors",
+    awards: [],
+    sectionVisibility: {
+      whoWeAre: true,
+      missionVision: true,
+      values: true,
+      milestones: true,
+      awards: false,
+    },
+    seoTitle: "About HUTARK — General-Purpose Embodied AI & Humanoid Robotics",
+    seoDescription: "Learn about HUTARK's mission, vision, core values, and engineering milestones in general-purpose embodied robotics.",
     coreValues: [
-      { title: "Customer First", desc: "We focus on solving real-world physical automation bottlenecks with uncompromising reliability and rapid deployment cycles." },
-      { title: "Ultimate Innovation", desc: "From bio-inspired harmonic joint actuation to foundation vision-language-action AI, we pursue frontier breakthroughs." },
-      { title: "Practical Dedication", desc: "General-purpose robots must prove their economic value on production lines, cleanrooms, and commercial floors every single day." },
-      { title: "Open Collaboration", desc: "We build an open ecosystem with Link-U OS, sharing developer SDKs and simulation environments with global robotics researchers." }
+      {
+        title: "Pursuit of Excellence",
+        desc: "We pursue frontier breakthroughs from bio-inspired harmonic actuation to foundation vision-language-action AI.",
+        statements: [
+          "Choose what is difficult but right. Set ambitious engineering goals and stay committed for the long term.",
+          "Strive for precision in every actuator, sensor, and policy network so system-wide performance excels.",
+          "Maintain high standards in commercial delivery, making every deployment reliable and dependable."
+        ],
+        visible: true
+      },
+      {
+        title: "Customer First",
+        desc: "We focus on solving real-world physical automation bottlenecks with uncompromising reliability and rapid deployment cycles.",
+        statements: [
+          "Prioritize real customer production bottlenecks across automotive, electronics, and logistics workcells.",
+          "Deliver rapid, safe, and economically measurable ROI from day-one pilot through volume fleet scaling."
+        ],
+        visible: true
+      },
+      {
+        title: "Practical Dedication",
+        desc: "General-purpose robots must prove their economic value on production lines, cleanrooms, and commercial floors every single day.",
+        statements: [
+          "Validate every capability on real shop floors under continuous multi-shift workloads.",
+          "Engineer modular, maintainable hardware built for industrial uptime."
+        ],
+        visible: true
+      },
+      {
+        title: "Execution & Efficiency",
+        desc: "Fast iteration from simulation to physical hardware deployment drives continuous operational advantage.",
+        statements: [
+          "Compress sim-to-real transfer cycles using closed-loop telemetry and physical foundation models.",
+          "Streamline manufacturing quality control for scalable commercial delivery."
+        ],
+        visible: true
+      },
+      {
+        title: "Open Collaboration",
+        desc: "We build an open ecosystem with Link-U OS, sharing developer SDKs and simulation environments with global robotics researchers.",
+        statements: [
+          "Empower partners and researchers with ROS 2, C++, and Python secondary development SDKs.",
+          "Collaborate across global universities and Tier-1 industrial ecosystems."
+        ],
+        visible: true
+      }
     ],
     milestones: [
-      { year: "2026", title: "20,000th Robot & GO-3 Foundation Model", desc: "Celebrated mass production milestone and rolled out the AHA3 compliance architecture and Link-U OS 1.0 globally." },
-      { year: "2025", title: "Commercial Fleet Deployments", desc: "Deployed hundreds of HUTARK A3 and X2 units across automotive, electronics, and micro-fulfillment facilities." },
-      { year: "2024", title: "Bipedal Locomotion Breakthrough", desc: "Debuted full-body bipedal dynamic balance with real-time push recovery and blind terrain adaptation." },
-      { year: "2023", title: "Foundation of HUTARK", desc: "Established with the vision of accelerating embodied artificial intelligence into physical reality." }
+      { year: "2026", month: "09", title: "20,000th Robot & GO-3 Foundation Model", desc: "Celebrated mass production milestone and rolled out the AHA3 compliance architecture and Link-U OS 1.0 globally.", visible: true },
+      { year: "2025", month: "10", title: "Commercial Fleet Deployments", desc: "Deployed hundreds of HUTARK A3 and X2 units across automotive, electronics, and micro-fulfillment facilities.", visible: true },
+      { year: "2024", month: "08", title: "Bipedal Locomotion Breakthrough", desc: "Debuted full-body bipedal dynamic balance with real-time push recovery and blind terrain adaptation.", visible: true },
+      { year: "2023", month: "02", title: "Foundation of HUTARK", desc: "Established with the vision of accelerating embodied artificial intelligence into physical reality.", visible: true }
     ],
     ceo: {
       name: "Deng Taihua",

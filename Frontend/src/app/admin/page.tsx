@@ -2423,32 +2423,245 @@ export default function AdminDashboardPage() {
             ========================================================================= */}
         {activeTab === 'about' && (
           <div className="space-y-6 max-w-5xl">
-            <div>
-              <h2 className="text-xl font-bold text-gray-900">About Page Content, CEO &amp; Leadership Editor</h2>
-              <p className="text-xs text-gray-500 font-light">
-                Update company vision, mission values, historical timeline milestones, executive CEO spotlight, team profiles, and career openings.
-              </p>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">About Page Content &amp; Timeline Editor</h2>
+                <p className="text-xs text-gray-500 font-light">
+                  Manage About HUTARK Hero, Who We Are, Mission &amp; Vision, Corporate Values, Milestones, Awards &amp; Honors, Section Visibility, and SEO.
+                </p>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Link
+                  href="/about"
+                  target="_blank"
+                  className="bg-gray-100 hover:bg-gray-200 text-gray-800 border border-gray-200 px-4 py-2 rounded-xl text-xs font-bold flex items-center space-x-1.5 transition-colors"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  <span>Live Preview</span>
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => handleSaveSiteContent()}
+                  className="bg-brand-blue hover:bg-blue-700 text-white px-5 py-2 rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow-sm cursor-pointer"
+                >
+                  <Save className="w-3.5 h-3.5" />
+                  <span>Save &amp; Publish</span>
+                </button>
+              </div>
             </div>
 
-            {/* Core Values */}
+            {/* Section Visibility Controls */}
+            <div className="bg-white border border-gray-200/90 rounded-2xl p-6 space-y-3 shadow-sm">
+              <h3 className="text-sm font-bold text-gray-900">Section Visibility</h3>
+              <div className="flex flex-wrap gap-3">
+                {[
+                  { key: 'whoWeAre', label: 'Who We Are' },
+                  { key: 'missionVision', label: 'Mission & Vision' },
+                  { key: 'values', label: 'Our Values' },
+                  { key: 'milestones', label: 'Milestones' },
+                  { key: 'awards', label: 'Awards & Honors' },
+                ].map((sec) => {
+                  const vis = siteContent.about.sectionVisibility || {};
+                  const checked =
+                    sec.key === 'awards'
+                      ? vis.awards === true
+                      : (vis as Record<string, boolean | undefined>)[sec.key] !== false;
+                  return (
+                    <label
+                      key={sec.key}
+                      className="flex items-center space-x-2 bg-[#f8f9fc] border border-gray-200 px-3.5 py-2 rounded-xl text-xs font-semibold text-gray-700 cursor-pointer"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={(e) =>
+                          setSiteContent({
+                            ...siteContent,
+                            about: {
+                              ...siteContent.about,
+                              sectionVisibility: {
+                                ...vis,
+                                [sec.key]: e.target.checked,
+                              },
+                            },
+                          })
+                        }
+                        className="w-3.5 h-3.5 rounded text-brand-blue"
+                      />
+                      <span>{sec.label}</span>
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Hero & Who We Are Editor */}
+            <div className="bg-white border border-gray-200/90 rounded-2xl p-6 sm:p-8 space-y-5 shadow-sm">
+              <h3 className="text-sm font-bold text-gray-900">Hero &amp; Who We Are</h3>
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">Hero Display Headline</label>
+                  <input
+                    type="text"
+                    value={siteContent.about.heroTitle}
+                    onChange={(e) =>
+                      setSiteContent({
+                        ...siteContent,
+                        about: { ...siteContent.about, heroTitle: e.target.value },
+                      })
+                    }
+                    className="w-full bg-[#f8f9fc] border border-gray-200 rounded-xl px-3.5 py-2 text-xs text-gray-900 font-bold"
+                  />
+                </div>
+                <MediaUploadZone
+                  label="Hero Background Image (1920×1080 Recommended)"
+                  value={siteContent.about.heroImg || ''}
+                  onChange={(url) =>
+                    setSiteContent({
+                      ...siteContent,
+                      about: { ...siteContent.about, heroImg: url },
+                    })
+                  }
+                  mediaType="image"
+                />
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">Who We Are Heading</label>
+                  <input
+                    type="text"
+                    value={siteContent.about.whoWeAreHeading || 'Who We Are'}
+                    onChange={(e) =>
+                      setSiteContent({
+                        ...siteContent,
+                        about: { ...siteContent.about, whoWeAreHeading: e.target.value },
+                      })
+                    }
+                    className="w-full bg-[#f8f9fc] border border-gray-200 rounded-xl px-3.5 py-2 text-xs text-gray-900 font-bold"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">Who We Are Narrative</label>
+                  <textarea
+                    rows={4}
+                    value={siteContent.about.whoWeAreText || siteContent.about.heroDesc}
+                    onChange={(e) =>
+                      setSiteContent({
+                        ...siteContent,
+                        about: { ...siteContent.about, whoWeAreText: e.target.value },
+                      })
+                    }
+                    className="w-full bg-[#f8f9fc] border border-gray-200 rounded-xl px-3.5 py-2 text-xs text-gray-700 leading-relaxed"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Mission & Vision Editor */}
             <div className="bg-white border border-gray-200/90 rounded-2xl p-6 sm:p-8 space-y-4 shadow-sm">
-              <h3 className="text-sm font-bold text-gray-900">Core Values</h3>
+              <h3 className="text-sm font-bold text-gray-900">Mission &amp; Vision</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="bg-[#f8f9fc] border border-gray-200 rounded-2xl p-4 space-y-2">
+                  <label className="block text-[11px] font-bold text-gray-700">Mission Title</label>
+                  <input
+                    type="text"
+                    value={siteContent.about.missionTitle || 'Our Mission'}
+                    onChange={(e) =>
+                      setSiteContent({
+                        ...siteContent,
+                        about: { ...siteContent.about, missionTitle: e.target.value },
+                      })
+                    }
+                    className="w-full bg-white border border-gray-200 rounded-xl px-3 py-1.5 text-xs text-gray-900 font-bold"
+                  />
+                  <label className="block text-[11px] font-bold text-gray-700 pt-1">Mission Statement</label>
+                  <textarea
+                    rows={3}
+                    value={siteContent.about.missionStatement || ''}
+                    onChange={(e) =>
+                      setSiteContent({
+                        ...siteContent,
+                        about: { ...siteContent.about, missionStatement: e.target.value },
+                      })
+                    }
+                    className="w-full bg-white border border-gray-200 rounded-xl px-3 py-1.5 text-xs text-gray-700"
+                  />
+                </div>
+                <div className="bg-[#f8f9fc] border border-gray-200 rounded-2xl p-4 space-y-2">
+                  <label className="block text-[11px] font-bold text-gray-700">Vision Title</label>
+                  <input
+                    type="text"
+                    value={siteContent.about.visionTitle || 'Our Vision'}
+                    onChange={(e) =>
+                      setSiteContent({
+                        ...siteContent,
+                        about: { ...siteContent.about, visionTitle: e.target.value },
+                      })
+                    }
+                    className="w-full bg-white border border-gray-200 rounded-xl px-3 py-1.5 text-xs text-gray-900 font-bold"
+                  />
+                  <label className="block text-[11px] font-bold text-gray-700 pt-1">Vision Statement</label>
+                  <textarea
+                    rows={3}
+                    value={siteContent.about.visionStatement || ''}
+                    onChange={(e) =>
+                      setSiteContent({
+                        ...siteContent,
+                        about: { ...siteContent.about, visionStatement: e.target.value },
+                      })
+                    }
+                    className="w-full bg-white border border-gray-200 rounded-xl px-3 py-1.5 text-xs text-gray-700"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Core Values CRUD */}
+            <div className="bg-white border border-gray-200/90 rounded-2xl p-6 sm:p-8 space-y-4 shadow-sm">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-bold text-gray-900">Corporate Values ({siteContent.about.coreValues.length})</h3>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const updated = [
+                      ...siteContent.about.coreValues,
+                      { title: 'New Value', desc: 'Supporting engineering value description.', statements: ['Supporting value point'], visible: true },
+                    ];
+                    setSiteContent({ ...siteContent, about: { ...siteContent.about, coreValues: updated } });
+                  }}
+                  className="bg-brand-blue/10 hover:bg-brand-blue/20 text-brand-blue px-3 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1 cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Add Value</span>
+                </button>
+              </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {siteContent.about.coreValues.map((val, idx) => (
                   <div key={idx} className="bg-[#f8f9fc] border border-gray-200/80 rounded-2xl p-4 space-y-2">
-                    <input
-                      type="text"
-                      value={val.title}
-                      onChange={(e) => {
-                        const updated = [...siteContent.about.coreValues];
-                        updated[idx] = { ...updated[idx], title: e.target.value };
-                        setSiteContent({
-                          ...siteContent,
-                          about: { ...siteContent.about, coreValues: updated }
-                        });
-                      }}
-                      className="w-full bg-white border border-gray-200 rounded-xl px-3 py-1.5 text-xs text-gray-900 font-bold"
-                    />
+                    <div className="flex items-center justify-between gap-2">
+                      <input
+                        type="text"
+                        value={val.title}
+                        onChange={(e) => {
+                          const updated = [...siteContent.about.coreValues];
+                          updated[idx] = { ...updated[idx], title: e.target.value };
+                          setSiteContent({
+                            ...siteContent,
+                            about: { ...siteContent.about, coreValues: updated }
+                          });
+                        }}
+                        className="flex-1 bg-white border border-gray-200 rounded-xl px-3 py-1.5 text-xs text-gray-900 font-bold"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const updated = siteContent.about.coreValues.filter((_, i) => i !== idx);
+                          setSiteContent({ ...siteContent, about: { ...siteContent.about, coreValues: updated } });
+                        }}
+                        className="text-red-500 hover:text-red-700 p-1.5 cursor-pointer"
+                        title="Delete Value"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                     <textarea
                       rows={2}
                       value={val.desc}
@@ -2462,46 +2675,232 @@ export default function AdminDashboardPage() {
                       }}
                       className="w-full bg-white border border-gray-200 rounded-xl px-3 py-1.5 text-xs text-gray-600 font-light"
                     />
+                    <textarea
+                      rows={2}
+                      placeholder="Supporting bullet statements (one per line)"
+                      value={(val.statements || []).join('\n')}
+                      onChange={(e) => {
+                        const updated = [...siteContent.about.coreValues];
+                        updated[idx] = {
+                          ...updated[idx],
+                          statements: e.target.value.split('\n').map((s) => s.trim()).filter(Boolean),
+                        };
+                        setSiteContent({
+                          ...siteContent,
+                          about: { ...siteContent.about, coreValues: updated }
+                        });
+                      }}
+                      className="w-full bg-white border border-gray-200 rounded-xl px-3 py-1.5 text-[11px] text-gray-600"
+                    />
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Milestones */}
+            {/* Milestones CRUD */}
             <div className="bg-white border border-gray-200/90 rounded-2xl p-6 sm:p-8 space-y-4 shadow-sm">
-              <h3 className="text-sm font-bold text-gray-900">Company Milestones</h3>
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-bold text-gray-900">Company Milestones ({siteContent.about.milestones.length})</h3>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const updated = [
+                      { year: '2026', month: '01', title: 'New Milestone', desc: 'Verified company milestone details.', visible: true },
+                      ...siteContent.about.milestones,
+                    ];
+                    setSiteContent({ ...siteContent, about: { ...siteContent.about, milestones: updated } });
+                  }}
+                  className="bg-brand-blue/10 hover:bg-brand-blue/20 text-brand-blue px-3 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1 cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Add Milestone</span>
+                </button>
+              </div>
               <div className="space-y-3">
                 {siteContent.about.milestones.map((m, idx) => (
-                  <div key={idx} className="bg-[#f8f9fc] border border-gray-200/80 rounded-2xl p-4 flex flex-col sm:flex-row gap-3 items-start sm:items-center">
-                    <input
-                      type="text"
-                      value={m.year}
+                  <div key={idx} className="bg-[#f8f9fc] border border-gray-200/80 rounded-2xl p-4 space-y-2">
+                    <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+                      <input
+                        type="text"
+                        placeholder="Year"
+                        value={m.year}
+                        onChange={(e) => {
+                          const updated = [...siteContent.about.milestones];
+                          updated[idx] = { ...updated[idx], year: e.target.value };
+                          setSiteContent({
+                            ...siteContent,
+                            about: { ...siteContent.about, milestones: updated }
+                          });
+                        }}
+                        className="w-20 bg-white border border-gray-200 rounded-xl px-3 py-1.5 text-xs text-brand-blue font-bold font-mono"
+                      />
+                      <input
+                        type="text"
+                        placeholder="Mo"
+                        value={m.month || ''}
+                        onChange={(e) => {
+                          const updated = [...siteContent.about.milestones];
+                          updated[idx] = { ...updated[idx], month: e.target.value };
+                          setSiteContent({
+                            ...siteContent,
+                            about: { ...siteContent.about, milestones: updated }
+                          });
+                        }}
+                        className="w-16 bg-white border border-gray-200 rounded-xl px-3 py-1.5 text-xs text-gray-700 font-mono"
+                      />
+                      <input
+                        type="text"
+                        placeholder="Milestone Title"
+                        value={m.title}
+                        onChange={(e) => {
+                          const updated = [...siteContent.about.milestones];
+                          updated[idx] = { ...updated[idx], title: e.target.value };
+                          setSiteContent({
+                            ...siteContent,
+                            about: { ...siteContent.about, milestones: updated }
+                          });
+                        }}
+                        className="flex-1 bg-white border border-gray-200 rounded-xl px-3 py-1.5 text-xs text-gray-900 font-bold"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const updated = siteContent.about.milestones.filter((_, i) => i !== idx);
+                          setSiteContent({ ...siteContent, about: { ...siteContent.about, milestones: updated } });
+                        }}
+                        className="text-red-500 hover:text-red-700 p-1.5 cursor-pointer"
+                        title="Delete Milestone"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                    <textarea
+                      rows={2}
+                      placeholder="Milestone description"
+                      value={m.desc}
                       onChange={(e) => {
                         const updated = [...siteContent.about.milestones];
-                        updated[idx] = { ...updated[idx], year: e.target.value };
+                        updated[idx] = { ...updated[idx], desc: e.target.value };
                         setSiteContent({
                           ...siteContent,
                           about: { ...siteContent.about, milestones: updated }
                         });
                       }}
-                      className="w-24 bg-white border border-gray-200 rounded-xl px-3 py-1.5 text-xs text-brand-blue font-bold font-mono"
-                    />
-                    <input
-                      type="text"
-                      value={m.title}
-                      onChange={(e) => {
-                        const updated = [...siteContent.about.milestones];
-                        updated[idx] = { ...updated[idx], title: e.target.value };
-                        setSiteContent({
-                          ...siteContent,
-                          about: { ...siteContent.about, milestones: updated }
-                        });
-                      }}
-                      className="flex-1 bg-white border border-gray-200 rounded-xl px-3 py-1.5 text-xs text-gray-900 font-bold"
+                      className="w-full bg-white border border-gray-200 rounded-xl px-3 py-1.5 text-xs text-gray-600"
                     />
                   </div>
                 ))}
               </div>
+            </div>
+
+            {/* Awards & Honors CRUD */}
+            <div className="bg-white border border-gray-200/90 rounded-2xl p-6 sm:p-8 space-y-4 shadow-sm">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-bold text-gray-900">Awards &amp; Honors ({siteContent.about.awards?.length || 0})</h3>
+                  <p className="text-[11px] text-gray-500">Hidden publicly unless Awards &amp; Honors visibility is checked above.</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const updated = [
+                      ...(siteContent.about.awards || []),
+                      { title: 'Certification / Award Title', issuer: 'Issuing Body', year: '2026', desc: '', img: '', visible: true },
+                    ];
+                    setSiteContent({ ...siteContent, about: { ...siteContent.about, awards: updated } });
+                  }}
+                  className="bg-brand-blue/10 hover:bg-brand-blue/20 text-brand-blue px-3 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1 cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Add Award</span>
+                </button>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {(siteContent.about.awards || []).map((aw, idx) => (
+                  <div key={idx} className="bg-[#f8f9fc] border border-gray-200/80 rounded-2xl p-4 space-y-2.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <input
+                        type="text"
+                        placeholder="Award Title"
+                        value={aw.title}
+                        onChange={(e) => {
+                          const updated = [...(siteContent.about.awards || [])];
+                          updated[idx] = { ...updated[idx], title: e.target.value };
+                          setSiteContent({ ...siteContent, about: { ...siteContent.about, awards: updated } });
+                        }}
+                        className="flex-1 bg-white border border-gray-200 rounded-xl px-3 py-1.5 text-xs text-gray-900 font-bold"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const updated = (siteContent.about.awards || []).filter((_, i) => i !== idx);
+                          setSiteContent({ ...siteContent, about: { ...siteContent.about, awards: updated } });
+                        }}
+                        className="text-red-500 hover:text-red-700 p-1.5 cursor-pointer"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <input
+                        type="text"
+                        placeholder="Issuer"
+                        value={aw.issuer}
+                        onChange={(e) => {
+                          const updated = [...(siteContent.about.awards || [])];
+                          updated[idx] = { ...updated[idx], issuer: e.target.value };
+                          setSiteContent({ ...siteContent, about: { ...siteContent.about, awards: updated } });
+                        }}
+                        className="bg-white border border-gray-200 rounded-xl px-3 py-1.5 text-xs text-gray-700"
+                      />
+                      <input
+                        type="text"
+                        placeholder="Year"
+                        value={aw.year}
+                        onChange={(e) => {
+                          const updated = [...(siteContent.about.awards || [])];
+                          updated[idx] = { ...updated[idx], year: e.target.value };
+                          setSiteContent({ ...siteContent, about: { ...siteContent.about, awards: updated } });
+                        }}
+                        className="bg-white border border-gray-200 rounded-xl px-3 py-1.5 text-xs text-gray-700 font-mono"
+                      />
+                    </div>
+                    <MediaUploadZone
+                      label="Award / Certificate Image"
+                      value={aw.img || ''}
+                      onChange={(url) => {
+                        const updated = [...(siteContent.about.awards || [])];
+                        updated[idx] = { ...updated[idx], img: url };
+                        setSiteContent({ ...siteContent, about: { ...siteContent.about, awards: updated } });
+                      }}
+                      mediaType="image"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* SEO Settings */}
+            <div className="bg-white border border-gray-200/90 rounded-2xl p-6 space-y-3 shadow-sm">
+              <h3 className="text-sm font-bold text-gray-900">About Page SEO Settings</h3>
+              <input
+                type="text"
+                placeholder="SEO Title"
+                value={siteContent.about.seoTitle || ''}
+                onChange={(e) =>
+                  setSiteContent({ ...siteContent, about: { ...siteContent.about, seoTitle: e.target.value } })
+                }
+                className="w-full bg-[#f8f9fc] border border-gray-200 rounded-xl px-3.5 py-2 text-xs text-gray-900"
+              />
+              <textarea
+                rows={2}
+                placeholder="Meta Description"
+                value={siteContent.about.seoDescription || ''}
+                onChange={(e) =>
+                  setSiteContent({ ...siteContent, about: { ...siteContent.about, seoDescription: e.target.value } })
+                }
+                className="w-full bg-[#f8f9fc] border border-gray-200 rounded-xl px-3.5 py-2 text-xs text-gray-700"
+              />
             </div>
 
             {/* CEO Spotlight Editor */}
