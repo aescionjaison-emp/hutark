@@ -605,7 +605,7 @@ export default function AdminDashboardPage() {
                 badgeCount: unreadInquiriesCount,
                 highlight: true 
               },
-              { id: 'youtube', label: 'YouTube Video Slides', icon: Video },
+              { id: 'youtube', label: 'Product Looping Videos', icon: Video },
               { id: 'home', label: 'Home Page Editor', icon: Home },
               { id: 'rd', label: 'R & D / Tech Editor', icon: FlaskConical },
               { id: 'about', label: 'About Page Editor', icon: Building2 },
@@ -775,7 +775,7 @@ export default function AdminDashboardPage() {
                           setActiveTab('youtube');
                         }}
                         className="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-3 py-2 rounded-xl text-xs font-bold flex items-center space-x-1 transition-colors cursor-pointer"
-                        title="Edit YouTube Video Slides"
+                        title="Edit Intro & Capability Looping Videos"
                       >
                         <Video className="w-3.5 h-3.5" />
                         <span>Videos</span>
@@ -1880,155 +1880,224 @@ export default function AdminDashboardPage() {
         )}
 
         {/* =========================================================================
-            TAB 3: YOUTUBE VIDEO SLIDES MANAGER
+            TAB 3: PRODUCT LOOPING VIDEOS MANAGER (SECTION 2 & SECTION 3)
             ========================================================================= */}
-        {activeTab === 'youtube' && (
-          <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div>
-                <h2 className="text-xl font-bold text-gray-900">YouTube Video Slides Manager</h2>
-                <p className="text-xs text-gray-500 font-light">
-                  Add, edit, and organize YouTube demonstration videos for every robot showroom detail page.
-                </p>
+        {activeTab === 'youtube' && (() => {
+          const targetProd = getProductData(selectedVideoRobotId);
+          const currentSlides = targetProd.featureSlides || [
+            {
+              title: targetProd.cinematicHeading || '24/7 Autonomous Operation · Your Reliable Around-the-Clock Partner',
+              video: targetProd.cinematicVideo || '/static/index/en/video/index2/index2_One-v1.mp4',
+              image: targetProd.cinematicImg || targetProd.heroImg,
+              tags: ['360° All-Domain Perception', '700 TOPS Full-Performance Compute'],
+            },
+            {
+              title: targetProd.manipulationHeading || 'Versatile Task Execution · A Capable Autonomous Partner',
+              video: '/static/index/en/video/index2/index2_One-v2.mp4',
+              image: targetProd.heroImg,
+              tags: ['Perception-Control Fusion', 'Sub-Millimeter Dexterous Manipulation'],
+            },
+            {
+              title: targetProd.interactionHeading || 'Comprehensive Safety · A Trusted, Gentle Companion',
+              video: '/static/index/en/video/index2/index2_One-v3.mp4',
+              image: targetProd.heroImg,
+              tags: ['Four-Layer Safety Protection', 'Proprietary Carbon Fiber-Reinforced Composite'],
+            },
+          ];
+
+          const updateTargetSlides = (nextSlides: typeof currentSlides) => {
+            saveProductData({ ...targetProd, featureSlides: nextSlides });
+            refreshProducts();
+          };
+
+          return (
+            <div className="space-y-6">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900">Product Looping Videos Manager</h2>
+                  <p className="text-xs text-gray-500 font-light">
+                    Manage looping MP4/WebM videos for Section 2 (Ambient Intro) and Section 3 (Capability Carousel) via drag &amp; drop or file manager.
+                  </p>
+                </div>
+
+                {/* Robot Model Selector */}
+                <div className="flex items-center space-x-2">
+                  <span className="text-xs font-semibold text-gray-700">Target Robot:</span>
+                  <select
+                    value={selectedVideoRobotId}
+                    onChange={(e) => setSelectedVideoRobotId(e.target.value)}
+                    className="bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs font-bold text-brand-blue focus:outline-none focus:ring-2 focus:ring-brand-blue/20"
+                  >
+                    {productList.map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {p.name} ({p.id})
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
-              {/* Robot Model Selector */}
-              <div className="flex items-center space-x-2">
-                <span className="text-xs font-semibold text-gray-700">Target Robot:</span>
-                <select
-                  value={selectedVideoRobotId}
-                  onChange={(e) => setSelectedVideoRobotId(e.target.value)}
-                  className="bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs font-bold text-brand-blue focus:outline-none focus:ring-2 focus:ring-brand-blue/20"
-                >
-                  {productList.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.name} ({p.id})
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
+              {/* SECTION 2: AMBIENT INTRO LOOPING VIDEO */}
+              <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm space-y-4">
+                <div>
+                  <h3 className="text-sm font-bold text-gray-900 flex items-center space-x-2">
+                    <Video className="w-4 h-4 text-brand-blue" />
+                    <span>Section 2 — Full-Bleed Ambient Intro Looping Video ({targetProd.name})</span>
+                  </h3>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Plays automatically in a continuous muted loop behind the centered product introduction heading.
+                  </p>
+                </div>
 
-            {/* Add New Video Bar */}
-            <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="text-sm font-bold text-gray-900 flex items-center space-x-2">
-                  <Plus className="w-4 h-4 text-brand-blue" />
-                  <span>Add Video Demonstration to {getProductData(selectedVideoRobotId).name}</span>
-                </h3>
-                <button
-                  type="button"
-                  onClick={handleAddBlankSlide}
-                  className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-3 py-1.5 rounded-xl text-xs transition-colors border border-gray-200 flex items-center space-x-1 cursor-pointer"
-                >
-                  <Plus className="w-3.5 h-3.5" />
-                  <span>Add Template Slide</span>
-                </button>
+                <MediaUploadZone
+                  label="Intro Looping Video (MP4 / WebM / MOV)"
+                  description="Drag & drop video file, select from file manager, or select from folder"
+                  placeholder="Drop looping intro video here, browse file manager, or select from folder"
+                  value={targetProd.cinematicVideo || '/static/index/en/video/index2/index2_One-v1.mp4'}
+                  onChange={(url) => {
+                    saveProductData({ ...targetProd, cinematicVideo: url });
+                    refreshProducts();
+                    setToastMsg(`Updated Section 2 looping video for ${targetProd.name}`);
+                  }}
+                  mediaType="video"
+                  allowUrlToggle={true}
+                />
               </div>
 
-              <MediaUploadZone
-                label="Upload Video File or Paste Video URL"
-                description="Drag & drop MP4/WebM file, select from folder, browse files, or paste YouTube link"
-                placeholder="Drop video here, select from folder, browse files, or enter YouTube URL"
-                value=""
-                onChange={handleAddVideoFromUpload}
-                mediaType="video"
-                allowUrlToggle={true}
-              />
-            </div>
-
-            {/* Video Slides Grid */}
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-gray-600 uppercase tracking-wider">
-                  Active Video Slides ({activeVideoSlides.length})
-                </span>
-                {activeVideoSlides.length > 0 && (
+              {/* SECTION 3: CAPABILITY CAROUSEL LOOPING VIDEO SLIDES */}
+              <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-bold text-gray-900 flex items-center space-x-2">
+                    <Plus className="w-4 h-4 text-brand-blue" />
+                    <span>Section 3 — Add Capability Carousel Looping Video Slide</span>
+                  </h3>
                   <button
                     type="button"
-                    onClick={handleSaveAllVideoSlides}
-                    className="bg-brand-blue hover:bg-blue-700 text-white font-bold px-4 py-1.5 rounded-xl text-xs flex items-center space-x-1 shadow-sm transition-all cursor-pointer"
+                    onClick={() => {
+                      const next = [
+                        ...currentSlides,
+                        {
+                          title: `${targetProd.name} Autonomous Capability`,
+                          video: '/static/index/en/video/index2/index2_One-v1.mp4',
+                          image: targetProd.cinematicImg || targetProd.heroImg,
+                          tags: ['360° All-Domain Perception', 'Continuous Loop Operation'],
+                        },
+                      ];
+                      updateTargetSlides(next);
+                      setToastMsg(`Added new capability video slide to ${targetProd.name}`);
+                    }}
+                    className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-3 py-1.5 rounded-xl text-xs transition-colors border border-gray-200 flex items-center space-x-1 cursor-pointer"
                   >
-                    <Save className="w-3.5 h-3.5" />
-                    <span>Save All Video Slides</span>
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>Add Blank Slide</span>
                   </button>
-                )}
+                </div>
+
+                <MediaUploadZone
+                  label="Quick Add Video Slide (Drag & Drop or Select from File Manager)"
+                  description="Drop MP4/WebM file, browse file manager, or select from folder to add a new looping slide"
+                  placeholder="Drop video here, browse file manager, or select from folder"
+                  value=""
+                  onChange={(url) => {
+                    if (!url) return;
+                    const next = [
+                      ...currentSlides,
+                      {
+                        title: `${targetProd.name} Capability ${currentSlides.length + 1}`,
+                        video: url,
+                        image: targetProd.cinematicImg || targetProd.heroImg,
+                        tags: ['Autonomous Operation', 'Real-Time Control'],
+                      },
+                    ];
+                    updateTargetSlides(next);
+                    setToastMsg(`Added new looping video slide to ${targetProd.name}`);
+                  }}
+                  mediaType="video"
+                  allowUrlToggle={true}
+                />
               </div>
 
-              {activeVideoSlides.length === 0 ? (
-                <div className="bg-white border border-gray-200 rounded-2xl p-10 text-center space-y-2 shadow-sm">
-                  <Video className="w-10 h-10 text-gray-400 mx-auto" />
-                  <p className="text-sm font-semibold text-gray-700">No custom video slides attached yet</p>
-                  <p className="text-xs text-gray-500 font-light">Drag &amp; drop a video file, select from folder, or paste a YouTube link above.</p>
+              {/* ACTIVE CAPABILITY SLIDES GRID */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-gray-600 uppercase tracking-wider">
+                    Active Capability Looping Slides ({currentSlides.length})
+                  </span>
                 </div>
-              ) : (
+
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {activeVideoSlides.map((slide, idx) => {
-                    const videoId = extractYouTubeId(slide.id);
-                    return (
-                      <div
-                        key={idx}
-                        className="bg-white border border-gray-200/90 rounded-2xl p-5 shadow-sm space-y-4 flex flex-col justify-between hover:shadow-md transition-all"
-                      >
-                        <div className="space-y-3">
-                          {/* Video Asset Uploader / Viewer with Drag & Drop and Folder Select */}
-                          <MediaUploadZone
-                            label={`Slide #${idx + 1} Video Asset`}
-                            value={slide.id}
-                            onChange={(url) => handleUpdateSlideField(idx, 'id', extractYouTubeId(url) || url)}
-                            mediaType="video"
+                  {currentSlides.map((slide, idx) => (
+                    <div
+                      key={idx}
+                      className="bg-white border border-gray-200/90 rounded-2xl p-5 shadow-sm space-y-4 flex flex-col justify-between hover:shadow-md transition-all"
+                    >
+                      <div className="space-y-3">
+                        <MediaUploadZone
+                          label={`Slide #${idx + 1} Looping Video`}
+                          value={slide.video || ''}
+                          onChange={(url) => {
+                            const next = [...currentSlides];
+                            next[idx] = { ...slide, video: url };
+                            updateTargetSlides(next);
+                            setToastMsg(`Updated video on Slide #${idx + 1}`);
+                          }}
+                          mediaType="video"
+                        />
+
+                        <div className="space-y-1">
+                          <label className="block text-[11px] font-semibold text-gray-700">Slide Headline</label>
+                          <input
+                            type="text"
+                            value={slide.title}
+                            onChange={(e) => {
+                              const next = [...currentSlides];
+                              next[idx] = { ...slide, title: e.target.value };
+                              updateTargetSlides(next);
+                            }}
+                            className="w-full bg-[#f8f9fc] border border-gray-200 rounded-xl px-3 py-1.5 text-xs text-gray-900 focus:bg-white focus:ring-1 focus:ring-brand-blue"
                           />
-
-                          <div className="space-y-1">
-                            <label className="block text-[11px] font-semibold text-gray-700">Slide Title</label>
-                            <input
-                              type="text"
-                              value={slide.title}
-                              onChange={(e) => handleUpdateSlideField(idx, 'title', e.target.value)}
-                              className="w-full bg-[#f8f9fc] border border-gray-200 rounded-xl px-3 py-1.5 text-xs text-gray-900 focus:bg-white focus:ring-1 focus:ring-brand-blue"
-                            />
-                          </div>
-
-                          <div className="space-y-1">
-                            <label className="block text-[11px] font-semibold text-gray-700">Category Tag</label>
-                            <input
-                              type="text"
-                              value={slide.category || slide.categoryTag || ''}
-                              onChange={(e) => handleUpdateSlideField(idx, 'category', e.target.value)}
-                              className="w-full bg-[#f8f9fc] border border-gray-200 rounded-xl px-3 py-1.5 text-xs text-brand-blue font-semibold focus:bg-white focus:ring-1 focus:ring-brand-blue"
-                            />
-                          </div>
-
-                          <div className="space-y-1">
-                            <label className="block text-[11px] font-semibold text-gray-700">Description</label>
-                            <textarea
-                              rows={2}
-                              value={slide.description}
-                              onChange={(e) => handleUpdateSlideField(idx, 'description', e.target.value)}
-                              className="w-full bg-[#f8f9fc] border border-gray-200 rounded-xl px-3 py-1.5 text-xs text-gray-700 focus:bg-white focus:ring-1 focus:ring-brand-blue resize-none font-light"
-                            />
-                          </div>
                         </div>
 
-                        <div className="pt-3 border-t border-gray-100 flex items-center justify-between">
-                          <button
-                            type="button"
-                            onClick={() => handleDeleteVideoSlide(idx)}
-                            className="text-xs text-red-500 hover:text-red-700 font-semibold flex items-center space-x-1"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                            <span>Remove</span>
-                          </button>
-                          <span className="text-[10px] text-gray-400 font-mono">{videoId}</span>
+                        <div className="space-y-1">
+                          <label className="block text-[11px] font-semibold text-gray-700">Highlight Tags (comma-separated)</label>
+                          <input
+                            type="text"
+                            value={(slide.tags || []).join(', ')}
+                            onChange={(e) => {
+                              const next = [...currentSlides];
+                              next[idx] = {
+                                ...slide,
+                                tags: e.target.value.split(',').map((t) => t.trim()).filter(Boolean),
+                              };
+                              updateTargetSlides(next);
+                            }}
+                            className="w-full bg-[#f8f9fc] border border-gray-200 rounded-xl px-3 py-1.5 text-xs text-gray-700 focus:bg-white focus:ring-1 focus:ring-brand-blue"
+                          />
                         </div>
                       </div>
-                    );
-                  })}
+
+                      <div className="pt-3 border-t border-gray-100 flex items-center justify-between">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const next = currentSlides.filter((_, i) => i !== idx);
+                            updateTargetSlides(next);
+                            setToastMsg(`Removed Slide #${idx + 1}`);
+                          }}
+                          className="text-xs text-red-500 hover:text-red-700 font-semibold flex items-center space-x-1 cursor-pointer"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          <span>Remove Slide</span>
+                        </button>
+                        <span className="text-[10px] text-emerald-600 font-semibold">Auto-Looping</span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              )}
+              </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
 
         {/* =========================================================================
             TAB 4: HOME PAGE CONTENT EDITOR
