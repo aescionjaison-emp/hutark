@@ -1,0 +1,38 @@
+{
+  "animations": [
+    {
+      "section": "A3Ultra_One (Hero)",
+      "trigger": "mount",
+      "initial": { "opacity": 0, "translateY": "24px" },
+      "final": { "opacity": 1, "translateY": "0px" },
+      "durationMs": 700,
+      "staggerMs": 100,
+      "easing": "cubic-bezier(0.22, 1, 0.36, 1)",
+      "videoModal": { "trigger": "click .A3Ultra_One-videoBtn", "backdrop": "rgba(0,0,0,0.9)", "closeKeys": ["Escape"] }
+    },
+    {
+      "section": "A3Ultra_Two (Ambient Intro)",
+      "trigger": "whileInView (amount: 0.25, once: false)",
+      "initial": { "opacity": 0, "translateY": "24px" },
+      "final": { "opacity": 1, "translateY": "0px" },
+      "durationMs": 750,
+      "reverseOnScrollUp": true
+    },
+    {
+      "section": "A3Ultra_Three & A3Ultra_Four (Peeking Carousels)",
+      "trigger": "slideChange (arrow click / slide click / touch swipe)",
+      "activeSlide": { "scale": 1, "opacity": 1 },
+      "adjacentSlides": { "scale": 0.8, "opacity": 0.35 },
+      "slideTransition": "opacity 0.45s ease, transform 1s cubic-bezier(0.22, 1, 0.36, 1)",
+      "titleTransition": {
+        "leaving": { "opacity": 0, "translateY": "16px", "durationMs": 320 },
+        "entering": { "opacity": 0, "translateY": "-16px" },
+        "settled": { "opacity": 1, "translateY": "0px", "durationMs": 400 }
+      }
+    },
+    {
+      "section": "Protected Buy Me Section",
+      "isolation": "STRICT_ISOLATED — zero external ScrollTrigger or global CSS overrides"
+    }
+  ]
+}

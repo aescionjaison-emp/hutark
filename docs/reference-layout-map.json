@@ -1,0 +1,59 @@
+{
+  "referenceUrl": "https://www.agibot.com/products/A3Ultra",
+  "viewportMeasured": "1920x1080",
+  "sections": [
+    {
+      "id": "A3Ultra_One",
+      "role": "hero",
+      "height": "100vh (1080px)",
+      "minHeight": "650px",
+      "backgroundColor": "#f0f0f0",
+      "contentWidth": "584px",
+      "contentPosition": { "left": "50%", "top": "43%", "transform": "translateY(-50%)" },
+      "typography": {
+        "title": { "fontSize": "64px", "fontWeight": 600, "lineHeight": "64px", "gradient": "linear-gradient(360deg, rgb(179,154,99) 0%, rgb(219,206,172) 100%)" },
+        "subStrong": { "fontSize": "50px", "fontWeight": 400, "color": "#1a1a1a" },
+        "subSpan": { "fontSize": "30px", "fontWeight": 300, "color": "#000000", "marginTop": "20px" },
+        "actions": { "fontSize": "18px", "color": "#333333", "gap": "80px", "marginTop": "50px" }
+      }
+    },
+    {
+      "id": "A3Ultra_Two",
+      "role": "introduction",
+      "height": "100vh (1080px)",
+      "minHeight": "80vh",
+      "backgroundColor": "#ffffff",
+      "paddingTop": "120px",
+      "typography": {
+        "h2": { "fontSize": "40px", "fontWeight": 400, "lineHeight": "56px", "color": "#ffffff" },
+        "p": { "fontSize": "20px", "fontWeight": 400, "letterSpacing": "6px", "color": "#ffffff", "marginTop": "10px" }
+      }
+    },
+    {
+      "id": "A3Ultra_Three",
+      "role": "capability_carousel",
+      "height": "905px",
+      "backgroundColor": "#ffffff",
+      "headerPadding": "100px 4% 40px",
+      "titleTypography": { "fontSize": "36px", "fontWeight": 400, "lineHeight": "50.4px", "color": "#333333" },
+      "slide": { "width": "1200px", "height": "675px", "aspectRatio": "16/9", "borderRadius": "6px" },
+      "overlayGradient": "linear-gradient(to bottom, rgba(255,255,255,0.1) 50%, rgba(0,0,0,1) 100%)"
+    },
+    {
+      "id": "A3Ultra_Four",
+      "role": "application_carousel",
+      "height": "905px",
+      "backgroundColor": "#ffffff",
+      "titleTypography": { "fontSize": "36px", "fontWeight": 400, "lineHeight": "50.4px", "color": "#333333" },
+      "slide": { "width": "1200px", "height": "675px", "aspectRatio": "16/9", "borderRadius": "6px" }
+    },
+    {
+      "id": "A3Ultra_Five",
+      "role": "specifications",
+      "backgroundColor": "#ffffff",
+      "paddingBottom": "150px",
+      "titleTypography": { "fontSize": "36px", "fontWeight": 400, "color": "#333333" },
+      "diagramContainer": { "maxWidth": "1400px", "width": "88%", "marginTop": "30px" }
+    }
+  ]
+}

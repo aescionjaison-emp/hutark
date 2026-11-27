@@ -6,12 +6,10 @@ import { getProductData } from '../../services/productStore';
 
 import ProductCinematicHero from './ProductCinematicHero';
 import ProductIntroSection from './ProductIntroSection';
-import ProductVideoExperience from './ProductVideoExperience';
-import ProductRobotPurchaseSection from './ProductRobotPurchaseSection'; // PROTECTED BUY ME COMPONENT
 import ProductFeatureSlider from './ProductFeatureSlider';
 import ProductScenariosCarousel from './ProductScenariosCarousel';
 import ProductSpecsMatrix from './ProductSpecsMatrix';
-import ProductDocumentation from './ProductDocumentation';
+import ProductRobotPurchaseSection from './ProductRobotPurchaseSection'; // PROTECTED BUY ME COMPONENT
 import ProductEnquiryForm from './ProductEnquiryForm';
 
 interface ProductDetailViewProps {
@@ -48,11 +46,9 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
     }
   };
 
-  const primaryColor = currentProduct.customStyles?.primaryColor || '#0062c5';
-
   return (
     <div className="bg-white text-[#333333] min-h-screen">
-      {/* SECTION 01: CINEMATIC HERO (.A3Ultra_One) */}
+      {/* SECTION 01: CINEMATIC HERO (.A3Ultra_One — includes Watch Video modal & Specs/Manual trigger) */}
       <ProductCinematicHero
         product={currentProduct}
         onSpecsClick={() => scrollToSection('specifications-section')}
@@ -61,29 +57,19 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
       {/* SECTION 02: FULL-BLEED AMBIENT INTRO (.A3Ultra_Two) */}
       <ProductIntroSection product={currentProduct} />
 
-      {/* SECTION 03: PRODUCT YOUTUBE VIDEO EXPERIENCE */}
-      <ProductVideoExperience
-        productName={currentProduct.name}
-        videos={currentProduct.youtubeVideos}
-        primaryColor={primaryColor}
-      />
-
-      {/* SECTION 04: PROTECTED BUY ME SECTION (STRICTLY UNCHANGED, IMMEDIATELY AFTER VIDEO) */}
-      <ProductRobotPurchaseSection product={currentProduct} />
-
-      {/* SECTION 05: CENTERED PEEKING FEATURE CAROUSEL (.A3Ultra_Three) */}
+      {/* SECTION 03: CENTERED PEEKING CAPABILITY CAROUSEL (.A3Ultra_Three) */}
       <ProductFeatureSlider product={currentProduct} />
 
-      {/* SECTION 06: CENTERED PEEKING APPLICATION SCENARIOS (.A3Ultra_Four) */}
+      {/* SECTION 04: CENTERED PEEKING APPLICATION SCENARIOS (.A3Ultra_Four) */}
       <ProductScenariosCarousel product={currentProduct} />
 
-      {/* SECTION 07: PRODUCT SPECIFICATIONS (.A3Ultra_Five) */}
+      {/* SECTION 05: PRODUCT SPECIFICATIONS (.A3Ultra_Five) */}
       <ProductSpecsMatrix product={currentProduct} />
 
-      {/* SECTION 08: PRODUCT DOCUMENTATION */}
-      <ProductDocumentation product={currentProduct} />
+      {/* SECTION 06: PROTECTED BUY ME SECTION (STRICTLY UNCHANGED, IMMEDIATELY BEFORE CONTACT US) */}
+      <ProductRobotPurchaseSection product={currentProduct} />
 
-      {/* SECTION 09: CONTACT US & PRODUCT ENQUIRY */}
+      {/* SECTION 07: CONTACT US & PRODUCT ENQUIRY (IMMEDIATELY AFTER BUY ME) */}
       <ProductEnquiryForm product={currentProduct} />
     </div>
   );

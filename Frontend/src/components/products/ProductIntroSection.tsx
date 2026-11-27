@@ -10,7 +10,11 @@ interface ProductIntroSectionProps {
 }
 
 export default function ProductIntroSection({ product }: ProductIntroSectionProps) {
-  const bgImg = product.cinematicImg || '/uploads/images/20261029/492548ce8722aa332e87aa47ce1019e5.png';
+  const rawCinematic = product.cinematicImg;
+  const bgImg =
+    rawCinematic && !rawCinematic.includes('492548ce8722aa332e87aa47ce1019e5')
+      ? rawCinematic
+      : product.heroImg;
   const heading = product.cinematicHeading || product.name;
   const subheading = product.cinematicSubheading || product.tagline || 'Your 24/7 Productivity Partner';
 

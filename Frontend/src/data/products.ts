@@ -520,7 +520,7 @@ export const PRODUCTS: Record<string, ProductData> = {
     cinematicHeading: "Full Scenario Embodied Intelligence",
     cinematicSubheading: "PHYSICAL AI BREAKTHROUGH",
     cinematicDesc: "Equipped with end-to-end foundation physical AI policy networks, navigating dynamic industrial shop floors, unmapped warehouses, and human co-working spaces with continuous multi-sensor real-time coordination.",
-    cinematicImg: "/uploads/images/20261029/492548ce8722aa332e87aa47ce1019e5.png",
+    cinematicImg: "/uploads/images/20251031/afa47f3a6d43c28b95a1534ed8310ad7.png",
     cinematicMetrics: [
       { value: "1000 Hz", label: "Bus Sync Rate" },
       { value: "380 N·m", label: "Peak Joint Torque" },
@@ -546,7 +546,7 @@ export const PRODUCTS: Record<string, ProductData> = {
       { title: "Collaborative Feedback:", text: "Assembly verified: Tolerances strictly within ±0.03 mm." }
     ],
 
-    matchingListImg: "/uploads/images/20261029/62974a39fa9e903d8e47b2cd2befc16e.png",
+    matchingListImg: "/uploads/images/20251031/afa47f3a6d43c28b95a1534ed8310ad7.png",
     matchingListChips: [
       { label: "Head Vision", value: "RGB-D + LiDAR" },
       { label: "Dual Arms", value: "7-DoF Active" },
@@ -595,7 +595,7 @@ export const PRODUCTS: Record<string, ProductData> = {
     cinematicHeading: "Full Scenario Embodied Intelligence",
     cinematicSubheading: "PHYSICAL AI BREAKTHROUGH",
     cinematicDesc: "Powered by end-to-end foundation physical AI policy networks, navigating dynamic industrial shop floors, unmapped warehouses, and human co-working spaces with continuous multi-sensor real-time coordination.",
-    cinematicImg: "/uploads/images/20261029/492548ce8722aa332e87aa47ce1019e5.png",
+    cinematicImg: "/uploads/images/20251031/afa47f3a6d43c28b95a1534ed8310ad7.png",
     cinematicMetrics: [
       { value: "26 DoF", label: "Active Degrees of Freedom" },
       { value: "5.0 kg", label: "Single Arm Rated Payload" },
@@ -624,7 +624,7 @@ export const PRODUCTS: Record<string, ProductData> = {
     ],
 
     // Matching List
-    matchingListImg: "/uploads/images/20261029/62974a39fa9e903d8e47b2cd2befc16e.png",
+    matchingListImg: "/uploads/images/20251031/afa47f3a6d43c28b95a1534ed8310ad7.png",
     matchingListChips: [
       { label: "Head & Vision", value: "RGB-D + 3D LiDAR" },
       { label: "Dual Arms", value: "7-DoF Force-Control" },
@@ -753,7 +753,7 @@ export const PRODUCTS: Record<string, ProductData> = {
     ],
     gallery: [
       "/uploads/images/20261103/015bf1f9da95cc783f5e1e7363b3882c.png",
-      "/uploads/images/20261029/492548ce8722aa332e87aa47ce1019e5.png"
+      "/uploads/images/20251031/afa47f3a6d43c28b95a1534ed8310ad7.png"
     ],
     youtubeVideos: [
       {
@@ -1231,8 +1231,8 @@ export const PRODUCTS: Record<string, ProductData> = {
     heroSubtitle: "Enhanced payload and tray delivery capabilities for commercial hospitality and healthcare.",
     heroImg: "/uploads/images/20240911/f3a327b21c97a466b04d58503326cfad.png",
     heroBannerBg: "/uploads/images/20261103/015bf1f9da95cc783f5e1e7363b3882c.png",
-    cinematicImg: "/uploads/images/20261029/492548ce8722aa332e87aa47ce1019e5.png",
-    matchingListImg: "/uploads/images/20261029/62974a39fa9e903d8e47b2cd2befc16e.png",
+    cinematicImg: "/uploads/images/20251031/afa47f3a6d43c28b95a1534ed8310ad7.png",
+    matchingListImg: "/uploads/images/20251031/afa47f3a6d43c28b95a1534ed8310ad7.png",
     overview: "Optimized for continuous food and beverage, linen, and medical specimen transport across complex multistory campuses with autonomous elevator integration.",
     cinematicHeading: "Commercial Multi-Floor Transport Autonomy",
     cinematicSubheading: "HEAVY-DUTY FLEET OPERATIONS",

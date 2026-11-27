@@ -445,23 +445,22 @@ export default function AdminProductEditorDrawer({
               ========================================================================= */}
           {activeTab === 'buyme' && (
             <div className="space-y-6">
-              {/* Header card with toggle */}
-              <div className="bg-[#151922] p-5 rounded-2xl border border-white/10 space-y-4">
+              <div className="bg-[#151922] p-5 rounded-2xl border border-amber-500/30 space-y-4">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div>
                     <h4 className="text-sm font-bold text-white flex items-center space-x-2">
                       <ShoppingBag className="w-4 h-4 text-amber-400" />
-                      <span>Full-Screen Cinematic &quot;BUY ME&quot; Section</span>
+                      <span>Protected &quot;BUY ME&quot; Purchase Section</span>
                     </h4>
                     <p className="text-xs text-gray-400 mt-1">
-                      Customize the edge-to-edge showroom stage, floating capsule button, positions, size, and background per product.
+                      Visually locked protected component positioned immediately before Contact Us. Robot hand, golden palm energy animation, background, and button styling are protected.
                     </p>
                   </div>
 
                   {/* Section Enable Toggle */}
                   <label className="flex items-center space-x-3 cursor-pointer select-none bg-black/40 px-3.5 py-2 rounded-xl border border-white/10 hover:border-white/20 transition-all">
                     <span className="text-xs font-semibold text-gray-300">
-                      {formData.buySectionEnabled !== false ? 'Section Enabled' : 'Section Disabled'}
+                      {formData.buySectionEnabled !== false ? 'Purchase Section Enabled' : 'Section Disabled'}
                     </span>
                     <input
                       type="checkbox"
@@ -472,330 +471,18 @@ export default function AdminProductEditorDrawer({
                   </label>
                 </div>
 
-                {/* Interactive Live Preview Box */}
-                <div className="space-y-2 pt-2 border-t border-white/10">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-gray-400 font-medium flex items-center space-x-1.5">
-                      <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                      <span>Real-Time Visual Positioning Preview (16:9)</span>
-                    </span>
-                    <span className="font-mono text-[11px] text-cyan-300 bg-cyan-950/50 px-2 py-0.5 rounded border border-cyan-800/40">
-                      X: {(formData.buyButtonPosX ?? 40.0).toFixed(1)}% | Y: {(formData.buyButtonPosY ?? 80.2).toFixed(1)}% | Scale: {(formData.buyButtonScale ?? 1.0).toFixed(2)}x
-                    </span>
-                  </div>
-
-                  <div className="relative w-full aspect-[16/9] rounded-2xl overflow-hidden border-2 border-white/20 bg-[#e8e8ea] shadow-inner select-none">
-                    {/* Background image in preview */}
-                    <div 
-                      className="absolute inset-0 w-full h-full overflow-hidden"
-                      style={{
-                        transform: `scale(${formData.buySectionBgZoom ?? 1.0})`,
-                        transformOrigin: `50% ${formData.buySectionBgPosY ?? 50}%`,
-                        transition: 'transform 0.15s ease',
-                      }}
-                    >
-                      <Image
-                        src={formData.buySectionImage || '/images/products/robot_buy_me_palm_rings_1920x1080.jpg'}
-                        alt="Robot Preview"
-                        fill
-                        className="object-cover object-center pointer-events-none"
-                        style={{ objectPosition: `50% ${formData.buySectionBgPosY ?? 50}%` }}
-                      />
-                    </div>
-
-                    {/* Preview Floating Button */}
-                    {formData.buyButtonVisible !== false && (
-                      <div
-                        className="absolute pointer-events-none"
-                        style={{
-                          left: `${formData.buyButtonPosX ?? 40.0}%`,
-                          top: `${formData.buyButtonPosY ?? 80.2}%`,
-                          transform: `translate(-50%, -50%) scale(${formData.buyButtonScale ?? 1.0})`,
-                          width: '14.5%',
-                          minWidth: '70px',
-                          maxWidth: '180px',
-                          transition: 'left 0.1s ease, top 0.1s ease, transform 0.1s ease',
-                        }}
-                      >
-                        <div className="w-full aspect-[3.25/1] rounded-full border border-[#dfc39a] bg-gradient-to-b from-[#1b1d26] via-[#0d0e14] to-[#06070a] shadow-lg flex items-center justify-center px-2">
-                          <span className="text-[8px] sm:text-[10px] md:text-xs font-black text-white tracking-widest uppercase truncate drop-shadow">
-                            {formData.buyButtonText || 'BUY ME'}
-                          </span>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Crosshair guidelines on hover/view */}
-                    <div className="absolute inset-0 border border-white/10 pointer-events-none flex items-center justify-center">
-                      <div className="absolute top-2 left-2 text-[9px] font-mono text-gray-400 bg-black/60 px-2 py-0.5 rounded">
-                        1920 x 1080 Coords
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* CARD 1: FLOATING "BUY ME" BUTTON CUSTOMIZATION */}
-              <div className="bg-[#151922] p-5 rounded-2xl border border-white/10 space-y-4">
-                <div className="flex items-center justify-between">
-                  <h4 className="text-sm font-bold text-white flex items-center space-x-2">
-                    <Sliders className="w-4 h-4 text-cyan-400" />
-                    <span>Floating Button Positions &amp; Geometry</span>
-                  </h4>
-                  <label className="flex items-center space-x-2 cursor-pointer text-xs text-gray-300">
-                    <input
-                      type="checkbox"
-                      checked={formData.buyButtonVisible !== false}
-                      onChange={(e) => setFormData({ ...formData, buyButtonVisible: e.target.checked })}
-                      className="w-3.5 h-3.5 rounded text-blue-600 focus:ring-0 cursor-pointer"
-                    />
-                    <span>Show Button</span>
-                  </label>
-                </div>
-
-                {/* Button Label Text */}
-                <div>
+                {/* Business Purchase Label */}
+                <div className="pt-3 border-t border-white/10">
                   <label className="block text-xs font-semibold text-gray-300 mb-1.5">
-                    Button Label Text (Uppercase)
+                    Purchase Action Label (Default: BUY ME)
                   </label>
                   <input
                     type="text"
                     value={formData.buyButtonText || ''}
                     onChange={(e) => setFormData({ ...formData, buyButtonText: e.target.value })}
-                    placeholder="BUY ME (Default)"
+                    placeholder="BUY ME"
                     className="w-full bg-[#1b202c] border border-white/15 rounded-xl px-4 py-2 text-xs text-amber-300 font-bold focus:outline-none focus:border-amber-400"
                   />
-                </div>
-
-                {/* Horizontal Position X Slider */}
-                <div className="space-y-1.5">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="font-semibold text-gray-300 flex items-center space-x-1.5">
-                      <Move className="w-3.5 h-3.5 text-cyan-400" />
-                      <span>Horizontal Position X (Left-to-Right %)</span>
-                    </span>
-                    <span className="font-mono text-cyan-300 bg-cyan-950/60 px-2 py-0.5 rounded border border-cyan-800/40 font-bold">
-                      {(formData.buyButtonPosX ?? 40.0).toFixed(1)}%
-                    </span>
-                  </div>
-                  <input
-                    type="range"
-                    min="15.0"
-                    max="85.0"
-                    step="0.1"
-                    value={formData.buyButtonPosX ?? 40.0}
-                    onChange={(e) => setFormData({ ...formData, buyButtonPosX: parseFloat(e.target.value) })}
-                    className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-cyan-400"
-                  />
-                  <div className="flex justify-between text-[10px] text-gray-500 font-mono">
-                    <span>15% (Left Edge)</span>
-                    <span className="text-cyan-400/80 font-bold">40.0% (Palm Center)</span>
-                    <span>85% (Right Edge)</span>
-                  </div>
-                </div>
-
-                {/* Vertical Position Y Slider */}
-                <div className="space-y-1.5">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="font-semibold text-gray-300 flex items-center space-x-1.5">
-                      <Move className="w-3.5 h-3.5 text-cyan-400 rotate-90" />
-                      <span>Vertical Position Y (Top-to-Bottom %)</span>
-                    </span>
-                    <span className="font-mono text-cyan-300 bg-cyan-950/60 px-2 py-0.5 rounded border border-cyan-800/40 font-bold">
-                      {(formData.buyButtonPosY ?? 80.2).toFixed(1)}%
-                    </span>
-                  </div>
-                  <input
-                    type="range"
-                    min="50.0"
-                    max="95.0"
-                    step="0.1"
-                    value={formData.buyButtonPosY ?? 80.2}
-                    onChange={(e) => setFormData({ ...formData, buyButtonPosY: parseFloat(e.target.value) })}
-                    className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-cyan-400"
-                  />
-                  <div className="flex justify-between text-[10px] text-gray-500 font-mono">
-                    <span>50% (Upper Screen)</span>
-                    <span className="text-cyan-400/80 font-bold">80.2% (Directly on Palm)</span>
-                    <span>95% (Bottom)</span>
-                  </div>
-                </div>
-
-                {/* Button Scale / Size Slider */}
-                <div className="space-y-1.5">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="font-semibold text-gray-300 flex items-center space-x-1.5">
-                      <ZoomIn className="w-3.5 h-3.5 text-cyan-400" />
-                      <span>Button Scale / Size Multiplier</span>
-                    </span>
-                    <span className="font-mono text-cyan-300 bg-cyan-950/60 px-2 py-0.5 rounded border border-cyan-800/40 font-bold">
-                      {(formData.buyButtonScale ?? 1.0).toFixed(2)}x
-                    </span>
-                  </div>
-                  <input
-                    type="range"
-                    min="0.60"
-                    max="1.60"
-                    step="0.05"
-                    value={formData.buyButtonScale ?? 1.0}
-                    onChange={(e) => setFormData({ ...formData, buyButtonScale: parseFloat(e.target.value) })}
-                    className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-cyan-400"
-                  />
-                  <div className="flex justify-between text-[10px] text-gray-500 font-mono">
-                    <span>0.60x (Compact)</span>
-                    <span className="text-cyan-400/80 font-bold">1.00x (Standard)</span>
-                    <span>1.60x (Large)</span>
-                  </div>
-                </div>
-
-                {/* Position Presets */}
-                <div className="pt-2 border-t border-white/10 space-y-2">
-                  <span className="text-[11px] font-semibold text-gray-400 block">Quick Alignment Presets:</span>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setFormData({ ...formData, buyButtonPosX: 40.0, buyButtonPosY: 80.2, buyButtonScale: 1.0 })}
-                      className="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-cyan-300 border border-white/10 hover:border-cyan-400/50 transition-all text-left cursor-pointer"
-                    >
-                      <div className="font-bold text-white">On Open Palm</div>
-                      <div className="text-[10px] text-gray-400 font-mono">X: 40.0% | Y: 80.2%</div>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => setFormData({ ...formData, buyButtonPosX: 40.0, buyButtonPosY: 75.0, buyButtonScale: 1.0 })}
-                      className="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-cyan-300 border border-white/10 hover:border-cyan-400/50 transition-all text-left cursor-pointer"
-                    >
-                      <div className="font-bold text-white">Hovering Higher</div>
-                      <div className="text-[10px] text-gray-400 font-mono">X: 40.0% | Y: 75.0%</div>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => setFormData({ ...formData, buyButtonPosX: 50.0, buyButtonPosY: 78.0, buyButtonScale: 1.1 })}
-                      className="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-cyan-300 border border-white/10 hover:border-cyan-400/50 transition-all text-left cursor-pointer"
-                    >
-                      <div className="font-bold text-white">Centered Showcase</div>
-                      <div className="text-[10px] text-gray-400 font-mono">X: 50.0% | Y: 78.0%</div>
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* CARD 2: BACKGROUND IMAGE & FRAMING */}
-              <div className="bg-[#151922] p-5 rounded-2xl border border-white/10 space-y-4">
-                <h4 className="text-sm font-bold text-white flex items-center space-x-2">
-                  <ImageIcon className="w-4 h-4 text-cyan-400" />
-                  <span>Robot Showroom Background Asset &amp; Framing</span>
-                </h4>
-
-                <MediaUploadZone
-                  label="Background Image (Drag & Drop or Browse)"
-                  description="Upload any custom 16:9 full-screen robot or showroom visual"
-                  value={formData.buySectionImage || '/images/products/robot_buy_me_palm_rings_1920x1080.jpg'}
-                  onChange={(url) => setFormData({ ...formData, buySectionImage: url })}
-                  mediaType="image"
-                />
-
-                {/* Preset Background Images */}
-                <div className="space-y-1.5">
-                  <label className="block text-xs font-semibold text-gray-300">Preset Studio Assets:</label>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                    {[
-                      {
-                        name: 'Clean Rings (1080p)',
-                        url: '/images/products/robot_buy_me_palm_rings_1920x1080.jpg',
-                        desc: 'Concentric holographic palm rings',
-                      },
-                      {
-                        name: 'Studio Showroom',
-                        url: '/images/products/robot_buy_me_1920x1080.jpg',
-                        desc: 'High-key minimalist white studio',
-                      },
-                      {
-                        name: 'Cinematic High-Contrast',
-                        url: '/images/products/robot_buy_me_cinematic.jpg',
-                        desc: 'Rich studio lighting balance',
-                      },
-                    ].map((p, i) => (
-                      <button
-                        key={i}
-                        type="button"
-                        onClick={() => setFormData({ ...formData, buySectionImage: p.url })}
-                        className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
-                          formData.buySectionImage === p.url
-                            ? 'bg-blue-950/80 border-cyan-400 text-cyan-300'
-                            : 'bg-white/5 border-white/10 text-gray-300 hover:text-white hover:bg-white/10'
-                        }`}
-                      >
-                        <div className="font-bold text-xs truncate">{p.name}</div>
-                        <div className="text-[10px] text-gray-400 truncate">{p.desc}</div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Background Zoom Scale */}
-                <div className="space-y-1.5">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="font-semibold text-gray-300">Background Image Zoom Factor</span>
-                    <span className="font-mono text-cyan-300 bg-cyan-950/60 px-2 py-0.5 rounded border border-cyan-800/40 font-bold">
-                      {(formData.buySectionBgZoom ?? 1.0).toFixed(2)}x
-                    </span>
-                  </div>
-                  <input
-                    type="range"
-                    min="1.00"
-                    max="1.50"
-                    step="0.02"
-                    value={formData.buySectionBgZoom ?? 1.0}
-                    onChange={(e) => setFormData({ ...formData, buySectionBgZoom: parseFloat(e.target.value) })}
-                    className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-cyan-400"
-                  />
-                </div>
-
-                {/* Background Vertical Position */}
-                <div className="space-y-1.5">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="font-semibold text-gray-300">Background Vertical Alignment</span>
-                    <span className="font-mono text-cyan-300 bg-cyan-950/60 px-2 py-0.5 rounded border border-cyan-800/40 font-bold">
-                      {formData.buySectionBgPosY ?? 50}%
-                    </span>
-                  </div>
-                  <input
-                    type="range"
-                    min="0"
-                    max="100"
-                    step="1"
-                    value={formData.buySectionBgPosY ?? 50}
-                    onChange={(e) => setFormData({ ...formData, buySectionBgPosY: parseInt(e.target.value, 10) })}
-                    className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-cyan-400"
-                  />
-                </div>
-
-                {/* Reset to Factory Defaults */}
-                <div className="pt-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setFormData({
-                        ...formData,
-                        buySectionEnabled: true,
-                        buyButtonVisible: true,
-                        buyButtonText: 'BUY ME',
-                        buyButtonPosX: 40.0,
-                        buyButtonPosY: 80.2,
-                        buyButtonScale: 1.0,
-                        buySectionImage: '/images/products/robot_buy_me_palm_rings_1920x1080.jpg',
-                        buySectionBgZoom: 1.0,
-                        buySectionBgPosY: 50,
-                      });
-                    }}
-                    className="px-3 py-2 bg-white/5 hover:bg-white/10 text-xs font-semibold text-gray-400 hover:text-white rounded-xl border border-white/10 transition-all flex items-center space-x-1.5 cursor-pointer"
-                  >
-                    <RotateCcw className="w-3.5 h-3.5" />
-                    <span>Reset Buy Section to Factory Defaults</span>
-                  </button>
                 </div>
               </div>
             </div>
@@ -869,31 +556,6 @@ export default function AdminProductEditorDrawer({
                   mediaType="image"
                 />
 
-                {/* 7. Full-Screen Cinematic BUY ME Robot Section */}
-                <div className="pt-4 border-t border-white/10 space-y-3">
-                  <span className="text-xs font-bold text-cyan-400 uppercase tracking-wider block">
-                    7. Full-Screen Cinematic Robot &quot;BUY ME&quot; Section
-                  </span>
-                  <MediaUploadZone
-                    label="Buy Me Robot Image (buySectionImage)"
-                    description="Cinematic full-screen robot with extended palm (defaults to official reference)"
-                    value={formData.buySectionImage || ''}
-                    onChange={(url) => setFormData({ ...formData, buySectionImage: url })}
-                    mediaType="image"
-                  />
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-300 mb-1">
-                      Floating Capsule Button Label (buyButtonText)
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.buyButtonText || ''}
-                      onChange={(e) => setFormData({ ...formData, buyButtonText: e.target.value })}
-                      placeholder="BUY ME (default)"
-                      className="w-full bg-[#1b202c] border border-white/15 rounded-xl px-4 py-2 text-xs text-cyan-300 font-bold focus:outline-none focus:border-cyan-400"
-                    />
-                  </div>
-                </div>
               </div>
 
               {/* QUICK PRESET SELECTOR CAROUSEL */}

@@ -1,0 +1,8 @@
+{
+  "breakpoints": {
+    "1920x1080": { "heroHeight": "1080px", "titleFontSize": "64px", "conLeft": "50%", "conTop": "43%", "slideOverlayPosition": "absolute" },
+    "1440x900": { "heroHeight": "900px", "titleFontSize": "42.24px", "conLeft": "50%", "conTop": "43%", "slideOverlayPosition": "absolute" },
+    "768x1024": { "heroHeight": "1024px", "titleFontSize": "42.24px", "conLeft": "50%", "conTop": "43%", "slideOverlayPosition": "absolute" },
+    "390x844": { "heroHeight": "auto (min 650px)", "titleFontSize": "33.28px", "conLeft": "0px", "conPaddingLeft": "8%", "slideOverlayPosition": "relative" }
+  }
+}
