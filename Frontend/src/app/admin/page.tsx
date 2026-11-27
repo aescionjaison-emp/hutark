@@ -1905,9 +1905,15 @@ export default function AdminDashboardPage() {
             },
           ];
 
+          const notifySaved = (msg: string) => {
+            setCustomizedList((prev) => ({ ...prev, [selectedVideoRobotId]: true }));
+            setSaveNotice(msg);
+            setTimeout(() => setSaveNotice(null), 3000);
+          };
+
           const updateTargetSlides = (nextSlides: typeof currentSlides) => {
             saveProductData({ ...targetProd, featureSlides: nextSlides });
-            refreshProducts();
+            setCustomizedList((prev) => ({ ...prev, [selectedVideoRobotId]: true }));
           };
 
           return (
@@ -1956,8 +1962,7 @@ export default function AdminDashboardPage() {
                   value={targetProd.cinematicVideo || '/static/index/en/video/index2/index2_One-v1.mp4'}
                   onChange={(url) => {
                     saveProductData({ ...targetProd, cinematicVideo: url });
-                    refreshProducts();
-                    setToastMsg(`Updated Section 2 looping video for ${targetProd.name}`);
+                    notifySaved(`Updated Section 2 looping video for ${targetProd.name}`);
                   }}
                   mediaType="video"
                   allowUrlToggle={true}
@@ -1984,7 +1989,7 @@ export default function AdminDashboardPage() {
                         },
                       ];
                       updateTargetSlides(next);
-                      setToastMsg(`Added new capability video slide to ${targetProd.name}`);
+                      notifySaved(`Added new capability video slide to ${targetProd.name}`);
                     }}
                     className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-3 py-1.5 rounded-xl text-xs transition-colors border border-gray-200 flex items-center space-x-1 cursor-pointer"
                   >
@@ -2010,7 +2015,7 @@ export default function AdminDashboardPage() {
                       },
                     ];
                     updateTargetSlides(next);
-                    setToastMsg(`Added new looping video slide to ${targetProd.name}`);
+                    notifySaved(`Added new looping video slide to ${targetProd.name}`);
                   }}
                   mediaType="video"
                   allowUrlToggle={true}
@@ -2039,7 +2044,7 @@ export default function AdminDashboardPage() {
                             const next = [...currentSlides];
                             next[idx] = { ...slide, video: url };
                             updateTargetSlides(next);
-                            setToastMsg(`Updated video on Slide #${idx + 1}`);
+                            notifySaved(`Updated video on Slide #${idx + 1}`);
                           }}
                           mediaType="video"
                         />
@@ -2082,7 +2087,7 @@ export default function AdminDashboardPage() {
                           onClick={() => {
                             const next = currentSlides.filter((_, i) => i !== idx);
                             updateTargetSlides(next);
-                            setToastMsg(`Removed Slide #${idx + 1}`);
+                            notifySaved(`Removed Slide #${idx + 1}`);
                           }}
                           className="text-xs text-red-500 hover:text-red-700 font-semibold flex items-center space-x-1 cursor-pointer"
                         >
