@@ -15,7 +15,7 @@ export default function ProductIntroSection({ product }: ProductIntroSectionProp
     rawCinematic && !rawCinematic.includes('492548ce8722aa332e87aa47ce1019e5')
       ? rawCinematic
       : product.heroImg;
-  const introVideo = product.cinematicVideo;
+  const introVideo = product.cinematicVideo || '/static/index/en/video/index2/index2_One-v1.mp4';
   const heading = product.cinematicHeading || product.name;
   const subheading = product.cinematicSubheading || product.tagline || 'Your 24/7 Productivity Partner';
 

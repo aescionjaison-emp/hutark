@@ -31,7 +31,7 @@ export default function ProductFeatureSlider({ product }: ProductFeatureSliderPr
     const slides: FeatureVideoSlide[] = [
       {
         title: product.cinematicHeading || '24/7 Autonomous Operation · Your Reliable Around-the-Clock Partner',
-        video: product.cinematicVideo,
+        video: product.cinematicVideo || '/static/index/en/video/index2/index2_One-v1.mp4',
         image: fallbackA,
         tags: [
           '360° All-Domain Perception',
@@ -42,6 +42,7 @@ export default function ProductFeatureSlider({ product }: ProductFeatureSliderPr
       },
       {
         title: product.manipulationHeading || 'Versatile Task Execution · A Capable Autonomous Partner',
+        video: '/static/index/en/video/index2/index2_One-v2.mp4',
         image: sanitizeImg(product.manipulationImg, fallbackB),
         tags:
           product.manipulationFeatures && product.manipulationFeatures.length > 0
@@ -55,6 +56,7 @@ export default function ProductFeatureSlider({ product }: ProductFeatureSliderPr
       },
       {
         title: product.interactionHeading || 'Comprehensive Safety · A Trusted, Gentle Companion',
+        video: '/static/index/en/video/index2/index2_One-v3.mp4',
         image: sanitizeImg(product.interactionImg, fallbackC),
         tags: [
           'Four-Layer Safety Protection',
@@ -65,9 +67,15 @@ export default function ProductFeatureSlider({ product }: ProductFeatureSliderPr
     ];
 
     if (product.hardwareModules && product.hardwareModules.length > 0) {
-      product.hardwareModules.slice(0, 3).forEach((mod) => {
+      const loopVideos = [
+        '/static/index/en/video/index2/index2_One-v1.mp4',
+        '/static/index/en/video/index2/index2_One-v2.mp4',
+        '/static/index/en/video/index2/index2_One-v3.mp4',
+      ];
+      product.hardwareModules.slice(0, 3).forEach((mod, i) => {
         slides.push({
           title: mod.title,
+          video: loopVideos[i % loopVideos.length],
           image: mod.img,
           tags: [mod.subtitle, `${product.name} Engineering Architecture`],
         });
