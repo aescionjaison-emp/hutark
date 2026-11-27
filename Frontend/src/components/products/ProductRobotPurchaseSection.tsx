@@ -204,19 +204,19 @@ export default function ProductRobotPurchaseSection({
                   }}
                   className="relative w-full flex items-center justify-center"
                 >
-                  {/* Holographic Warm-White Illuminated Ring / Halo beneath capsule */}
+                  {/* Subtle Frosted Glass Halo beneath capsule */}
                   <div 
-                    className={`absolute -bottom-3 left-1/2 -translate-x-1/2 w-[88%] h-4 rounded-[100%] bg-gradient-to-r from-transparent via-[#fff1dc] to-transparent blur-[3px] pointer-events-none transition-all duration-300 ${
-                      isHovered ? 'opacity-100 scale-110' : 'opacity-85 animate-pulse'
+                    className={`absolute -bottom-3 left-1/2 -translate-x-1/2 w-[86%] h-4 rounded-[100%] bg-gradient-to-r from-transparent via-white/75 to-transparent blur-[5px] pointer-events-none transition-all duration-300 ${
+                      isHovered ? 'opacity-95 scale-110' : 'opacity-65 animate-pulse'
                     }`}
                     style={{
                       boxShadow: isHovered 
-                        ? '0 0 30px rgba(255, 230, 180, 0.95), 0 0 50px rgba(255, 255, 255, 0.8)' 
-                        : '0 0 18px rgba(255, 220, 175, 0.65)'
+                        ? '0 0 28px rgba(255, 255, 255, 0.75), 0 0 46px rgba(186, 220, 255, 0.45)' 
+                        : '0 0 16px rgba(255, 255, 255, 0.4)'
                     }}
                   />
 
-                  {/* Real High-Gloss Champagne-Gold Rimmed Capsule Button */}
+                  {/* iOS Liquid Glass Capsule Button */}
                   <button
                     type="button"
                     onClick={handleButtonClick}
@@ -225,27 +225,34 @@ export default function ProductRobotPurchaseSection({
                     onFocus={() => setIsHovered(true)}
                     onBlur={() => setIsHovered(false)}
                     aria-label={`Buy ${product.name} Now`}
-                    className="group relative w-full aspect-[3.25/1] rounded-full border-2 border-[#dfc39a] hover:border-[#ffe8c5] text-white font-black tracking-[0.18em] uppercase flex items-center justify-center shadow-2xl transition-all duration-300 active:scale-95 cursor-pointer overflow-hidden focus:outline-none focus:ring-4 focus:ring-[#dfc39a]/50"
+                    className="group relative w-full aspect-[3.25/1] rounded-full border border-white/60 hover:border-white/85 text-white font-semibold tracking-[0.2em] uppercase flex items-center justify-center transition-all duration-300 active:scale-[0.97] cursor-pointer overflow-hidden focus:outline-none focus:ring-4 focus:ring-white/40"
                     style={{
-                      background: 'linear-gradient(180deg, #1b1d26 0%, #0d0e14 55%, #06070a 100%)',
+                      background: isHovered
+                        ? 'linear-gradient(165deg, rgba(255, 255, 255, 0.42) 0%, rgba(226, 238, 255, 0.2) 42%, rgba(16, 22, 36, 0.34) 100%)'
+                        : 'linear-gradient(165deg, rgba(255, 255, 255, 0.32) 0%, rgba(220, 234, 255, 0.14) 42%, rgba(14, 18, 28, 0.36) 100%)',
+                      backdropFilter: 'blur(22px) saturate(185%)',
+                      WebkitBackdropFilter: 'blur(22px) saturate(185%)',
                       boxShadow: isHovered
-                        ? '0 16px 38px -6px rgba(0, 0, 0, 0.9), 0 0 40px rgba(255, 230, 180, 0.8), inset 0 1px 2px rgba(255, 255, 255, 0.5)'
-                        : '0 10px 28px -5px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 220, 175, 0.45), inset 0 1px 2px rgba(255, 255, 255, 0.35)',
+                        ? '0 18px 42px -8px rgba(0, 0, 0, 0.42), 0 0 32px rgba(255, 255, 255, 0.42), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.9), inset 0 -1.5px 3px rgba(255, 255, 255, 0.34), inset 1px 0 2px rgba(255, 255, 255, 0.35), inset -1px 0 2px rgba(255, 255, 255, 0.35)'
+                        : '0 12px 32px -6px rgba(0, 0, 0, 0.34), 0 0 18px rgba(255, 255, 255, 0.24), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.78), inset 0 -1.5px 2.5px rgba(255, 255, 255, 0.24), inset 1px 0 2px rgba(255, 255, 255, 0.25), inset -1px 0 2px rgba(255, 255, 255, 0.25)',
                     }}
                   >
-                    {/* Top-half Glass Highlight Gradient Reflection */}
-                    <div className="absolute top-0 inset-x-0 h-1/2 bg-gradient-to-b from-white/30 via-white/10 to-transparent rounded-t-full pointer-events-none" />
+                    {/* Top Specular Glass Meniscus Reflection */}
+                    <div className="absolute top-[2px] inset-x-[4px] h-[46%] bg-gradient-to-b from-white/50 via-white/15 to-transparent rounded-t-full pointer-events-none" />
 
-                    {/* Inner Metallic Border Glow */}
-                    <div className="absolute inset-[1px] rounded-full border border-white/15 pointer-events-none" />
+                    {/* Inner Crisp Liquid-Glass Rim */}
+                    <div className="absolute inset-[1px] rounded-full border border-white/25 pointer-events-none" />
 
-                    {/* Button Typography: White uppercase "BUY ME" or custom name */}
-                    <span className="relative z-10 text-xs sm:text-sm md:text-base font-extrabold text-white drop-shadow-md tracking-[0.18em] transition-transform duration-200 group-hover:scale-105 flex items-center justify-center space-x-1.5 px-3">
+                    {/* Subtle Bottom Caustic Light Edge */}
+                    <div className="absolute bottom-[2px] inset-x-5 h-[1px] bg-gradient-to-r from-transparent via-white/75 to-transparent pointer-events-none" />
+
+                    {/* Button Typography: Crisp White "BUY ME" with soft contrast shadow */}
+                    <span className="relative z-10 text-xs sm:text-sm md:text-base font-bold text-white drop-shadow-[0_1px_8px_rgba(0,0,0,0.5)] tracking-[0.2em] transition-transform duration-200 group-hover:scale-105 flex items-center justify-center space-x-1.5 px-3">
                       <span>{buttonText}</span>
                     </span>
 
-                    {/* Hover Sheen Sweep Animation */}
-                    <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/30 to-transparent pointer-events-none" />
+                    {/* Hover Glass Sheen Sweep Animation */}
+                    <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/40 to-transparent pointer-events-none" />
                   </button>
                 </motion.div>
               </div>
