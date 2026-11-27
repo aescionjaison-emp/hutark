@@ -1,14 +1,8 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
-import { ProductData } from '../../types';
-
-interface FeatureSlide {
-  title: string;
-  image: string;
-  tags: string[];
-}
+import { ProductData, FeatureVideoSlide } from '../../types';
 
 interface ProductFeatureSliderProps {
   product: ProductData;
@@ -23,14 +17,21 @@ export default function ProductFeatureSlider({ product }: ProductFeatureSliderPr
     return url;
   };
 
-  const getProductSlides = (): FeatureSlide[] => {
-    const fallbackA = product.cinematicImg || '/uploads/images/products/a3_cinematic_dark.jpg';
+  const getProductSlides = (): FeatureVideoSlide[] => {
+    if (product.featureSlides && product.featureSlides.length > 0) {
+      return product.featureSlides;
+    }
+
+    const fallbackA = product.cinematicImg && !product.cinematicImg.includes('492548ce8722aa332e87aa47ce1019e5')
+      ? product.cinematicImg
+      : product.heroImg;
     const fallbackB = product.hardwareModules?.[0]?.img || '/uploads/images/20261029/55303dc4864d9d5c35f52263a4dd2e46.jpg';
     const fallbackC = product.applicationScenarios?.[0]?.img || '/uploads/images/20261029/763c5b4b30767904e5cddda22e083597.png';
 
-    const slides: FeatureSlide[] = [
+    const slides: FeatureVideoSlide[] = [
       {
         title: product.cinematicHeading || '24/7 Autonomous Operation · Your Reliable Around-the-Clock Partner',
+        video: product.cinematicVideo,
         image: fallbackA,
         tags: [
           '360° All-Domain Perception',
@@ -81,6 +82,21 @@ export default function ProductFeatureSlider({ product }: ProductFeatureSliderPr
   const [titlePhase, setTitlePhase] = useState<'idle' | 'leaving' | 'entering'>('idle');
   const [displayedTitle, setDisplayedTitle] = useState(slides[0]?.title || '');
   const touchStartX = useRef<number | null>(null);
+  const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
+
+  // Play active slide video in loop, pause inactive slides (Reference: playActiveVideo)
+  useEffect(() => {
+    videoRefs.current.forEach((vid, idx) => {
+      if (!vid) return;
+      if (idx === currentIndex) {
+        vid.currentTime = 0;
+        vid.play().catch(() => {});
+      } else {
+        vid.pause();
+        vid.currentTime = 0;
+      }
+    });
+  }, [currentIndex, slides.length]);
 
   const goToSlide = (nextIdx: number) => {
     if (nextIdx === currentIndex || nextIdx < 0 || nextIdx >= slides.length) return;
@@ -150,7 +166,6 @@ export default function ProductFeatureSlider({ product }: ProductFeatureSliderPr
           <div className="relative w-[86%] sm:w-[74%] lg:w-[62.5%] max-w-[1200px] aspect-video">
             {slides.map((slide, idx) => {
               const offset = idx - currentIndex;
-              // Wrap around for seamless peeking feel
               let normalizedOffset = offset;
               if (offset > slides.length / 2) normalizedOffset -= slides.length;
               if (offset < -slides.length / 2) normalizedOffset += slides.length;
@@ -175,13 +190,29 @@ export default function ProductFeatureSlider({ product }: ProductFeatureSliderPr
                 >
                   {/* 16:9 Media Frame (Reference: .slide-media) */}
                   <div className="relative w-full h-full rounded-[6px] overflow-hidden bg-[#e8e8e8]">
-                    <Image
-                      src={slide.image}
-                      alt={slide.title}
-                      fill
-                      sizes="(max-width: 768px) 86vw, 1200px"
-                      className="object-cover object-center"
-                    />
+                    {slide.video ? (
+                      <video
+                        ref={(el) => {
+                          videoRefs.current[idx] = el;
+                        }}
+                        src={slide.video}
+                        poster={slide.image}
+                        autoPlay={isActive}
+                        loop
+                        muted
+                        playsInline
+                        preload="auto"
+                        className="block w-full h-full object-cover object-center"
+                      />
+                    ) : (
+                      <Image
+                        src={slide.image || product.heroImg}
+                        alt={slide.title}
+                        fill
+                        sizes="(max-width: 768px) 86vw, 1200px"
+                        className="object-cover object-center"
+                      />
+                    )}
                     {/* Reference Bottom Gradient Overlay */}
                     <div
                       className="hidden md:block absolute inset-0 pointer-events-none z-[1]"
@@ -213,7 +244,7 @@ export default function ProductFeatureSlider({ product }: ProductFeatureSliderPr
             })}
           </div>
 
-          {/* Left / Right Minimal Chevron Arrows (Reference: .A3Ultra_swiper-prev / next) */}
+          {/* Left / Right Minimal Chevron Arrows */}
           <button
             type="button"
             onClick={handlePrev}
@@ -237,7 +268,7 @@ export default function ProductFeatureSlider({ product }: ProductFeatureSliderPr
           </button>
         </div>
 
-        {/* Mobile Tags Below Media (Reference: mobile .slide-overlay relative) */}
+        {/* Mobile Tags Below Media */}
         <div className="md:hidden px-[7%] pt-5">
           <ul className="flex flex-col gap-2.5">
             {slides[currentIndex]?.tags.map((tag, tIdx) => (

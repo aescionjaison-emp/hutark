@@ -51,6 +51,13 @@ export interface MatchingComponentItem {
   value: string;
 }
 
+export interface FeatureVideoSlide {
+  title: string;
+  video?: string;
+  image?: string;
+  tags: string[];
+}
+
 export interface ProductData {
   id: string;
   slug?: string;
@@ -64,6 +71,8 @@ export interface ProductData {
   cinematicSubheading?: string;
   cinematicDesc?: string;
   cinematicImg?: string;
+  cinematicVideo?: string;
+  featureSlides?: FeatureVideoSlide[];
   cinematicMetrics?: { value: string; label: string }[];
   manipulationHeading?: string;
   manipulationSubtitle?: string;

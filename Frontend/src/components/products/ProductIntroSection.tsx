@@ -15,6 +15,7 @@ export default function ProductIntroSection({ product }: ProductIntroSectionProp
     rawCinematic && !rawCinematic.includes('492548ce8722aa332e87aa47ce1019e5')
       ? rawCinematic
       : product.heroImg;
+  const introVideo = product.cinematicVideo;
   const heading = product.cinematicHeading || product.name;
   const subheading = product.cinematicSubheading || product.tagline || 'Your 24/7 Productivity Partner';
 
@@ -23,15 +24,28 @@ export default function ProductIntroSection({ product }: ProductIntroSectionProp
       className="relative w-full min-h-[80vh] lg:min-h-[100vh] bg-white overflow-hidden"
       aria-label={`${product.name} Introduction`}
     >
-      {/* Full-Bleed Atmospheric Robot Visual (Reference: .A3Ultra_Two-video) */}
+      {/* Full-Bleed Atmospheric Looping Video or Fallback Visual (Reference: .A3Ultra_Two-video) */}
       <div className="absolute inset-0 z-0">
-        <Image
-          src={bgImg}
-          alt={heading}
-          fill
-          sizes="100vw"
-          className="object-cover object-center"
-        />
+        {introVideo ? (
+          <video
+            src={introVideo}
+            poster={bgImg}
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+            className="w-full h-full object-cover object-center"
+          />
+        ) : (
+          <Image
+            src={bgImg}
+            alt={heading}
+            fill
+            sizes="100vw"
+            className="object-cover object-center"
+          />
+        )}
         {/* Subtle top gradient so white centered text remains legible over any product visual */}
         <div className="absolute inset-x-0 top-0 h-72 bg-gradient-to-b from-black/55 via-black/25 to-transparent pointer-events-none" />
       </div>

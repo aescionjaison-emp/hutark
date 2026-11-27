@@ -853,7 +853,153 @@ export default function AdminProductEditorDrawer({
               ========================================================================= */}
           {activeTab === 'videos' && (
             <div className="space-y-6">
-              {/* PRIMARY PROMINENT VIDEO DROP / SELECT FROM FOLDER / URL BOX */}
+              {/* SECTION 2: AMBIENT INTRO LOOPING VIDEO */}
+              <div className="bg-[#151922] border border-cyan-500/30 p-6 rounded-2xl space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="text-sm font-bold text-white flex items-center space-x-2">
+                      <Video className="w-4 h-4 text-cyan-400" />
+                      <span>Section 2 — Full-Bleed Ambient Intro Looping Video</span>
+                    </h4>
+                    <p className="text-[11px] text-gray-400 mt-1">
+                      Plays automatically in a continuous muted loop behind the product introduction title.
+                    </p>
+                  </div>
+                </div>
+                <MediaUploadZone
+                  label="Ambient Intro Video (MP4 / WebM / MOV)"
+                  description="Drag & drop video, select from file/folder, or paste video URL"
+                  placeholder="Drop looping intro video here, browse file, or select from folder"
+                  value={formData.cinematicVideo || ''}
+                  onChange={(url) => setFormData({ ...formData, cinematicVideo: url })}
+                  mediaType="video"
+                  allowUrlToggle={true}
+                />
+              </div>
+
+              {/* SECTION 3: CAPABILITY CAROUSEL LOOPING VIDEO SLIDES */}
+              <div className="bg-[#151922] border border-amber-500/30 p-6 rounded-2xl space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="text-sm font-bold text-white flex items-center space-x-2">
+                      <Video className="w-4 h-4 text-amber-400" />
+                      <span>Section 3 — Capability Carousel Looping Videos ({formData.featureSlides?.length || 0})</span>
+                    </h4>
+                    <p className="text-[11px] text-gray-400 mt-1">
+                      Each slide plays its video in a loop when centered in the peeking capability carousel.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const next = [
+                        ...(formData.featureSlides || []),
+                        {
+                          title: `${formData.name} Autonomous Capability`,
+                          video: '',
+                          image: formData.cinematicImg || formData.heroImg,
+                          tags: ['360° Perception', 'Continuous Loop Operation'],
+                        },
+                      ];
+                      setFormData({ ...formData, featureSlides: next });
+                    }}
+                    className="px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-xs font-bold flex items-center space-x-1.5 border border-amber-500/30 cursor-pointer"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>Add Video Slide</span>
+                  </button>
+                </div>
+
+                {/* Quick Drag & Drop to Add New Capability Video Slide */}
+                <MediaUploadZone
+                  label="Quick Add Capability Video Slide"
+                  description="Drag & drop or select a video file/folder to immediately add a new looping slide"
+                  placeholder="Drop video here, browse file, or select from folder to add slide"
+                  value=""
+                  onChange={(url) => {
+                    if (!url) return;
+                    const next = [
+                      ...(formData.featureSlides || []),
+                      {
+                        title: `${formData.name} Capability ${(formData.featureSlides?.length || 0) + 1}`,
+                        video: url,
+                        image: formData.cinematicImg || formData.heroImg,
+                        tags: ['Autonomous Operation', 'Real-Time Control'],
+                      },
+                    ];
+                    setFormData({ ...formData, featureSlides: next });
+                  }}
+                  mediaType="video"
+                  allowUrlToggle={true}
+                />
+
+                {/* Editable List of Capability Video Slides */}
+                <div className="space-y-4">
+                  {(formData.featureSlides || []).map((slide, sIdx) => (
+                    <div key={sIdx} className="bg-black/40 p-4 rounded-xl border border-white/10 space-y-3">
+                      <div className="flex items-center justify-between text-xs font-bold border-b border-white/10 pb-2">
+                        <span className="text-amber-300">CAPABILITY SLIDE {String(sIdx + 1).padStart(2, '0')}</span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const next = (formData.featureSlides || []).filter((_, i) => i !== sIdx);
+                            setFormData({ ...formData, featureSlides: next });
+                          }}
+                          className="text-gray-400 hover:text-red-400 flex items-center space-x-1 cursor-pointer"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          <span>Remove</span>
+                        </button>
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] text-gray-400 mb-1">Slide Headline</label>
+                        <input
+                          type="text"
+                          value={slide.title}
+                          onChange={(e) => {
+                            const next = [...(formData.featureSlides || [])];
+                            next[sIdx] = { ...slide, title: e.target.value };
+                            setFormData({ ...formData, featureSlides: next });
+                          }}
+                          className="w-full bg-[#1b202c] border border-white/15 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400"
+                        />
+                      </div>
+
+                      <MediaUploadZone
+                        label="Looping Video (Drag & Drop or Select File/Folder)"
+                        value={slide.video || ''}
+                        onChange={(url) => {
+                          const next = [...(formData.featureSlides || [])];
+                          next[sIdx] = { ...slide, video: url };
+                          setFormData({ ...formData, featureSlides: next });
+                        }}
+                        mediaType="video"
+                        allowUrlToggle={true}
+                      />
+
+                      <div>
+                        <label className="block text-[11px] text-gray-400 mb-1">Highlight Tags (comma-separated)</label>
+                        <input
+                          type="text"
+                          value={(slide.tags || []).join(', ')}
+                          onChange={(e) => {
+                            const next = [...(formData.featureSlides || [])];
+                            next[sIdx] = {
+                              ...slide,
+                              tags: e.target.value.split(',').map((t) => t.trim()).filter(Boolean),
+                            };
+                            setFormData({ ...formData, featureSlides: next });
+                          }}
+                          className="w-full bg-[#1b202c] border border-white/15 rounded-xl px-3 py-2 text-xs text-gray-200 focus:outline-none focus:border-amber-400"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* HERO WATCH-VIDEO MODAL & YOUTUBE LINKS */}
               <div className="bg-gradient-to-br from-red-950/50 via-[#181a24] to-[#12151e] border-2 border-red-500/50 p-6 rounded-2xl space-y-4 shadow-xl">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2.5 text-white font-bold text-sm">
@@ -861,8 +1007,8 @@ export default function AdminProductEditorDrawer({
                       <Video className="w-4 h-4" />
                     </div>
                     <div>
-                      <h4 className="text-sm font-bold text-white tracking-tight">Add Product Video Demonstration</h4>
-                      <p className="text-[11px] text-gray-400 font-light">Drag & drop video file, select from folder, browse files, or paste YouTube link</p>
+                      <h4 className="text-sm font-bold text-white tracking-tight">Hero &quot;Click to Watch Video&quot; Modal</h4>
+                      <p className="text-[11px] text-gray-400 font-light">Drag &amp; drop video file, select from folder, browse files, or paste YouTube link</p>
                     </div>
                   </div>
                   <span className="text-[10px] font-mono font-bold bg-red-950 text-red-400 border border-red-500/30 px-2.5 py-1 rounded-full uppercase">
