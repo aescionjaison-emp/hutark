@@ -92,7 +92,7 @@ export default function AboutPage() {
     return () => clearInterval(timer);
   }, [milestoneYears, autoCycleReset]);
 
-  // Scroll-driven one-by-one progression through Milestones when scrolling
+  // Scroll-driven one-by-one progression while Milestones is sticky-pinned
   useEffect(() => {
     if (milestoneYears.length <= 1) return;
     let lastScrollIdx = -1;
@@ -100,11 +100,14 @@ export default function AboutPage() {
       const el = document.getElementById('milestones');
       if (!el) return;
       const rect = el.getBoundingClientRect();
-      const vh = window.innerHeight;
-      // Only step while Milestones is actively passing through the viewport
-      if (rect.top < vh * 0.65 && rect.bottom > vh * 0.25) {
-        const totalTravel = rect.height - vh * 0.4;
-        const rawProgress = Math.max(0, Math.min(0.999, (vh * 0.65 - rect.top) / Math.max(1, totalTravel)));
+      const pinTop = 72;
+      const scrollableDistance = el.offsetHeight - (window.innerHeight - pinTop);
+      if (scrollableDistance <= 0) return;
+
+      // Active while the section is pinned (rect.top <= pinTop && rect.bottom >= window.innerHeight)
+      if (rect.top <= pinTop + 40 && rect.bottom >= window.innerHeight - 40) {
+        const scrolled = Math.max(0, pinTop - rect.top);
+        const rawProgress = Math.max(0, Math.min(0.9999, scrolled / scrollableDistance));
         const targetIdx = Math.min(
           milestoneYears.length - 1,
           Math.floor(rawProgress * milestoneYears.length)
@@ -502,23 +505,25 @@ export default function AboutPage() {
       )}
 
       {/* =========================================================================
-          05. MILESTONES (.aboutFour — Interactive Year Star-Axis Timeline)
+          05. MILESTONES (.aboutFour — Sticky-Pinned Scroll-Driven Star-Axis Timeline)
           ========================================================================= */}
       {visibility.milestones && milestoneYears.length > 0 && (
         <section
           id="milestones"
-          className="relative w-full py-24 sm:py-32 overflow-hidden bg-[#060d18]"
+          className="relative w-full bg-[#060d18] overflow-x-clip"
+          style={{ minHeight: `${Math.max(1, milestoneYears.length) * 85}vh` }}
         >
-          {/* Subtle Mountain Horizon Glow */}
-          <div
-            className="absolute inset-x-0 bottom-0 h-56 pointer-events-none opacity-40"
-            style={{
-              background:
-                'linear-gradient(180deg, transparent 0%, rgba(16,38,70,0.45) 70%, #050a14 100%)',
-            }}
-          />
+          <div className="sticky top-[72px] min-h-[calc(100vh-72px)] w-full flex items-center py-12 sm:py-16">
+            {/* Subtle Mountain Horizon Glow */}
+            <div
+              className="absolute inset-x-0 bottom-0 h-56 pointer-events-none opacity-40"
+              style={{
+                background:
+                  'linear-gradient(180deg, transparent 0%, rgba(16,38,70,0.45) 70%, #050a14 100%)',
+              }}
+            />
 
-          <div className="relative z-10 max-w-[1400px] mx-auto px-6 sm:px-12 flex">
+            <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 sm:px-12 flex">
             {/* Left Vertical Rail Label */}
             <div className="hidden md:flex flex-col items-center mr-12 lg:mr-16 pt-1 select-none">
               <div className="w-[1px] h-14 bg-white/15 mb-4" />
@@ -627,6 +632,7 @@ export default function AboutPage() {
                   );
                 })}
               </div>
+            </div>
             </div>
           </div>
         </section>
