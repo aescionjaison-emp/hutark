@@ -71,12 +71,54 @@ export default function AboutPage() {
   }, [visibleMilestones]);
 
   const [selectedYear, setSelectedYear] = useState<string>(milestoneYears[0] || '2026');
+  const [autoCycleReset, setAutoCycleReset] = useState(0);
 
   useEffect(() => {
     if (milestoneYears.length > 0 && !milestoneYears.includes(selectedYear)) {
       setSelectedYear(milestoneYears[0]);
     }
   }, [milestoneYears, selectedYear]);
+
+  // Automatic 5-second one-by-one cycling through milestones
+  useEffect(() => {
+    if (milestoneYears.length <= 1) return;
+    const timer = setInterval(() => {
+      setSelectedYear((prev) => {
+        const idx = milestoneYears.indexOf(prev);
+        const nextIdx = (idx + 1) % milestoneYears.length;
+        return milestoneYears[nextIdx];
+      });
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [milestoneYears, autoCycleReset]);
+
+  // Scroll-driven one-by-one progression through Milestones when scrolling
+  useEffect(() => {
+    if (milestoneYears.length <= 1) return;
+    let lastScrollIdx = -1;
+    const handleMilestoneScroll = () => {
+      const el = document.getElementById('milestones');
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const vh = window.innerHeight;
+      // Only step while Milestones is actively passing through the viewport
+      if (rect.top < vh * 0.65 && rect.bottom > vh * 0.25) {
+        const totalTravel = rect.height - vh * 0.4;
+        const rawProgress = Math.max(0, Math.min(0.999, (vh * 0.65 - rect.top) / Math.max(1, totalTravel)));
+        const targetIdx = Math.min(
+          milestoneYears.length - 1,
+          Math.floor(rawProgress * milestoneYears.length)
+        );
+        if (targetIdx !== lastScrollIdx) {
+          lastScrollIdx = targetIdx;
+          setSelectedYear(milestoneYears[targetIdx]);
+          setAutoCycleReset((c) => c + 1);
+        }
+      }
+    };
+    window.addEventListener('scroll', handleMilestoneScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleMilestoneScroll);
+  }, [milestoneYears]);
 
   const activeYearEvents = useMemo(
     () => visibleMilestones.filter((m) => m.year === selectedYear),
@@ -122,6 +164,7 @@ export default function AboutPage() {
     const idx = milestoneYears.indexOf(selectedYear);
     const nextIdx = (idx + dir + milestoneYears.length) % milestoneYears.length;
     setSelectedYear(milestoneYears[nextIdx]);
+    setAutoCycleReset((c) => c + 1);
   };
 
   return (
@@ -558,7 +601,10 @@ export default function AboutPage() {
                     <button
                       key={yr}
                       type="button"
-                      onClick={() => setSelectedYear(yr)}
+                      onClick={() => {
+                        setSelectedYear(yr);
+                        setAutoCycleReset((c) => c + 1);
+                      }}
                       className="relative flex flex-col items-center -mt-9 group cursor-pointer"
                     >
                       <span

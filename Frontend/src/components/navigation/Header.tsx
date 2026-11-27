@@ -102,16 +102,17 @@ export default function Header() {
             R & D
           </Link>
 
-          {/* About Dropdown Trigger */}
-          <div
-            className="relative py-6 cursor-pointer select-none"
-            onClick={() => setActiveMenu(activeMenu === 'about' ? null : 'about')}
+          {/* About Us Link & Hover Dropdown Trigger */}
+          <Link
+            href="/about"
+            onClick={() => setActiveMenu(null)}
             onMouseEnter={() => setActiveMenu('about')}
+            className="relative py-6 cursor-pointer select-none"
           >
             <span
               className={`flex items-center space-x-1 transition-colors ${
                 isLightHeader ? 'text-gray-800 hover:text-brand-blue' : 'text-white hover:text-blue-400'
-              } ${activeMenu === 'about' ? (isLightHeader ? 'text-brand-blue font-semibold' : 'text-blue-400 font-semibold') : ''}`}
+              } ${activeMenu === 'about' || pathname === '/about' ? (isLightHeader ? 'text-brand-blue font-semibold' : 'text-blue-400 font-semibold') : ''}`}
             >
               <span>About Us</span>
               <ChevronDown
@@ -120,7 +121,7 @@ export default function Header() {
                 }`}
               />
             </span>
-          </div>
+          </Link>
 
           {/* News Link */}
           <Link
@@ -388,19 +389,29 @@ export default function Header() {
             </Link>
 
             <div>
-              <button
-                onClick={() =>
-                  setMobileActiveSubmenu(mobileActiveSubmenu === 'about' ? null : 'about')
-                }
-                className="w-full flex items-center justify-between py-3 text-base font-bold border-b border-gray-100"
-              >
-                <span>About Us</span>
-                <ChevronDown
-                  className={`w-4 h-4 transition-transform ${
-                    mobileActiveSubmenu === 'about' ? 'rotate-180' : ''
-                  }`}
-                />
-              </button>
+              <div className="w-full flex items-center justify-between py-3 text-base font-bold border-b border-gray-100">
+                <Link
+                  href="/about"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex-1 hover:text-brand-blue transition-colors"
+                >
+                  About Us
+                </Link>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setMobileActiveSubmenu(mobileActiveSubmenu === 'about' ? null : 'about')
+                  }
+                  aria-label="Toggle About Us submenu"
+                  className="p-1.5"
+                >
+                  <ChevronDown
+                    className={`w-4 h-4 transition-transform ${
+                      mobileActiveSubmenu === 'about' ? 'rotate-180' : ''
+                    }`}
+                  />
+                </button>
+              </div>
 
               {mobileActiveSubmenu === 'about' && (
                 <div className="pl-4 py-3 space-y-3 bg-gray-50 rounded-xl my-2">
