@@ -71,7 +71,7 @@ export default function ProductEnquiryForm({ product }: ProductEnquiryFormProps)
     >
       <div className="max-w-[900px] w-[90%] mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-[28px] sm:text-[36px] font-normal text-[#1a1a1a]">
+          <h2 className="text-[clamp(22px,1.875vw,36px)] font-normal text-[#1a1a1a] leading-[1.4]">
             Contact Us
           </h2>
           <p className="text-sm text-[#666666] mt-2">

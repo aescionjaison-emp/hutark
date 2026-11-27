@@ -43,7 +43,7 @@ export default function ProductIntroSection({ product }: ProductIntroSectionProp
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false, amount: 0.3 }}
           transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
-          className="text-[28px] sm:text-[36px] lg:text-[40px] font-normal text-white leading-[1.4]"
+          className="text-[clamp(24px,2.083vw,40px)] font-normal text-white leading-[1.4]"
         >
           {heading}
         </motion.h2>
@@ -53,7 +53,7 @@ export default function ProductIntroSection({ product }: ProductIntroSectionProp
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false, amount: 0.3 }}
           transition={{ duration: 0.75, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-2.5 text-[14px] sm:text-[18px] lg:text-[20px] font-normal text-white tracking-[0.28em]"
+          className="mt-2.5 text-[clamp(14px,1.042vw,20px)] font-normal text-white tracking-[0.28em]"
         >
           {subheading}
         </motion.p>

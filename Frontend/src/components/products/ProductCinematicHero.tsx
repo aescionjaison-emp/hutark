@@ -74,7 +74,7 @@ export default function ProductCinematicHero({
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          className="font-semibold leading-none tracking-tight text-[34px] sm:text-[46px] lg:text-[56px] xl:text-[64px]"
+          className="font-semibold leading-none tracking-tight text-[clamp(33px,3.333vw,64px)]"
           style={{
             background: 'linear-gradient(360deg, rgb(179, 154, 99) 0%, rgb(219, 206, 172) 100%)',
             WebkitBackgroundClip: 'text',
@@ -88,12 +88,12 @@ export default function ProductCinematicHero({
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-2.5 leading-none"
+          className="mt-[clamp(8px,0.52vw,10px)] leading-none"
         >
-          <strong className="block font-normal text-[#1a1a1a] text-[22px] sm:text-[32px] lg:text-[42px] xl:text-[50px] leading-[1.08]">
+          <strong className="block font-normal text-[#1a1a1a] text-[clamp(24px,2.604vw,50px)] leading-[1.12]">
             {product.tagline || product.series || 'Full-Size Humanoid Robot'}
           </strong>
-          <span className="block font-light text-black text-[15px] sm:text-[20px] lg:text-[26px] xl:text-[30px] mt-3 sm:mt-5 leading-[1.25]">
+          <span className="block font-light text-black text-[clamp(16px,1.5625vw,30px)] mt-[clamp(12px,1.04vw,20px)] leading-[1.2]">
             {product.heroSubtitle || 'Your 24/7 Productivity Partner'}
           </span>
         </motion.div>
@@ -103,15 +103,15 @@ export default function ProductCinematicHero({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-6 sm:mt-12 flex flex-wrap items-center gap-6 sm:gap-14 lg:gap-20"
+          className="mt-[clamp(24px,2.6vw,50px)] flex flex-wrap items-center gap-[clamp(24px,4.16vw,80px)]"
         >
           <button
             type="button"
             onClick={handleVideoTrigger}
-            className="inline-flex items-center text-[15px] sm:text-[18px] font-normal text-[#333333] hover:opacity-75 transition-opacity cursor-pointer"
+            className="inline-flex items-center text-[clamp(14px,0.9375vw,18px)] leading-[1.4] font-normal text-[#333333] hover:opacity-75 transition-opacity cursor-pointer"
           >
             <span>Click to Watch Video</span>
-            <span className="ml-2.5 w-5 h-5 sm:w-[22px] sm:h-[22px] rounded-full border border-[#333333] flex items-center justify-center">
+            <span className="ml-2.5 w-[20px] h-[20px] sm:w-[22px] sm:h-[22px] rounded-full border border-[#333333] flex items-center justify-center">
               <Play className="w-2.5 h-2.5 fill-[#333333] text-[#333333] ml-0.5" />
             </span>
           </button>
@@ -119,7 +119,7 @@ export default function ProductCinematicHero({
           <button
             type="button"
             onClick={onSpecsClick}
-            className="inline-flex items-center text-[15px] sm:text-[18px] font-normal text-[#333333] hover:opacity-75 transition-opacity cursor-pointer"
+            className="inline-flex items-center text-[clamp(14px,0.9375vw,18px)] leading-[1.4] font-normal text-[#333333] hover:opacity-75 transition-opacity cursor-pointer"
           >
             <span>Product Specifications</span>
             <ChevronRight className="w-4 h-4 sm:w-[18px] sm:h-[18px] text-black ml-1" />

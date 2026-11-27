@@ -128,7 +128,7 @@ export default function ProductFeatureSlider({ product }: ProductFeatureSliderPr
       {/* Centered Section Title (Reference: .A3Ultra_sec-tle) */}
       <div className="px-[4%] pt-20 sm:pt-24 pb-8 sm:pb-10 text-center">
         <h3
-          className={`inline-block min-h-[1.2em] text-[22px] sm:text-[30px] lg:text-[36px] font-normal text-[#333333] leading-[1.4] transition-all duration-400 ease-out ${
+          className={`inline-block min-h-[1.2em] text-[clamp(22px,1.875vw,36px)] font-normal text-[#333333] leading-[1.4] transition-all duration-400 ease-out ${
             titlePhase === 'leaving'
               ? 'opacity-0 translate-y-4'
               : titlePhase === 'entering'
